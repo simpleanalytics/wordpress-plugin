@@ -42,6 +42,10 @@ This plugin template is designed to help you get started with any new WordPress 
 
 == Changelog ==
 
+= 1.1 =
+* 2019-05-09
+* Skip requests from admins
+
 = 1.0 =
 * 2019-05-09
 * Initial release
