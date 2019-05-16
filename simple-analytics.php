@@ -1,7 +1,7 @@
 <?php
 /*
- * Plugin Name: Simple Analytics
- * Version: 1.1
+ * Plugin Name: Simple Analytics Official Plugin
+ * Version: 1.2
  * Plugin URI: https://docs.simpleanalytics.com/install-simple-analytics-on-wordpress
  * Description: Embed Simple Analytics script in your WordPress website
  * Author: Simple Analytics
