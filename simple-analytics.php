@@ -22,6 +22,7 @@ if (!defined('ABSPATH')) exit;
 function simpleanalytics_warn_not_logging() {
   global $is_running;
   if (!$is_running) {
+    // Can't use wp_add_inline_script here because there is no script to add it to
     echo '<script>console.warn(\'Simple Analytics: Not logging requests from admins\')</script>';
   }
 }
