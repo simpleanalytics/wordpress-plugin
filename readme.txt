@@ -28,13 +28,13 @@ Installing "Simple Analytics" can be done in multiple ways.
 
 = Install via WordPress Plugins =
 
-1. Search for 'Simple Analytics Official' plugin in you WordPress admin
+1. Search for `simpleanalytics` plugin in your WordPress admin
 1. Upload the ZIP file through the 'Plugins > Add New > Upload' screen in your WordPress dashboard
 1. Activate the plugin through the 'Plugins' menu in WordPress
 
 = Download the ZIP via WordPress.org =
 
-1. Download the plugin via WordPress.org
+1. Download the plugin via [wordpress.org/plugins/simpleanalytics](https://wordpress.org/plugins/simpleanalytics/)
 1. Upload the ZIP file through the 'Plugins > Add New > Upload' screen in your WordPress dashboard
 1. Activate the plugin through the 'Plugins' menu in WordPress
 
