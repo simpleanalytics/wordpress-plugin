@@ -4,7 +4,7 @@ Contributors: simpleanalytics
 Donate link: https://simpleanalytics.com
 Tags: wordpress, plugin, simple analytics, analytics
 Requires at least: 2.0
-Tested up to: 5.2
+Tested up to: 5.5
 Requires PHP: 5.2.4
 Stable tag: 1.6
 License: GPLv2 or later
