@@ -6,7 +6,7 @@ Tags: wordpress, plugin, simple analytics, analytics
 Requires at least: 2.0
 Tested up to: 5.2
 Requires PHP: 5.2.4
-Stable tag: 1.5
+Stable tag: 1.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,14 +65,18 @@ You can [leave your feedback here](https://simpleanalytics.com/feedback?ref=word
 == Screenshots ==
 
 1. The dashboard of Simple Analytics
-2. The referrals, paths, devices and more
-3. We have dark mode
+2. We have dark mode
+3. See Tweets that got you some traffic
 
 == Upgrade Notice ==
 
 No changed needed for upgrades.
 
 == Changelog ==
+
+= 1.6 =
+* 2020-12-07
+* Test with latest WordPress version
 
 = 1.5 =
 * 2019-06-12

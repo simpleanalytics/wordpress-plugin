@@ -1,13 +1,13 @@
 <?php
 /*
  * Plugin Name: Simple Analytics Official
- * Version: 1.5
+ * Version: 1.6
  * Plugin URI: https://docs.simpleanalytics.com/install-simple-analytics-on-wordpress
  * Description: Embed Simple Analytics script in your WordPress website
  * Author: Simple Analytics
  * Author URI: https://simpleanalytics.com/
  * Requires at least: 2.0.0
- * Tested up to: 5.2
+ * Tested up to: 5.5.3
  *
  * Text Domain: simple-analytics
  * Domain Path: /lang/
@@ -19,14 +19,14 @@
 
 if (!defined('ABSPATH')) exit;
 
-$simpleanalytics_script = 'https://cdn.simpleanalytics.io/hello.js';
+$simpleanalytics_script = 'https://scripts.simpleanalyticscdn.com/latest.js';
 
 function simpleanalytics_warn_not_logging() {
   echo "<!-- Simple Analytics: Not logging requests from admins -->\n";
 }
 
 function simpleanalytics_noscript() {
-  echo '<noscript><img src="https://api.simpleanalytics.io/hello.gif" alt=""></noscript>' . "\n";
+  echo '<noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt=""></noscript>' . "\n";
 }
 
 function simpleanalytics_init() {
@@ -36,7 +36,7 @@ function simpleanalytics_init() {
     wp_enqueue_script('simpleanalytics_script', $simpleanalytics_script, array(), null, true);
     add_action('wp_footer', 'simpleanalytics_noscript', 10);
   } else {
-    wp_enqueue_script('simpleanalytics_admins', plugins_url('js/admins.js', __FILE__), array(), null, true);
+    wp_enqueue_script('simpleanalytics_admins', plugins_url('public/js/admins.js', __FILE__), array(), null, true);
     add_action('wp_footer', 'simpleanalytics_warn_not_logging', 10);
   }
 }
