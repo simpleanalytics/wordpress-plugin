@@ -4,21 +4,21 @@ Contributors: simpleanalytics
 Donate link: https://simpleanalytics.com
 Tags: wordpress, plugin, simple analytics, analytics
 Requires at least: 2.0
-Tested up to: 5.5
+Tested up to: 5.8.1
 Requires PHP: 5.2.4
-Stable tag: 1.6
+Stable tag: 1.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Privacy friendly analytics with an actionable dashboard
+Privacy-friendly analytics with an actionable dashboard
 
 == Description ==
 
-Simple Analytics gives you the analytics you need without invading the privacy of your users, with a clean interface, and simple integration.
+Simple Analytics gives you the analytics you need without invading the privacy of your users, with a clean interface and simple integration.
 
-- We just show you the essentials: page views, referrers, top pages, and screen sizes.
+- We show you the essentials: page views, referrers, top pages, and screen sizes.
 - We don't use cookies or collect any personal data. So no cookie banners or GDPR to worry about.
-- When a service is free you are the product. We won't ever sell your data. As a result, we need to charge.
+- When a service is free, you are the product. We won't ever sell your data. As a result, we need to charge.
 
 > You need to have a paid subscription from [Simple Analytics](https://simpleanalytics.com/?ref=wordpress).
 
@@ -70,9 +70,13 @@ You can [leave your feedback here](https://simpleanalytics.com/feedback?ref=word
 
 == Upgrade Notice ==
 
-No changed needed for upgrades.
+No changes needed for upgrades.
 
 == Changelog ==
+
+= 1.7 =
+* 2021-10-22
+* Fix for WordPress 5.8.1
 
 = 1.6 =
 * 2020-12-07
