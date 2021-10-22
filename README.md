@@ -8,7 +8,7 @@
 
 You will need a paid subscription to Simple Analytics. [Create one here](https://simpleanalytics.com/welcome).
 
-# Publish
+## Publish
 
 When publishing a new version, we automatically deploy a new version to SVN (the WordPress code repository).
 
@@ -16,7 +16,7 @@ When publishing a new version, we automatically deploy a new version to SVN (the
 1. Update "Version" to new version in [/simple-analytics.php](/simple-analytics.php).
 2. Publish [a new release](https://github.com/simpleanalytics/wordpress-plugin/releases/new).
 
-# Resources
+## Resources
 
 - [WordPress plugin page](https://wordpress.org/plugins/simpleanalytics/)
 - [Create a Simple Analytics account](https://simpleanalytics.com/welcome)
