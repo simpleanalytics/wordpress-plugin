@@ -4,9 +4,9 @@ Contributors: simpleanalytics
 Donate link: https://simpleanalytics.com
 Tags: wordpress, plugin, simple analytics, analytics
 Requires at least: 2.0
-Tested up to: 5.8.1
+Tested up to: 6.0
 Requires PHP: 5.2.4
-Stable tag: 1.7
+Stable tag: 1.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,10 @@ You can [leave your feedback here](https://simpleanalytics.com/feedback?ref=word
 No changes needed for upgrades.
 
 == Changelog ==
+
+= 1.8 =
+* 2022-06-27
+* Fix for WordPress 6.0
 
 = 1.7 =
 * 2021-10-22
