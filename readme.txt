@@ -75,7 +75,7 @@ No changes needed for upgrades.
 == Changelog ==
 
 = 1.10 =
-* 2022-09-26
+* 2023-01-07
 * Upgraded to WordPress 6.1.1
 
 = 1.9 =
