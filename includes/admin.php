@@ -32,12 +32,14 @@ function simpleanalytics_render_settings_page() {
 			return;
 		}
 
-		if ( isset( $_POST['simpleanalytics_custom_domain'] ) ) {
-			$custom_domain = sanitize_text_field( $_POST['simpleanalytics_custom_domain'] );
-			$custom_domain = preg_replace( '/^https?:\/\//', '', $custom_domain );
-
-			update_option( 'simpleanalytics_custom_domain', $custom_domain );
+		if ( ! isset( $_POST['simpleanalytics_custom_domain'] ) ) {
+			return;
 		}
+
+		$custom_domain = sanitize_text_field( $_POST['simpleanalytics_custom_domain'] );
+		$custom_domain = preg_replace( '/^https?:\/\//', '', $custom_domain );
+
+		update_option( 'simpleanalytics_custom_domain', $custom_domain );
 	}
 
 	$custom_domain = get_option( 'simpleanalytics_custom_domain' );
