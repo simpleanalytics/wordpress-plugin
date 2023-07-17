@@ -6,7 +6,7 @@ Tags: wordpress, plugin, simple analytics, analytics
 Requires at least: 2.0
 Tested up to: 6.2.2
 Requires PHP: 5.2.4
-Stable tag: 1.12
+Stable tag: 1.13
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,10 @@ You can [leave your feedback here](https://simpleanalytics.com/feedback?ref=word
 No changes needed for upgrades.
 
 == Changelog ==
+
+= 1.13 =
+* 2023-07-17
+* Allow custom domains (thanks to Ostap Brehin)
 
 = 1.12 =
 * 2023-07-05
