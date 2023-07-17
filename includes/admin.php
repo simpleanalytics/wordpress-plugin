@@ -23,14 +23,24 @@ function simpleanalytics_render_settings_page() {
 		return;
 	}
 
-	$custom_domain = get_option( 'simpleanalytics_custom_domain' );
+	if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
+		if ( ! isset( $_POST['simpleanalytics_settings_nonce'] ) ) {
+			return;
+		}
 
-	if ( isset( $_POST['simpleanalytics_custom_domain'] ) ) {
-		$custom_domain = sanitize_text_field( $_POST['simpleanalytics_custom_domain'] );
-		$custom_domain = preg_replace( '/^https?:\/\//', '', $custom_domain );
+		if ( ! wp_verify_nonce( $_POST['simpleanalytics_settings_nonce'], 'simpleanalytics_settings' ) ) {
+			return;
+		}
 
-		update_option( 'simpleanalytics_custom_domain', $custom_domain );
+		if ( isset( $_POST['simpleanalytics_custom_domain'] ) ) {
+			$custom_domain = sanitize_text_field( $_POST['simpleanalytics_custom_domain'] );
+			$custom_domain = preg_replace( '/^https?:\/\//', '', $custom_domain );
+
+			update_option( 'simpleanalytics_custom_domain', $custom_domain );
+		}
 	}
+
+	$custom_domain = get_option( 'simpleanalytics_custom_domain' );
 	?>
     <div class="wrap">
         <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
