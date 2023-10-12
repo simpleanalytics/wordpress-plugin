@@ -15,7 +15,7 @@ CONFIG_TESTED_UP_TO=$(jq -r '.TESTED_UP_TO' ./config.json)
 if [[ "$TESTED_UP_TO" == "$CONFIG_TESTED_UP_TO" ]]; then
     echo "### :no_good_woman: Didn't update versions :no_good:" >> $GITHUB_STEP_SUMMARY
     echo "" >> $GITHUB_STEP_SUMMARY
-    echo "Stopped because new WordPress version ($TESTED_UP_TO) has not changed." >> $GITHUB_STEP_SUMMARY
+    echo "Stopped because WordPress version ($TESTED_UP_TO) has not changed." >> $GITHUB_STEP_SUMMARY
     echo "TESTED_UP_TO has not changed. Exiting..."
     exit 0
 fi
