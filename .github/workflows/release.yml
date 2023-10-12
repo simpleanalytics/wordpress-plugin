@@ -57,13 +57,14 @@ jobs:
 
       - name: WordPress Plugin Deploy
         id: deploy
-        uses: 10up/action-wordpress-plugin-deploy@2.1.1
+        uses: 10up/action-wordpress-plugin-deploy@2.2.2
         with:
           generate-zip: true
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG: simpleanalytics
+          VERSION: ${{ steps.script.outputs.stable-tag }}
           ASSETS_DIR: assets
 
       - name: Upload release asset
