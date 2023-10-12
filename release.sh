@@ -9,7 +9,7 @@ JSON_DATA=$(curl -s https://api.wordpress.org/core/stable-check/1.0/)
 TESTED_UP_TO=$(echo "$JSON_DATA" | jq -r 'to_entries[] | select(.value == "latest") | .key')
 
 # Read the TESTED_UP_TO value from config.json
-CONFIG_TESTED_UP_TO=$(jq -r '.TESTED_UP_TO' config.json)
+CONFIG_TESTED_UP_TO=$(jq -r '.TESTED_UP_TO' ./config.json)
 
 # Compare the two values and exit if they are the same
 if [[ "$TESTED_UP_TO" == "$CONFIG_TESTED_UP_TO" ]]; then
@@ -50,7 +50,7 @@ sed -i '' -e "/== Changelog ==/a\\
 \\
 = $STABLE_TAG =\\
 * $DATE\\
-* Upgraded to WordPress $TESTED_UP_TO" readme.txt
+* Upgraded to WordPress $TESTED_UP_TO" ./readme.txt
 
 # Update the config.json file
 echo "{
