@@ -2,7 +2,7 @@ name: Release
 
 on:
   schedule:
-    - cron: "0 8 * * 5"
+    - cron: "0 8 * * 1" # At 08:00 on Monday.
   push:
     branches:
       - main
