@@ -28,10 +28,8 @@ STABLE_TAG=$(echo "$PREVIOUS_STABLE_TAG" | awk -F. '{$NF+=1} 1' OFS=.)
 
 echo "### :rocket: Updated versions :rocket:" >> $GITHUB_STEP_SUMMARY
 echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
-echo "- Previous stable tag: $PREVIOUS_STABLE_TAG" >> $GITHUB_STEP_SUMMARY
-echo "- New stable tag: $STABLE_TAG" >> $GITHUB_STEP_SUMMARY
-echo "- Previous WordPress version: $CONFIG_TESTED_UP_TO" >> $GITHUB_STEP_SUMMARY
-echo "- New WordPress version: $TESTED_UP_TO" >> $GITHUB_STEP_SUMMARY
+echo "- New stable tag: $STABLE_TAG (was $PREVIOUS_STABLE_TAG)" >> $GITHUB_STEP_SUMMARY
+echo "- New WordPress version: $TESTED_UP_TO (was $CONFIG_TESTED_UP_TO)" >> $GITHUB_STEP_SUMMARY
 
 # Use sed to replace the version lines in some files
 sed -i -e "s/Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
