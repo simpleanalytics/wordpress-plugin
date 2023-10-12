@@ -28,11 +28,11 @@ echo "::debug::TESTED_UP_TO has changed from $CONFIG_TESTED_UP_TO to $TESTED_UP_
 echo "::debug::STABLE_TAG has changed from $PREVIOUS_STABLE_TAG to $STABLE_TAG"
 
 # Use sed to replace the version lines in some files
-sed -i '' -e "s/Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
-          -e "s/Stable tag: [0-9.]*$/Stable tag: $STABLE_TAG/" ./readme.txt
+sed -i -e "s/Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
+       -e "s/Stable tag: [0-9.]*$/Stable tag: $STABLE_TAG/" ./readme.txt
 
-sed -i '' -e "s/Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
-          -e "s/Version: [0-9.]*$/Version: $STABLE_TAG/" ./simple-analytics.php
+sed -i -e "s/Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
+       -e "s/Version: [0-9.]*$/Version: $STABLE_TAG/" ./simple-analytics.php
 
 # Get the current date in the specified format
 DATE=$(date +"%Y-%m-%d")
