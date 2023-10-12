@@ -24,6 +24,7 @@ jobs:
 
       - name: Run release.sh script
         id: script
+        shell: bash
         run: |
           chmod +x ./release.sh
           ./release.sh
