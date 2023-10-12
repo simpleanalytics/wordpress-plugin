@@ -1,4 +1,4 @@
-name: Update Version
+name: Release
 
 on:
   schedule:
@@ -10,25 +10,23 @@ on:
 
 jobs:
   update:
+    name: Update version
     runs-on: ubuntu-latest
+    timeout-minutes: 3
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      - name: Set up environment
+      - name: Install jq
         run: |
           sudo apt-get install -y jq
-          echo "TEST_SCRIPT=$(base64 -w0 script.sh)" >> $GITHUB_ENV
 
-      - name: Run script
+      - name: Run release.sh script
         id: script
         run: |
-          echo "$TEST_SCRIPT" | base64 -d > script.sh
-          chmod +x script.sh
-          ./script.sh
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          chmod +x ./release.sh
+          ./release.sh
 
       - name: Commit and push changes
         if: steps.script.outputs.has-changed == 'true'

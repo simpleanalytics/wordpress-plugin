@@ -13,6 +13,7 @@ CONFIG_TESTED_UP_TO=$(jq -r '.TESTED_UP_TO' config.json)
 
 # Compare the two values and exit if they are the same
 if [[ "$TESTED_UP_TO" == "$CONFIG_TESTED_UP_TO" ]]; then
+    echo "::debug::Stopped because TESTED_UP_TO has not changed."
     echo "TESTED_UP_TO has not changed. Exiting..."
     exit 0
 fi
@@ -23,8 +24,8 @@ PREVIOUS_STABLE_TAG=$(jq -r '.STABLE_TAG' config.json)
 # Increment the STABLE_TAG value
 STABLE_TAG=$(echo "$PREVIOUS_STABLE_TAG" | awk -F. '{$NF+=1} 1' OFS=.)
 
-echo "TESTED_UP_TO has changed from $CONFIG_TESTED_UP_TO to $TESTED_UP_TO"
-echo "STABLE_TAG has changed from $PREVIOUS_STABLE_TAG to $STABLE_TAG"
+echo "::debug::TESTED_UP_TO has changed from $CONFIG_TESTED_UP_TO to $TESTED_UP_TO"
+echo "::debug::STABLE_TAG has changed from $PREVIOUS_STABLE_TAG to $STABLE_TAG"
 
 # Use sed to replace the version lines in some files
 sed -i '' -e "s/Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
