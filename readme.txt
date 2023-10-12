@@ -74,10 +74,6 @@ No changes needed for upgrades.
 
 == Changelog ==
 
-= 1.14 =
-* 2023-10-12
-* Upgraded to WordPress 6.3.1
-
 = 1.13 =
 * 2023-07-17
 * Allow custom domains (thanks to Ostap Brehin)
