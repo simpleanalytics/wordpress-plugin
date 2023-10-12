@@ -46,7 +46,7 @@ EOL
 )
 
 # Use sed to insert the new changelog item below the line "== Changelog =="
-sed -i '' -e "/== Changelog ==/a\\
+sed -i -e "/== Changelog ==/a\\
 \\
 = $STABLE_TAG =\\
 * $DATE\\
