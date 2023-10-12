@@ -21,7 +21,7 @@ jobs:
       - name: Install Node.js LTS
         uses: actions/setup-node@v3
         with:
-          node-version: lts
+          node-version: lts/*
 
       - name: Install jq
         run: |
