@@ -28,10 +28,10 @@ echo "STABLE_TAG has changed from $PREVIOUS_STABLE_TAG to $STABLE_TAG"
 
 # Use sed to replace the version lines in some files
 sed -i '' -e "s/Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
-          -e "s/Stable tag: [0-9.]*$/Stable tag: $STABLE_TAG/" ./test.txt
+          -e "s/Stable tag: [0-9.]*$/Stable tag: $STABLE_TAG/" ./readme.txt
 
 sed -i '' -e "s/Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
-          -e "s/Version: [0-9.]*$/Version: $STABLE_TAG/" ./test.php
+          -e "s/Version: [0-9.]*$/Version: $STABLE_TAG/" ./simple-analytics.php
 
 # Get the current date in the specified format
 DATE=$(date +"%Y-%m-%d")
@@ -49,7 +49,7 @@ sed -i '' -e "/== Changelog ==/a\\
 \\
 = $STABLE_TAG =\\
 * $DATE\\
-* Upgraded to WordPress $TESTED_UP_TO" test.txt
+* Upgraded to WordPress $TESTED_UP_TO" readme.txt
 
 # Update the config.json file
 echo "{
