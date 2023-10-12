@@ -14,25 +14,25 @@ CONFIG_TESTED_UP_TO=$(jq -r '.TESTED_UP_TO' ./config.json)
 # Compare the two values and exit if they are the same
 if [[ "$TESTED_UP_TO" == "$CONFIG_TESTED_UP_TO" ]]; then
     echo "::debug::Stopped because TESTED_UP_TO has not changed."
-    echo "### Didn't update the versions" >> $GITHUB_STEP_SUMMARY
+    echo "### Didn't update versions" >> $GITHUB_STEP_SUMMARY
     echo "" >> $GITHUB_STEP_SUMMARY
     echo "Stopped because TESTED_UP_TO ($TESTED_UP_TO) has not changed." >> $GITHUB_STEP_SUMMARY
     echo "TESTED_UP_TO has not changed. Exiting..."
     exit 0
 fi
 
-echo "### Updating the versions" >> $GITHUB_STEP_SUMMARY
-echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
-echo "- Previous stable tag: $PREVIOUS_STABLE_TAG" >> $GITHUB_STEP_SUMMARY
-echo "- New stable tag: $STABLE_TAG" >> $GITHUB_STEP_SUMMARY
-echo "- Previous WordPress version: $CONFIG_TESTED_UP_TO" >> $GITHUB_STEP_SUMMARY
-echo "- New WordPress version: $TESTED_UP_TO" >> $GITHUB_STEP_SUMMARY
-
 # Fetch the current STABLE_TAG value from config.json
 PREVIOUS_STABLE_TAG=$(jq -r '.STABLE_TAG' config.json)
 
 # Increment the STABLE_TAG value
 STABLE_TAG=$(echo "$PREVIOUS_STABLE_TAG" | awk -F. '{$NF+=1} 1' OFS=.)
+
+echo "### Updating versions :rocket:" >> $GITHUB_STEP_SUMMARY
+echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+echo "- Previous stable tag: $PREVIOUS_STABLE_TAG" >> $GITHUB_STEP_SUMMARY
+echo "- New stable tag: $STABLE_TAG" >> $GITHUB_STEP_SUMMARY
+echo "- Previous WordPress version: $CONFIG_TESTED_UP_TO" >> $GITHUB_STEP_SUMMARY
+echo "- New WordPress version: $TESTED_UP_TO" >> $GITHUB_STEP_SUMMARY
 
 echo "::debug::TESTED_UP_TO has changed from $CONFIG_TESTED_UP_TO to $TESTED_UP_TO"
 echo "::debug::STABLE_TAG has changed from $PREVIOUS_STABLE_TAG to $STABLE_TAG"
