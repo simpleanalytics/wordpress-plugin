@@ -4,10 +4,6 @@ if ( ! defined( 'ABSPATH' ) ) {
   exit;
 }
 
-function simpleanalytics_warn_not_logging() {
-  echo "<!-- Simple Analytics: Not logging requests from admins -->\n";
-}
-
 function simpleanalytics_add_settings_page() {
   add_options_page(
     __( 'Simple Analytics Settings', 'simple-analytics' ),
@@ -73,5 +69,3 @@ function simpleanalytics_render_settings_page() {
 }
 
 add_action( 'admin_menu', 'simpleanalytics_add_settings_page' );
-wp_enqueue_script( 'simpleanalytics_admins', plugins_url( 'public/js/admins.js', dirname( __FILE__ ) ), array(), null, true );
-add_action( 'wp_footer', 'simpleanalytics_warn_not_logging', 10 );

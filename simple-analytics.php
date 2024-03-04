@@ -17,25 +17,43 @@
  * @since 1.0.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+namespace SimpleAnalytics;
+
+defined('ABSPATH') || exit;
+
+function should_collect_analytics(): bool
+{
+    return ! is_user_logged_in();
 }
 
-function simpleanalytics_noscript() {
-	$domain = get_option( 'simpleanalytics_custom_domain' ) ?: 'queue.simpleanalyticscdn.com';
-
-	echo '<noscript><img src="https://' . $domain . '/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade"></noscript>' . "\n";
+function get_analytics_domain(): string
+{
+    return esc_url_raw(get_option('simpleanalytics_custom_domain')) ?? 'queue.simpleanalyticscdn.com';
 }
 
-function simpleanalytics_init() {
-	if ( current_user_can( 'editor' ) || current_user_can( 'administrator' ) ) {
-		require_once plugin_dir_path( __FILE__ ) . 'includes/admin.php';
-	} else {
-		$domain = get_option( 'simpleanalytics_custom_domain' ) ?: 'scripts.simpleanalyticscdn.com';
+function insert_noscript(): void
+{
+    if ( ! should_collect_analytics()) {
+        echo "<!-- Simple Analytics: Not logging requests from admins -->\n";
 
-		wp_enqueue_script( 'simpleanalytics_script', "https://$domain/latest.js", array(), null, true );
-		add_action( 'wp_footer', 'simpleanalytics_noscript', 10 );
-	}
+        return;
+    }
+
+    echo '<noscript><img src="https://'.get_analytics_domain().'/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade"></noscript>'."\n";
 }
 
-add_action( 'init', 'simpleanalytics_init' );
+function enqueue_scripts(): void
+{
+    if ( ! should_collect_analytics()) {
+        wp_enqueue_script('simpleanalytics_inactive', plugins_url('js/inactive.js', __FILE__), [], null, true);
+
+        return;
+    }
+
+    wp_enqueue_script('simpleanalytics_script', "https://".get_analytics_domain()."/latest.js", [], null, true);
+}
+
+add_action('wp_footer', 'SimpleAnalytics\insert_noscript');
+add_action('wp_enqueue_scripts', 'SimpleAnalytics\enqueue_scripts');
+
+require __DIR__.'/includes/admin.php';
