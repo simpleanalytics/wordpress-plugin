@@ -6,7 +6,7 @@
  * Description: Embed Simple Analytics script in your WordPress website
  * Author: Simple Analytics
  * Author URI: https://simpleanalytics.com/
- * Requires at least: 2.0.0
+ * Requires at least: 5.2.0
  * Tested up to: 6.4.3
  *
  * Text Domain: simple-analytics
