@@ -31,29 +31,25 @@ function get_analytics_domain(): string
     return esc_url_raw(get_option('simpleanalytics_custom_domain')) ?? 'queue.simpleanalyticscdn.com';
 }
 
-function insert_noscript(): void
+function insert_footer_contents(): void
 {
     if ( ! should_collect_analytics()) {
         echo "<!-- Simple Analytics: Not logging requests from admins -->\n";
-
-        return;
+    } else {
+        echo '<noscript><img src="https://'.get_analytics_domain().'/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade"></noscript>'."\n";
     }
-
-    echo '<noscript><img src="https://'.get_analytics_domain().'/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade"></noscript>'."\n";
 }
 
 function enqueue_scripts(): void
 {
     if ( ! should_collect_analytics()) {
         wp_enqueue_script('simpleanalytics_inactive', plugins_url('js/inactive.js', __FILE__), [], null, true);
-
-        return;
+    } else {
+        wp_enqueue_script('simpleanalytics_script', "https://".get_analytics_domain()."/latest.js", [], null, true);
     }
-
-    wp_enqueue_script('simpleanalytics_script', "https://".get_analytics_domain()."/latest.js", [], null, true);
 }
 
-add_action('wp_footer', 'SimpleAnalytics\insert_noscript');
+add_action('wp_footer', 'SimpleAnalytics\insert_footer_contents');
 add_action('wp_enqueue_scripts', 'SimpleAnalytics\enqueue_scripts');
 
 require __DIR__.'/includes/admin.php';
