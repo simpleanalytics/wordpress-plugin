@@ -6,7 +6,7 @@
  * Description: Embed Simple Analytics script in your WordPress website
  * Author: Simple Analytics
  * Author URI: https://simpleanalytics.com/
- * Requires at least: 2.0.0
+ * Requires at least: 5.2.0
  * Tested up to: 6.4.3
  *
  * Text Domain: simple-analytics
@@ -17,25 +17,45 @@
  * @since 1.0.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+namespace SimpleAnalytics;
+
+defined('ABSPATH') || exit;
+
+function should_collect_analytics(): bool
+{
+    return ! is_user_logged_in();
 }
 
-function simpleanalytics_noscript() {
-	$domain = get_option( 'simpleanalytics_custom_domain' ) ?: 'queue.simpleanalyticscdn.com';
-
-	echo '<noscript><img src="https://' . $domain . '/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade"></noscript>' . "\n";
+function get_analytics_domain(string $default): string
+{
+    return get_option('simpleanalytics_custom_domain', $default);
 }
 
-function simpleanalytics_init() {
-	if ( current_user_can( 'editor' ) || current_user_can( 'administrator' ) ) {
-		require_once plugin_dir_path( __FILE__ ) . 'includes/admin.php';
-	} else {
-		$domain = get_option( 'simpleanalytics_custom_domain' ) ?: 'scripts.simpleanalyticscdn.com';
-
-		wp_enqueue_script( 'simpleanalytics_script', "https://$domain/latest.js", array(), null, true );
-		add_action( 'wp_footer', 'simpleanalytics_noscript', 10 );
-	}
+function insert_footer_contents(): void
+{
+    if (! should_collect_analytics()) {
+        echo "<!-- Simple Analytics: Not logging requests from admins -->\n";
+    } else {
+        echo '<noscript><img src="https://' . get_analytics_domain('queue.simpleanalyticscdn.com') . '/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade"></noscript>' . "\n";
+    }
 }
 
-add_action( 'init', 'simpleanalytics_init' );
+function enqueue_scripts(): void
+{
+    if (! should_collect_analytics()) {
+        wp_enqueue_script('simpleanalytics_inactive', plugins_url('js/inactive.js', __FILE__), [], null, true);
+    } else {
+        wp_enqueue_script('simpleanalytics_script', "https://" . get_analytics_domain('scripts.simpleanalyticscdn.com') . "/latest.js", [], null, true);
+    }
+}
+
+add_action('wp_footer', 'SimpleAnalytics\insert_footer_contents');
+add_action('wp_enqueue_scripts', 'SimpleAnalytics\enqueue_scripts');
+
+require __DIR__ . '/includes/AbstractField.php';
+require __DIR__ . '/includes/CustomDomainField.php';
+require __DIR__ . '/includes/ExcludedRolesField.php';
+require __DIR__ . '/includes/ExcludedIpAddressesField.php';
+require __DIR__ . '/includes/settings.php';
+
+new SettingsPage();
