@@ -1,8 +1,8 @@
 <?php
 
-namespace SimpleAnalytics;
+namespace SimpleAnalytics\Fields;
 
-defined('ABSPATH') || exit;
+defined('\\ABSPATH') || exit;
 
 abstract class AbstractField
 {
@@ -25,11 +25,6 @@ abstract class AbstractField
         );
     }
 
-    /**
-     * @template T
-     * @param T $input
-     * @return T|false
-     */
     abstract public function sanitize($input);
 
     abstract public function render();

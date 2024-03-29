@@ -1,8 +1,8 @@
 <?php
 
-namespace SimpleAnalytics;
+namespace SimpleAnalytics\Fields;
 
-defined('ABSPATH') || exit;
+defined('\\ABSPATH') || exit;
 
 class ExcludedRolesField extends AbstractField
 {
