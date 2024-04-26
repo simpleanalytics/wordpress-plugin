@@ -2,45 +2,48 @@
 
 namespace SimpleAnalytics;
 
-defined('\\ABSPATH') || exit;
+use SimpleAnalytics\Enums\Setting;
 
 class Plugin
 {
-    public bool $shouldCollectAnalytics;
-
     public function __construct()
     {
+        new SettingsRegistry();
+        new Admin\SettingsPage();
+        new Admin\SettingsForm();
+
         add_action('init', [$this, 'initialize']);
     }
 
     public function initialize(): void
     {
-        $this->shouldCollectAnalytics = ! is_user_logged_in();
-
-        add_action('wp_footer', [$this, 'insertFooterContents']);
-        add_action('wp_enqueue_scripts', [$this, 'enqueueScripts']);
+        new ScriptInjector($this->shouldCollectAnalytics());
     }
 
-    public function insertFooterContents(): void
+    protected function shouldCollectAnalytics(): bool
     {
-        if (! $this->shouldCollectAnalytics) {
-            echo "<!-- Simple Analytics: Not logging requests from admins -->\n";
-        } else {
-            echo '<noscript><img src="https://' . $this->getDomain('queue.simpleanalyticscdn.com') . '/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade"></noscript>' . "\n";
+        if (! get_option(Setting::ENABLED, true)) {
+            return false;
         }
-    }
 
-    public function enqueueScripts(): void
-    {
-        if (! $this->shouldCollectAnalytics) {
-            wp_enqueue_script('simpleanalytics_inactive', plugins_url('js/inactive.js', __FILE__), [], null, true);
-        } else {
-            wp_enqueue_script('simpleanalytics_script', "https://" . $this->getDomain('scripts.simpleanalyticscdn.com') . "/latest.js", [], null, true);
+        if ($this->clientIpExcluded($_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'])) {
+            return false;
         }
+
+        if (! $user = wp_get_current_user()) {
+            return true;
+        }
+
+        return ! $this->containsExcludedRole($user->roles);
     }
 
-    public function getDomain(string $default): string
+    protected function clientIpExcluded(string $ip): bool
     {
-        return get_option('simpleanalytics_custom_domain', $default);
+        return str_contains(get_option(Setting::EXCLUDED_IP_ADDRESSES, ''), $ip);
+    }
+
+    protected function containsExcludedRole(array $roles): bool
+    {
+        return array_intersect(get_option(Setting::EXCLUDED_ROLES, []), $roles) !== [];
     }
 }

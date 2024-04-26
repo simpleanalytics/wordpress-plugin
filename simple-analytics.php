@@ -19,12 +19,15 @@
 
 defined('\\ABSPATH') || exit;
 
-require __DIR__ . '/src/SettingsPage.php';
 require __DIR__ . '/src/Plugin.php';
+require __DIR__ . '/src/Enums/Setting.php';
+require __DIR__ . '/src/Admin/SettingsPage.php';
+require __DIR__ . '/src/Admin/SettingsForm.php';
+require __DIR__ . '/src/SettingsRegistry.php';
+require __DIR__ . '/src/ScriptInjector.php';
 require __DIR__ . '/src/Fields/AbstractField.php';
 require __DIR__ . '/src/Fields/ExcludedIpAddressesField.php';
 require __DIR__ . '/src/Fields/ExcludedRolesField.php';
 require __DIR__ . '/src/Fields/CustomDomainField.php';
 
 new SimpleAnalytics\Plugin();
-new SimpleAnalytics\SettingsPage();

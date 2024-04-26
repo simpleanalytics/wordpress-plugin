@@ -4,6 +4,7 @@ namespace SimpleAnalytics\Fields;
 
 defined('\\ABSPATH') || exit;
 
+/** @depreacted */
 abstract class AbstractField
 {
     protected string $name;

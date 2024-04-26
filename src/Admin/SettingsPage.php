@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleAnalytics;
+namespace SimpleAnalytics\Admin;
 
 use SimpleAnalytics\Fields\CustomDomainField;
 use SimpleAnalytics\Fields\ExcludedIpAddressesField;
