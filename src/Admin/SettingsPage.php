@@ -2,10 +2,6 @@
 
 namespace SimpleAnalytics\Admin;
 
-use SimpleAnalytics\Fields\CustomDomainField;
-use SimpleAnalytics\Fields\ExcludedIpAddressesField;
-use SimpleAnalytics\Fields\ExcludedRolesField;
-
 defined('\\ABSPATH') || exit;
 
 class SettingsPage
@@ -13,7 +9,6 @@ class SettingsPage
     public function __construct()
     {
         add_action('admin_menu', [$this, 'register']);
-        add_action('admin_init', [$this, 'initialize']);
     }
 
     public function register(): void
@@ -27,43 +22,7 @@ class SettingsPage
         );
     }
 
-    public function initialize(): void
-    {
-        // General Settings
-        add_settings_section(
-            'simple_analytics_general_settings',
-            null,
-            '__return_null',
-            'simple-analytics-settings-general'
-        );
-
-        new CustomDomainField(
-            'simple_analytics_general_settings',
-            'simple-analytics-settings-general',
-            'simple_analytics_general_settings'
-        );
-
-        // Advanced Settings
-        add_settings_section(
-            'simple_analytics_advanced_settings',
-            null,
-            '__return_null',
-            'simple-analytics-settings-advanced'
-        );
-
-        new ExcludedRolesField(
-            'simple_analytics_advanced_settings',
-            'simple-analytics-settings-advanced',
-            'simple_analytics_advanced_settings'
-        );
-        new ExcludedIpAddressesField(
-            'simple-analytics-settings-advanced',
-            'simple_analytics_advanced_settings',
-            'simple_analytics_advanced_settings'
-        );
-    }
-
-    public function render()
+    public function render(): void
     {
         $active_tab = $_GET['tab'] ?? 'general';
         ?>
