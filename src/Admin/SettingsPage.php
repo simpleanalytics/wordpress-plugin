@@ -6,12 +6,12 @@ defined('\\ABSPATH') || exit;
 
 class SettingsPage
 {
-    public function __construct()
+    public function register(): void
     {
-        add_action('admin_menu', [$this, 'register']);
+        add_action('admin_menu', [$this, 'addOptionsPage']);
     }
 
-    public function register(): void
+    public function addOptionsPage(): void
     {
         add_options_page(
             'Simple Analytics Settings',

@@ -7,7 +7,7 @@
  * Author: Simple Analytics
  * Author URI: https://simpleanalytics.com/
  * Requires at least: 5.2.0
- * Tested up to: 6.4.3
+ * Tested up to: 6.5.2
  *
  * Text Domain: simple-analytics
  * Domain Path: /lang/
@@ -19,15 +19,19 @@
 
 defined('\\ABSPATH') || exit;
 
+require __DIR__ . '/src/Actions/RegisterSettings.php';
+require __DIR__ . '/src/Actions/InjectScripts.php';
 require __DIR__ . '/src/Plugin.php';
 require __DIR__ . '/src/Enums/Setting.php';
+require __DIR__ . '/src/Scripts/Script.php';
+require __DIR__ . '/src/Scripts/AnalyticsScript.php';
+require __DIR__ . '/src/Scripts/AutomatedEventsScript.php';
+require __DIR__ . '/src/Scripts/InactiveScript.php';
 require __DIR__ . '/src/Admin/SettingsPage.php';
+require __DIR__ . '/src/Admin/Fields/Field.php';
+require __DIR__ . '/src/Admin/Fields/Input.php';
+require __DIR__ . '/src/Admin/Fields/CheckboxSelect.php';
+require __DIR__ . '/src/Admin/Form.php';
 require __DIR__ . '/src/Admin/SettingsForm.php';
-require __DIR__ . '/src/SettingsRegistry.php';
-require __DIR__ . '/src/ScriptInjector.php';
-require __DIR__ . '/src/Fields/AbstractField.php';
-require __DIR__ . '/src/Fields/ExcludedIpAddressesField.php';
-require __DIR__ . '/src/Fields/ExcludedRolesField.php';
-require __DIR__ . '/src/Fields/CustomDomainField.php';
 
 new SimpleAnalytics\Plugin();

@@ -2,22 +2,40 @@
 
 namespace SimpleAnalytics;
 
+use SimpleAnalytics\Actions\RegisterSettings;
+use SimpleAnalytics\Actions\InjectScripts;
+use SimpleAnalytics\Admin\SettingsForm;
+use SimpleAnalytics\Admin\SettingsPage;
 use SimpleAnalytics\Enums\Setting;
 
 class Plugin
 {
     public function __construct()
     {
-        new SettingsRegistry();
-        new Admin\SettingsPage();
-        new Admin\SettingsForm();
+        add_action('admin_init', new RegisterSettings);
 
-        add_action('init', [$this, 'initialize']);
+        (new SettingsPage())->register();
+        (new SettingsForm())->register();
+
+        add_action('init', new InjectScripts($this->getScrips()));
     }
 
-    public function initialize(): void
+    /** @return Scripts\Script[] */
+    protected function getScrips(): array
     {
-        new ScriptInjector($this->shouldCollectAnalytics());
+        $scripts = [];
+
+        if ($this->shouldCollectAnalytics()) {
+            $scripts[] = new Scripts\AnalyticsScript();
+        } else {
+            $scripts[] = new Scripts\InactiveScript();
+        }
+
+        if (get_option(Setting::EVENT_COLLECT, false)) {
+            $scripts[] = new Scripts\AutomatedEventsScript();
+        }
+
+        return $scripts;
     }
 
     protected function shouldCollectAnalytics(): bool
