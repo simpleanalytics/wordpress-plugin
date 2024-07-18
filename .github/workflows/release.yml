@@ -18,10 +18,36 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+            version: 9
+
       - name: Install Node.js LTS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build assets
+        run: pnpm build
+
+      - name: Install PHP
+        uses: "shivammathur/setup-php@v2"
+        with:
+            php-version: "latest"
+
+      - name: Install Composer
+        uses: "ramsey/composer-install@v3"
+
+      - name: Downgrade PHP code to the minimum version WordPress requires
+        run: vendor/bin/rector --ansi
+
+      - name: Validate PHP syntax to prevent fatal errors
+        run: find . -name "*.php" -type f -not \( -path "./vendor/*" -o -path "./node_modules/*" \) -print0 | xargs -0 -n1 php -l
 
       - name: Install jq
         run: |

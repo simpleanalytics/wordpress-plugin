@@ -2,8 +2,15 @@
 /.git
 /.github
 /node_modules
+/vendor
 /css
 
 .distignore
 .gitignore
+.gitattributes
 config.json
+composer.json
+composer.lock
+package.json
+pnpm-lock.yaml
+release.sh
