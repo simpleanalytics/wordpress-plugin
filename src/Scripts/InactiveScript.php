@@ -2,14 +2,16 @@
 
 namespace SimpleAnalytics\Scripts;
 
-class InactiveScript extends Script
+use SimpleAnalytics\Fluent\Scripts\Script;
+
+class InactiveScript implements Script
 {
-    public function getPath(): string
+    public function path(): string
     {
-        return plugins_url('js/inactive.js', __FILE__);
+        return SIMPLEANALYTICS_PLUGIN_URL. 'assets/js/inactive.js';
     }
 
-    public function getHandle(): string
+    public function handle(): string
     {
         return 'simpleanalytics_inactive';
     }

@@ -1,3 +1,4 @@
 .svn
 node*
 vendor*
+assets/css

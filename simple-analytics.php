@@ -19,19 +19,38 @@
 
 defined('\\ABSPATH') || exit;
 
-require __DIR__ . '/src/Actions/RegisterSettings.php';
-require __DIR__ . '/src/Actions/InjectScripts.php';
+define('SIMPLEANALYTICS_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('SIMPLEANALYTICS_PLUGIN_PATH', plugin_dir_path(__FILE__));
+
+/**
+ * @note Manual loading rather than Composer to avoid potential conflict with plugins/themes that ship older autoloader.
+ */
+require __DIR__ . '/src/Fluent/SvgIcon.php';
+require __DIR__ . '/helpers.php';
 require __DIR__ . '/src/Plugin.php';
-require __DIR__ . '/src/Enums/Setting.php';
-require __DIR__ . '/src/Scripts/Script.php';
+require __DIR__ . '/src/Enums/SettingName.php';
+require __DIR__ . '/src/TrackingPolicy.php';
+require __DIR__ . '/src/Fluent/Scripts/ScriptCollection.php';
+require __DIR__ . '/src/Fluent/Scripts/Script.php';
+require __DIR__ . '/src/Fluent/Scripts/HasAttributes.php';
 require __DIR__ . '/src/Scripts/AnalyticsScript.php';
 require __DIR__ . '/src/Scripts/AutomatedEventsScript.php';
 require __DIR__ . '/src/Scripts/InactiveScript.php';
-require __DIR__ . '/src/Admin/SettingsPage.php';
-require __DIR__ . '/src/Admin/Fields/Field.php';
-require __DIR__ . '/src/Admin/Fields/Input.php';
-require __DIR__ . '/src/Admin/Fields/CheckboxSelect.php';
-require __DIR__ . '/src/Admin/Form.php';
-require __DIR__ . '/src/Admin/SettingsForm.php';
+require __DIR__ . '/src/Actions/Action.php';
+require __DIR__ . '/src/Actions/FooterContents.php';
+require __DIR__ . '/src/Actions/Scripts.php';
+require __DIR__ . '/src/Actions/AnalyticsCode.php';
+require __DIR__ . '/src/Fluent/Str.php';
+require __DIR__ . '/src/Fluent/Stringable.php';
+require __DIR__ . '/src/Fluent/Settings/Concerns/ManagesFields.php';
+require __DIR__ . '/src/Fluent/Settings/SettingsPage.php';
+require __DIR__ . '/src/Fluent/Settings/Fields/Field.php';
+require __DIR__ . '/src/Fluent/Settings/Fields/Input.php';
+require __DIR__ . '/src/Fluent/Settings/Fields/Checkbox.php';
+require __DIR__ . '/src/Fluent/Settings/Tab.php';
+require __DIR__ . '/src/Fluent/Settings/SettingsPageRegistrar.php';
+require __DIR__ . '/src/Fluent/Settings/SettingsPageRenderer.php';
 
-new SimpleAnalytics\Plugin();
+use SimpleAnalytics\Plugin;
+
+(new Plugin)->register();
