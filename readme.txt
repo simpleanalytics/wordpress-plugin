@@ -2,7 +2,7 @@
 
 Contributors: simpleanalytics
 Donate link: https://simpleanalytics.com
-Tags: wordpress, plugin, simple analytics, analytics
+Tags: privacy-first, privacy-friendly, free analytics, website analytics, simple analytics, analytics, statistics
 Requires at least: 2.0
 Tested up to: 6.6.1
 Requires PHP: 5.2.4
