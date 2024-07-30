@@ -39,6 +39,7 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+          git pull
           git add .
           git commit -m "Update version to support WordPress ${{ steps.script.outputs.tested-up-to }}"
           git push
