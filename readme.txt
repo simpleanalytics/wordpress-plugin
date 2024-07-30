@@ -74,10 +74,6 @@ No changes needed for upgrades.
 
 == Changelog ==
 
-= 1.25 =
-* 2024-07-30
-* Upgraded to WordPress 6.6.1
-
 = 1.24 =
 * 2024-07-22
 * Upgraded to WordPress 6.6
