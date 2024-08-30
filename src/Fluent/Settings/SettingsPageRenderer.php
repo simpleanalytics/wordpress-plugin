@@ -31,8 +31,10 @@ class SettingsPageRenderer
             <link rel="preconnect" href="https://fonts.bunny.net">
             <link rel="stylesheet" href="<?php echo SIMPLEANALYTICS_PLUGIN_URL ?>assets/css/settings.css">
             <form method="post" action="options.php">
+                <!-- Hidden fields -->
                 <?php settings_fields($optionGroup); ?>
 
+                <!-- Header / Nav -->
                 <header class="pt-5 bg-primaryBg">
                     <div class="mx-auto max-w-3xl flex-col justify-between gap-5 sm:flex sm:items-baseline">
                         <!-- Logo -->
@@ -71,6 +73,7 @@ class SettingsPageRenderer
                     </div>
                 </header>
 
+                <!-- Fields / Layout -->
                 <div class="mx-auto max-w-3xl bg-white px-4 py-6 sm:px-4 lg:px-0">
                     <div class="border-b border-gray-900/10 pb-7">
                         <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -93,7 +96,20 @@ class SettingsPageRenderer
                 </div>
             </form>
         </template>
-        <script src="<?php echo SIMPLEANALYTICS_PLUGIN_URL ?>assets/js/shadow-dom-polyfill.js"></script>
+        <script>
+        // Polyfill in case the browser has no support for shadowRootMode
+        // 1. https://developer.chrome.com/docs/css-ui/declarative-shadow-dom#polyfill
+        // 2. https://caniuse.com/mdn-html_elements_template_shadowrootmode
+        (function attachShadowRoots(root) {
+            root.querySelectorAll("template[shadowrootmode]").forEach(template => {
+                const mode = template.getAttribute("shadowrootmode");
+                const shadowRoot = template.parentNode.attachShadow({ mode });
+                shadowRoot.appendChild(template.content);
+                template.remove();
+                attachShadowRoots(shadowRoot);
+            });
+        })(document);
+        </script>
         <?php
     }
 
