@@ -16,9 +16,14 @@ class FooterContents extends Action
     public function handle(): void
     {
         if ($this->shouldCollect) {
-            echo '<noscript><img src="https://' . get_option(SettingName::CUSTOM_DOMAIN, 'queue.simpleanalyticscdn.com') . '/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade"></noscript>' . "\n";
+            echo '<noscript><img src="' . $this->getCustomDomain() . '" alt="" referrerpolicy="no-referrer-when-downgrade"></noscript>' . "\n";
         } else {
             echo "<!-- Simple Analytics: Not logging requests from admins -->\n";
         }
+    }
+
+    public function getCustomDomain(): string
+    {
+        return esc_url('https://' . get_option(SettingName::CUSTOM_DOMAIN, 'queue.simpleanalyticscdn.com') . '/noscript.gif');
     }
 }

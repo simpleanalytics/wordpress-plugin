@@ -48,6 +48,11 @@ readonly class SettingsPageRegistrar
         register_setting(
             $this->page->getSlug() . '-' . $tab->getSlug(),
             $field->getKey(),
+            [
+                //                'type' => 'string',
+                'default'           => $field->getDefault(),
+                'sanitize_callback' => fn($value) => sanitize_text_field($value),
+            ]
         );
     }
 }

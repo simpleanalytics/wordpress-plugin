@@ -8,22 +8,14 @@ use SimpleAnalytics\Fluent\Settings\{SettingsPage, Tab};
 
 class Plugin
 {
-    protected bool $shouldCollect;
-
-    public function __construct(TrackingPolicy $trackingPolicy = new TrackingPolicy)
-    {
-        $this->shouldCollect = $trackingPolicy->shouldCollectAnalytics();
-    }
-
     public function register(): void
     {
-        AnalyticsCode::register($this->shouldCollect);
+        AnalyticsCode::register();
 
         SettingsPage::title('Simple Analytics')
             ->slug('simpleanalytics')
             ->tab('General', function (Tab $tab) {
                 $tab->input(SettingName::CUSTOM_DOMAIN, 'Custom Domain')
-                    ->autofocus()
                     ->placeholder('Enter your custom domain or leave it empty.')
                     ->description('E.g. api.example.com. Leave empty to use the default domain (most users).')
                     ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
@@ -35,6 +27,10 @@ class Plugin
                     ->description('Comma separated list of pages to ignore. E.g. /contact, /about')
                     ->placeholder('Example: /page1, /page2, /category/*')
                     ->docs('https://docs.simpleanalytics.com/ignore-pages');
+
+                $tab->checkbox(SettingName::ENABLED, 'Enabled')
+                    ->description('Enable or disable Simple Analytics on your website.')
+                    ->default(true);
 
                 $tab->checkbox(SettingName::COLLECT_DNT, 'Collect Do Not Track')
                     ->description('If you want to collect visitors with Do Not Track enabled, turn this on.')

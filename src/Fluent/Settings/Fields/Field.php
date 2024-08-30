@@ -8,6 +8,8 @@ abstract class Field
 
     protected string $label;
 
+    protected mixed $default = null;
+
     public function __construct(string $key, string $label)
     {
         $this->key = $key;
@@ -25,4 +27,16 @@ abstract class Field
     }
 
     abstract public function render(): void;
+
+    public function default(mixed $default): static
+    {
+        $this->default = $default;
+
+        return $this;
+    }
+
+    public function getDefault(): mixed
+    {
+        return $this->default;
+    }
 }

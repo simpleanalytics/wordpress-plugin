@@ -8,7 +8,7 @@ class TrackingPolicy
 {
     public function shouldCollectAnalytics(): bool
     {
-        if (! get_option(SettingName::ENABLED)) {
+        if (! get_option(SettingName::ENABLED) === false) {
             return false;
         }
 
@@ -16,11 +16,11 @@ class TrackingPolicy
             return false;
         }
 
-        if (! $user = wp_get_current_user()) {
+        if (! is_user_logged_in()) {
             return true;
         }
 
-        return ! $this->containsExcludedRole($user->roles);
+        return ! $this->containsExcludedRole(wp_get_current_user()->roles);
     }
 
     protected function clientIpExcluded(string $ip): bool
