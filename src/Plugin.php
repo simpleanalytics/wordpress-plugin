@@ -4,7 +4,7 @@ namespace SimpleAnalytics;
 
 use SimpleAnalytics\Actions\AnalyticsCode;
 use SimpleAnalytics\Enums\SettingName;
-use SimpleAnalytics\Fluent\Settings\{Page, Tab};
+use SimpleAnalytics\Foundation\Settings\{Page, Tab};
 
 class Plugin
 {

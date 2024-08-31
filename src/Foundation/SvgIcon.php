@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleAnalytics\Fluent;
+namespace SimpleAnalytics\Foundation;
 
 class SvgIcon implements \Stringable
 {

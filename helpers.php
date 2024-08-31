@@ -2,7 +2,7 @@
 
 namespace SimpleAnalytics;
 
-use SimpleAnalytics\Fluent\SvgIcon;
+use SimpleAnalytics\Foundation\SvgIcon;
 
 defined('\\ABSPATH') || exit;
 

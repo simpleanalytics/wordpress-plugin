@@ -1,10 +1,10 @@
 <?php
 
-namespace SimpleAnalytics\Fluent\Settings\Concerns;
+namespace SimpleAnalytics\Foundation\Settings\Concerns;
 
-use SimpleAnalytics\Fluent\Settings\Fields\Checkbox;
-use SimpleAnalytics\Fluent\Settings\Fields\Field;
-use SimpleAnalytics\Fluent\Settings\Fields\Input;
+use SimpleAnalytics\Foundation\Settings\Fields\Checkbox;
+use SimpleAnalytics\Foundation\Settings\Fields\Field;
+use SimpleAnalytics\Foundation\Settings\Fields\Input;
 
 trait ManagesFields
 {

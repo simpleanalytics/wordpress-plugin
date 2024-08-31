@@ -1,8 +1,8 @@
 <?php
 
-namespace SimpleAnalytics\Fluent\Settings;
+namespace SimpleAnalytics\Foundation\Settings;
 
-use SimpleAnalytics\Fluent\Settings\Fields\Field;
+use SimpleAnalytics\Foundation\Settings\Fields\Field;
 
 readonly class PageRegistrar
 {

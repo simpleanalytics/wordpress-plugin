@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleAnalytics\Fluent\Scripts;
+namespace SimpleAnalytics\Foundation\Scripts;
 
 interface HasAttributes
 {

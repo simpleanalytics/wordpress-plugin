@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleAnalytics\Fluent\Settings\Fields;
+namespace SimpleAnalytics\Foundation\Settings\Fields;
 
 abstract class Field
 {

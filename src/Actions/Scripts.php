@@ -3,7 +3,7 @@
 namespace SimpleAnalytics\Actions;
 
 use SimpleAnalytics\Enums\SettingName;
-use SimpleAnalytics\Fluent\Scripts\ScriptCollection;
+use SimpleAnalytics\Foundation\Scripts\ScriptCollection;
 use SimpleAnalytics\Scripts\AnalyticsScript;
 use SimpleAnalytics\Scripts\AutomatedEventsScript;
 use SimpleAnalytics\Scripts\InactiveScript;

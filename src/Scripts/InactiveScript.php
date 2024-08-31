@@ -2,7 +2,7 @@
 
 namespace SimpleAnalytics\Scripts;
 
-use SimpleAnalytics\Fluent\Scripts\Script;
+use SimpleAnalytics\Foundation\Scripts\Script;
 
 class InactiveScript implements Script
 {

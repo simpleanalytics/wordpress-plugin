@@ -1,8 +1,8 @@
 <?php
 
-namespace SimpleAnalytics\Fluent\Settings;
+namespace SimpleAnalytics\Foundation\Settings;
 
-use SimpleAnalytics\Fluent\Settings\Tab;
+use SimpleAnalytics\Foundation\Settings\Tab;
 
 class PageRenderer
 {
