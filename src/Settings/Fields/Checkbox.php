@@ -2,11 +2,6 @@
 
 namespace SimpleAnalytics\Settings\Fields;
 
-use function SimpleAnalytics\Foundation\Settings\Fields\esc_attr;
-use function SimpleAnalytics\Foundation\Settings\Fields\esc_html;
-use function SimpleAnalytics\Foundation\Settings\Fields\esc_url;
-use function SimpleAnalytics\Foundation\Settings\Fields\get_option;
-
 class Checkbox extends Field
 {
     protected ?string $description = null;

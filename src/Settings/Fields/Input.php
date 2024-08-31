@@ -2,10 +2,6 @@
 
 namespace SimpleAnalytics\Settings\Fields;
 
-use function SimpleAnalytics\Foundation\Settings\Fields\esc_attr;
-use function SimpleAnalytics\Foundation\Settings\Fields\esc_html;
-use function SimpleAnalytics\Foundation\Settings\Fields\esc_url;
-
 class Input extends Field
 {
     protected string $type = 'text';

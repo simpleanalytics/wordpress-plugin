@@ -2,9 +2,6 @@
 
 namespace SimpleAnalytics\Settings;
 
-use function SimpleAnalytics\Foundation\Settings\add_query_arg;
-use function SimpleAnalytics\Foundation\Settings\settings_fields;
-
 class PageRenderer
 {
     public function __construct(

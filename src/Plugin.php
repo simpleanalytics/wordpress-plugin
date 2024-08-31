@@ -4,14 +4,20 @@ namespace SimpleAnalytics;
 
 use SimpleAnalytics\Actions\AnalyticsCode;
 use SimpleAnalytics\Enums\SettingName;
-use SimpleAnalytics\Settings\{Tab};
-use SimpleAnalytics\Settings\Page;
+use SimpleAnalytics\Settings\{Tab, Page};
 
 class Plugin
 {
     public function register(): void
     {
         AnalyticsCode::register();
+
+        $this->defineAdminPage();
+    }
+
+    protected function defineAdminPage(): void
+    {
+        if (! is_admin()) return;
 
         Page::title('Simple Analytics')
             ->slug('simpleanalytics')

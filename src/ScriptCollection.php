@@ -1,14 +1,13 @@
 <?php
 
-namespace SimpleAnalytics\Scripts;
+namespace SimpleAnalytics;
 
-use function SimpleAnalytics\Foundation\Scripts\add_filter;
-use function SimpleAnalytics\Foundation\Scripts\wp_enqueue_script;
+use SimpleAnalytics\Scripts\{HasAttributes, Script};
 
 /**
  * Register scripts with WordPress.
  */
-class ScriptCollection
+final class ScriptCollection
 {
     public function __construct(
         /** @var Script[] */
@@ -60,7 +59,7 @@ class ScriptCollection
         foreach ($this->scripts as $script) {
             if (
                 $script instanceof HasAttributes &&
-                $script->handle() === $script['id']
+                $script->handle() === $attributes['id']
             ) {
                 return [...$attributes, ...$script->attributes()];
             }

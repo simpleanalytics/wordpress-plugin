@@ -3,6 +3,7 @@
 namespace SimpleAnalytics\Scripts;
 
 use SimpleAnalytics\Enums\SettingName;
+use SimpleAnalytics\Setting;
 
 class AnalyticsScript implements Script, HasAttributes
 {
@@ -10,7 +11,7 @@ class AnalyticsScript implements Script, HasAttributes
     {
         return sprintf(
             "https://%s/latest.js",
-            get_option(SettingName::CUSTOM_DOMAIN, 'scripts.simpleanalyticscdn.com'),
+            Setting::get(SettingName::CUSTOM_DOMAIN, 'scripts.simpleanalyticscdn.com'),
         );
     }
 
@@ -22,12 +23,12 @@ class AnalyticsScript implements Script, HasAttributes
     public function attributes(): array
     {
         return array_filter([
-            'data-mode'         => get_option(SettingName::MODE),
-            'data-collect-dnt'  => get_option(SettingName::COLLECT_DNT),
-            'data-ignore-pages' => get_option(SettingName::IGNORE_PAGES),
-            'data-auto-collect' => get_option(SettingName::MANUAL_COLLECT),
-            'data-onload'       => get_option(SettingName::ONLOAD_CALLBACK),
-            'data-sa-global'    => get_option(SettingName::SA_GLOBAL),
+            'data-mode'         => Setting::get(SettingName::HASH_MODE),
+            'data-collect-dnt'  => Setting::get(SettingName::COLLECT_DNT),
+            'data-ignore-pages' => Setting::get(SettingName::IGNORE_PAGES),
+            'data-auto-collect' => Setting::get(SettingName::MANUAL_COLLECT),
+            'data-onload'       => Setting::get(SettingName::ONLOAD_CALLBACK),
+            'data-sa-global'    => Setting::get(SettingName::SA_GLOBAL),
         ]);
     }
 }
