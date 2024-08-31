@@ -4,7 +4,7 @@ namespace SimpleAnalytics;
 
 use SimpleAnalytics\Actions\AnalyticsCode;
 use SimpleAnalytics\Enums\SettingName;
-use SimpleAnalytics\Fluent\Settings\{SettingsPage, Tab};
+use SimpleAnalytics\Fluent\Settings\{Page, Tab};
 
 class Plugin
 {
@@ -12,7 +12,7 @@ class Plugin
     {
         AnalyticsCode::register();
 
-        SettingsPage::title('Simple Analytics')
+        Page::title('Simple Analytics')
             ->slug('simpleanalytics')
             ->tab('General', function (Tab $tab) {
                 $tab->input(SettingName::CUSTOM_DOMAIN, 'Custom Domain')

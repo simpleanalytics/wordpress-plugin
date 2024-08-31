@@ -24,6 +24,7 @@ class FooterContents extends Action
 
     public function getCustomDomain(): string
     {
+        // dd(get_option(SettingName::CUSTOM_DOMAIN, 'ok'));
         return esc_url('https://' . get_option(SettingName::CUSTOM_DOMAIN, 'queue.simpleanalyticscdn.com') . '/noscript.gif');
     }
 }

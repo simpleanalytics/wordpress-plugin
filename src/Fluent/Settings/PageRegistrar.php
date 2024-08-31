@@ -4,15 +4,15 @@ namespace SimpleAnalytics\Fluent\Settings;
 
 use SimpleAnalytics\Fluent\Settings\Fields\Field;
 
-readonly class SettingsPageRegistrar
+readonly class PageRegistrar
 {
-    protected SettingsPage $page;
-    protected SettingsPageRenderer $renderer;
+    protected Page $page;
+    protected PageRenderer $renderer;
 
-    public function __construct(SettingsPage $settings)
+    public function __construct(Page $settings)
     {
         $this->page = $settings;
-        $this->renderer = new SettingsPageRenderer(
+        $this->renderer = new PageRenderer(
             $settings->getTitle(),
             $settings->getSlug(),
             $settings->getTabs(),
@@ -49,9 +49,15 @@ readonly class SettingsPageRegistrar
             $this->page->getSlug() . '-' . $tab->getSlug(),
             $field->getKey(),
             [
-                //                'type' => 'string',
+                'type' => 'string',
                 'default'           => $field->getDefault(),
-                'sanitize_callback' => fn($value) => sanitize_text_field($value),
+                'sanitize_callback' => function($value) {
+                    if ($value === "") {
+                        return false;
+                    }
+
+                    return sanitize_text_field($value);
+                },
             ]
         );
     }

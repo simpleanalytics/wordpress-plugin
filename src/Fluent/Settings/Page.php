@@ -4,7 +4,7 @@ namespace SimpleAnalytics\Fluent\Settings;
 
 use SimpleAnalytics\Fluent\Str;
 
-class SettingsPage
+class Page
 {
     protected string $title;
 
@@ -57,6 +57,6 @@ class SettingsPage
 
     public function register(): void
     {
-        (new SettingsPageRegistrar($this))->register();
+        (new PageRegistrar($this))->register();
     }
 }

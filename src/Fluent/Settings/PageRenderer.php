@@ -2,7 +2,9 @@
 
 namespace SimpleAnalytics\Fluent\Settings;
 
-class SettingsPageRenderer
+use SimpleAnalytics\Fluent\Settings\Tab;
+
+class PageRenderer
 {
     public function __construct(
         protected string $pageTitle,

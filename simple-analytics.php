@@ -41,15 +41,14 @@ require __DIR__ . '/src/Actions/FooterContents.php';
 require __DIR__ . '/src/Actions/Scripts.php';
 require __DIR__ . '/src/Actions/AnalyticsCode.php';
 require __DIR__ . '/src/Fluent/Str.php';
-require __DIR__ . '/src/Fluent/Stringable.php';
 require __DIR__ . '/src/Fluent/Settings/Concerns/ManagesFields.php';
-require __DIR__ . '/src/Fluent/Settings/SettingsPage.php';
+require __DIR__ . '/src/Fluent/Settings/Page.php';
 require __DIR__ . '/src/Fluent/Settings/Fields/Field.php';
 require __DIR__ . '/src/Fluent/Settings/Fields/Input.php';
 require __DIR__ . '/src/Fluent/Settings/Fields/Checkbox.php';
 require __DIR__ . '/src/Fluent/Settings/Tab.php';
-require __DIR__ . '/src/Fluent/Settings/SettingsPageRegistrar.php';
-require __DIR__ . '/src/Fluent/Settings/SettingsPageRenderer.php';
+require __DIR__ . '/src/Fluent/Settings/PageRegistrar.php';
+require __DIR__ . '/src/Fluent/Settings/PageRenderer.php';
 
 use SimpleAnalytics\Plugin;
 
