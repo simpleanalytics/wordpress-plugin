@@ -1,8 +1,9 @@
 <?php
 
-namespace SimpleAnalytics\Foundation\Settings;
+namespace SimpleAnalytics\Settings;
 
-use SimpleAnalytics\Foundation\Settings\Tab;
+use function SimpleAnalytics\Foundation\Settings\add_query_arg;
+use function SimpleAnalytics\Foundation\Settings\settings_fields;
 
 class PageRenderer
 {

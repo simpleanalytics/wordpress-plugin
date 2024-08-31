@@ -1,6 +1,9 @@
 <?php
 
-namespace SimpleAnalytics\Foundation\Scripts;
+namespace SimpleAnalytics\Scripts;
+
+use function SimpleAnalytics\Foundation\Scripts\add_filter;
+use function SimpleAnalytics\Foundation\Scripts\wp_enqueue_script;
 
 /**
  * Register scripts with WordPress.

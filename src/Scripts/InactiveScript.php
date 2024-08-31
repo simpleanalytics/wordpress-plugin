@@ -2,8 +2,6 @@
 
 namespace SimpleAnalytics\Scripts;
 
-use SimpleAnalytics\Foundation\Scripts\Script;
-
 class InactiveScript implements Script
 {
     public function path(): string

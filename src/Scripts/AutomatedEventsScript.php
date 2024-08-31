@@ -3,8 +3,6 @@
 namespace SimpleAnalytics\Scripts;
 
 use SimpleAnalytics\Enums\SettingName;
-use SimpleAnalytics\Foundation\Scripts\HasAttributes;
-use SimpleAnalytics\Foundation\Scripts\Script;
 
 class AutomatedEventsScript implements Script, HasAttributes
 {

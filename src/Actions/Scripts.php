@@ -3,10 +3,10 @@
 namespace SimpleAnalytics\Actions;
 
 use SimpleAnalytics\Enums\SettingName;
-use SimpleAnalytics\Foundation\Scripts\ScriptCollection;
 use SimpleAnalytics\Scripts\AnalyticsScript;
 use SimpleAnalytics\Scripts\AutomatedEventsScript;
 use SimpleAnalytics\Scripts\InactiveScript;
+use SimpleAnalytics\Scripts\ScriptCollection;
 
 class Scripts extends Action
 {

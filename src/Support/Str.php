@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleAnalytics\Foundation;
+namespace SimpleAnalytics\Support;
 
 class Str
 {

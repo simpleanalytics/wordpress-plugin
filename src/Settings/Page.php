@@ -1,8 +1,8 @@
 <?php
 
-namespace SimpleAnalytics\Foundation\Settings;
+namespace SimpleAnalytics\Settings;
 
-use SimpleAnalytics\Foundation\Str;
+use SimpleAnalytics\Support\Str;
 
 class Page
 {

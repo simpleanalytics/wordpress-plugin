@@ -1,8 +1,11 @@
 <?php
 
-namespace SimpleAnalytics\Foundation\Settings;
+namespace SimpleAnalytics\Settings;
 
-use SimpleAnalytics\Foundation\Settings\Fields\Field;
+use SimpleAnalytics\Settings\Fields\Field;
+use function SimpleAnalytics\Foundation\Settings\add_action;
+use function SimpleAnalytics\Foundation\Settings\add_options_page;
+use function SimpleAnalytics\Foundation\Settings\register_setting;
 
 readonly class PageRegistrar
 {

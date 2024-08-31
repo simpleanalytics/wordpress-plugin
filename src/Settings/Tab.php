@@ -1,10 +1,10 @@
 <?php
 
-namespace SimpleAnalytics\Foundation\Settings;
+namespace SimpleAnalytics\Settings;
 
-use SimpleAnalytics\Foundation\Settings\Concerns\ManagesFields;
-use SimpleAnalytics\Foundation\Settings\Fields\Field;
-use SimpleAnalytics\Foundation\SvgIcon;
+use SimpleAnalytics\Settings\Concerns\ManagesFields;
+use SimpleAnalytics\Settings\Fields\Field;
+use SimpleAnalytics\Support\SvgIcon;
 
 class Tab
 {

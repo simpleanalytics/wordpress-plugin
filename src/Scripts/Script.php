@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleAnalytics\Foundation\Scripts;
+namespace SimpleAnalytics\Scripts;
 
 interface Script
 {
