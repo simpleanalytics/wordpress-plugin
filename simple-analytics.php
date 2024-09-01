@@ -33,6 +33,7 @@ require __DIR__ . '/src/Enums/SettingName.php';
 require __DIR__ . '/src/TrackingPolicy.php';
 require __DIR__ . '/src/ScriptCollection.php';
 require __DIR__ . '/src/Scripts/Script.php';
+require __DIR__ . '/src/Scripts/HiddenScriptId.php';
 require __DIR__ . '/src/Scripts/HasAttributes.php';
 require __DIR__ . '/src/Scripts/AnalyticsScript.php';
 require __DIR__ . '/src/Scripts/AutomatedEventsScript.php';

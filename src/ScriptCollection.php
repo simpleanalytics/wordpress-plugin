@@ -2,7 +2,7 @@
 
 namespace SimpleAnalytics;
 
-use SimpleAnalytics\Scripts\{HasAttributes, Script};
+use SimpleAnalytics\Scripts\{HasAttributes, HiddenScriptId, Script};
 
 /**
  * Register scripts with WordPress.
@@ -26,7 +26,8 @@ final class ScriptCollection
     public function register(): void
     {
         $this->enqueueScripts();
-        $this->applyAttributes();
+        $this->addAttributes();
+        $this->removeIds();
     }
 
     protected function enqueueScripts(): void
@@ -46,15 +47,12 @@ final class ScriptCollection
      * As WordPress does not provide a way of directly assigning attributes to scripts, we need to use a filter.
      * @see https://developer.wordpress.org/reference/hooks/wp_script_attributes
      */
-    protected function applyAttributes(): void
+    protected function addAttributes(): void
     {
-        add_filter('wp_script_attributes', $this->attributesFilter(...), 10, 2);
+        add_filter('wp_script_attributes', $this->addAttributesFilter(...), 10, 2);
     }
 
-    /**
-     * Filter implementation that adds attributes to scripts.
-     */
-    protected function attributesFilter($attributes)
+    protected function addAttributesFilter($attributes)
     {
         foreach ($this->scripts as $script) {
             if (
@@ -66,5 +64,22 @@ final class ScriptCollection
         }
 
         return $attributes;
+    }
+
+    protected function removeIds(): void
+    {
+        add_filter('script_loader_tag', $this->removeIdsFilter(...), 10, 2);
+    }
+
+    protected function removeIdsFilter($tag, $handle): string
+    {
+        foreach ($this->scripts as $script) {
+            if ($script instanceof HiddenScriptId && $script->handle() === $handle) {
+                // Remove the id attribute from the script tag
+                return preg_replace('/ id=([\'"])[^\'"]*\\1/', '', $tag);
+            }
+        }
+
+        return $tag;
     }
 }
