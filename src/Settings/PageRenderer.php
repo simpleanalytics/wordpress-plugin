@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Settings;
 
+use const SimpleAnalytics\PLUGIN_URL;
+
 class PageRenderer
 {
     public function __construct(
@@ -29,7 +31,7 @@ class PageRenderer
         </style>
         <template shadowrootmode="open">
             <link rel="preconnect" href="https://fonts.bunny.net">
-            <link rel="stylesheet" href="<?php echo SIMPLEANALYTICS_PLUGIN_URL ?>assets/css/settings.css">
+            <link rel="stylesheet" href="<?php echo PLUGIN_URL ?>assets/css/settings.css">
             <form method="post" action="options.php">
                 <!-- Hidden fields -->
                 <?php settings_fields($optionGroup); ?>
@@ -45,7 +47,7 @@ class PageRenderer
                         >
                             <img
                                 alt="SimpleAnalytics logo"
-                                src="<?php echo SIMPLEANALYTICS_PLUGIN_URL; ?>assets/logo.svg"
+                                src="<?php echo PLUGIN_URL; ?>assets/logo.svg"
                                 class="mr-2 inline-block h-10 w-auto text-primary"
                             >
                         </a>
