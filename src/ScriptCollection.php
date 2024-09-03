@@ -57,7 +57,7 @@ final class ScriptCollection
         foreach ($this->scripts as $script) {
             if (
                 $script instanceof HasAttributes &&
-                $script->handle() === $attributes['id']
+                $script->handle() . '-js' === $attributes['id']
             ) {
                 return [...$attributes, ...$script->attributes()];
             }

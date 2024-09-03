@@ -17,7 +17,7 @@ class AnalyticsScript implements Script, HasAttributes, HiddenScriptId
 
     public function handle(): string
     {
-        return 'simpleanalytics_script';
+        return 'simpleanalytics';
     }
 
     public function attributes(): array
