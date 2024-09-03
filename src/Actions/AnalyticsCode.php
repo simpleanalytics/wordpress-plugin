@@ -5,6 +5,7 @@ namespace SimpleAnalytics\Actions;
 use SimpleAnalytics\Enums\SettingName;
 use SimpleAnalytics\ScriptCollection;
 use SimpleAnalytics\Scripts\{AnalyticsScript, AutomatedEventsScript, InactiveScript};
+use SimpleAnalytics\Setting;
 use SimpleAnalytics\TrackingPolicy;
 
 class AnalyticsCode extends Action
@@ -33,7 +34,7 @@ class AnalyticsCode extends Action
             $scripts->add(new InactiveScript);
         }
 
-        if (get_option(SettingName::EVENT_COLLECT)) {
+        if (Setting::get(SettingName::EVENT_COLLECT)) {
             $scripts->add(new AutomatedEventsScript);
         }
 

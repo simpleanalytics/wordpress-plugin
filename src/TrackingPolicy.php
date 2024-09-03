@@ -8,7 +8,7 @@ class TrackingPolicy
 {
     public function shouldCollectAnalytics(): bool
     {
-        if (! Setting::get(SettingName::ENABLED) === false) {
+        if (Setting::get(SettingName::ENABLED) === false) {
             return false;
         }
 

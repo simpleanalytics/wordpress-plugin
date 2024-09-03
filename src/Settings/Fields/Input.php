@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Settings\Fields;
 
+use SimpleAnalytics\Setting;
+
 class Input extends Field
 {
     protected string $type = 'text';
@@ -31,7 +33,7 @@ class Input extends Field
             <?php if ($this->autofocus): ?>
                 autofocus
             <?php endif; ?>
-            value="<?php echo esc_attr(get_option($this->getKey())); ?>"
+            value="<?php echo esc_attr(Setting::get($this->getKey())); ?>"
         >
         <?php if ($this->description): ?>
         <p class="mt-2 text-sm text-gray-500">

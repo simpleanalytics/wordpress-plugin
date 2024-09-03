@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Settings\Fields;
 
+use SimpleAnalytics\Setting;
+
 class Checkbox extends Field
 {
     protected ?string $description = null;
@@ -17,7 +19,7 @@ class Checkbox extends Field
                     name="<?php echo esc_attr($this->getKey()); ?>"
                     type="checkbox"
                     class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                    <?php if (get_option($this->getKey())): ?>
+                    <?php if (Setting::get($this->getKey())): ?>
                         checked
                     <?php endif; ?>
                 >
