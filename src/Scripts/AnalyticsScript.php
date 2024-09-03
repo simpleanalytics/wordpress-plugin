@@ -5,7 +5,7 @@ namespace SimpleAnalytics\Scripts;
 use SimpleAnalytics\Enums\SettingName;
 use SimpleAnalytics\Setting;
 
-class AnalyticsScript implements Script, HasAttributes, HiddenScriptId
+class AnalyticsScript implements Script, HasAttributes, HideScriptId
 {
     public function path(): string
     {

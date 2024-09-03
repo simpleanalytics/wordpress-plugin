@@ -28,6 +28,8 @@ abstract class Field
 
     abstract public function render(): void;
 
+    abstract public function getSanitizer(): callable;
+
     public function default(mixed $default): static
     {
         $this->default = $default;

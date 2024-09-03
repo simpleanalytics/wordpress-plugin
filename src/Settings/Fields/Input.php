@@ -12,6 +12,11 @@ class Input extends Field
     protected ?string $description = null;
     protected ?string $docs = null;
 
+    public function getSanitizer(): callable
+    {
+        return 'sanitize_text_field';
+    }
+
     public function render(): void
     {
         ?>

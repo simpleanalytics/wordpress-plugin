@@ -2,7 +2,7 @@
 
 namespace SimpleAnalytics;
 
-use SimpleAnalytics\Scripts\{HasAttributes, HiddenScriptId, Script};
+use SimpleAnalytics\Scripts\{HasAttributes, HideScriptId, Script};
 
 /**
  * Register scripts with WordPress.
@@ -74,7 +74,7 @@ final class ScriptCollection
     protected function removeIdsFilter($tag, $handle): string
     {
         foreach ($this->scripts as $script) {
-            if ($script instanceof HiddenScriptId && $script->handle() === $handle) {
+            if ($script instanceof HideScriptId && $script->handle() === $handle) {
                 // Remove the id attribute from the script tag
                 return preg_replace('/ id=([\'"])[^\'"]*\\1/', '', $tag);
             }

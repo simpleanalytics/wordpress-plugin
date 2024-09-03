@@ -9,6 +9,11 @@ class Checkbox extends Field
     protected ?string $description = null;
     protected ?string $docs = null;
 
+    public function getSanitizer(): callable
+    {
+        return 'intval';
+    }
+
     public function render(): void
     {
         ?>
@@ -18,6 +23,7 @@ class Checkbox extends Field
                     id="<?php echo esc_attr($this->getKey()) ?>"
                     name="<?php echo esc_attr($this->getKey()) ?>"
                     type="checkbox"
+                    value="1"
                     class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                     <?php if (Setting::get($this->getKey())): ?>
                         checked

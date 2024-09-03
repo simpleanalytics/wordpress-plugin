@@ -2,6 +2,6 @@
 
 namespace SimpleAnalytics\Scripts;
 
-interface HiddenScriptId
+interface HideScriptId
 {
 }

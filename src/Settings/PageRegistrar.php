@@ -51,13 +51,7 @@ readonly class PageRegistrar
             [
                 'type' => 'string',
                 'default'           => $field->getDefault(),
-                'sanitize_callback' => function($value) {
-                    if ($value === "") {
-                        return false;
-                    }
-
-                    return sanitize_text_field($value);
-                },
+                'sanitize_callback' => $field->getSanitizer(),
             ]
         );
     }
