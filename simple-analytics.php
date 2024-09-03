@@ -19,8 +19,8 @@
 
 defined('\\ABSPATH') || exit;
 
-define('SIMPLEANALYTICS_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('SIMPLEANALYTICS_PLUGIN_PATH', plugin_dir_path(__FILE__));
+define('SimpleAnalytics\\PLUGIN_URL', plugin_dir_url(__FILE__));
+define('SimpleAnalytics\\PLUGIN_PATH', plugin_dir_path(__FILE__));
 
 /**
  * @note Manual loading rather than Composer to avoid potential conflict with plugins/themes that ship older autoloader.
