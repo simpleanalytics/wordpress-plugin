@@ -34,7 +34,7 @@ class PageRenderer
             <link rel="stylesheet" href="<?php echo PLUGIN_URL ?>assets/css/settings.css">
             <form method="post" action="options.php">
                 <!-- Hidden fields -->
-                <?php settings_fields($optionGroup); ?>
+                <?php settings_fields($optionGroup) ?>
 
                 <!-- Header / Nav -->
                 <header class="pt-5 bg-primaryBg">
@@ -47,7 +47,7 @@ class PageRenderer
                         >
                             <img
                                 alt="SimpleAnalytics logo"
-                                src="<?php echo PLUGIN_URL; ?>assets/logo.svg"
+                                src="<?php echo PLUGIN_URL ?>assets/logo.svg"
                                 class="mr-2 inline-block h-10 w-auto text-primary"
                             >
                         </a>
@@ -66,10 +66,10 @@ class PageRenderer
                                                 : 'text-littleMuted border-transparent hover:border-gray-300 hover:text-gray-700'
                                         ]) ?>"
                                     >
-                                        <?php if ($icon = $tab->getIcon()) echo $icon(['class' => 'mr-1 inline-block h-4 w-4']); ?>
-                                        <?php echo $tab->getTitle(); ?>
+                                        <?php if ($icon = $tab->getIcon()) echo $icon(['class' => 'mr-1 inline-block h-4 w-4']) ?>
+                                        <?php echo $tab->getTitle() ?>
                                     </a>
-                                <?php endforeach; ?>
+                                <?php endforeach ?>
                             </nav>
                         </div>
                     </div>
@@ -81,9 +81,9 @@ class PageRenderer
                         <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                             <?php foreach ($currentTab->getFields() as $field): ?>
                                 <div class="sm:col-span-4">
-                                    <?php $field->render(); ?>
+                                    <?php $field->render() ?>
                                 </div>
-                            <?php endforeach; ?>
+                            <?php endforeach ?>
                         </div>
                     </div>
 

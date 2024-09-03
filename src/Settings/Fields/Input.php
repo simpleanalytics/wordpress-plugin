@@ -19,27 +19,27 @@ class Input extends Field
             for="<?php echo esc_attr($this->getKey()) ?>"
             class="block text-sm font-medium leading-6 text-gray-900"
         >
-            <?php echo esc_html($this->getLabel()); ?>
+            <?php echo esc_html($this->getLabel()) ?>
             <?php if ($this->docs): ?>
-                <a href="<?php echo esc_url($this->docs); ?>" target="_blank" class="text-primary">(docs)</a>
-            <?php endif; ?>
+                <a href="<?php echo esc_url($this->docs) ?>" target="_blank" class="text-primary">(docs)</a>
+            <?php endif ?>
         </label>
         <input
-            type="<?php echo esc_attr($this->type); ?>"
-            name="<?php echo esc_attr($this->getKey()); ?>"
-            id="<?php echo esc_attr($this->getKey()); ?>"
+            type="<?php echo esc_attr($this->type) ?>"
+            name="<?php echo esc_attr($this->getKey()) ?>"
+            id="<?php echo esc_attr($this->getKey()) ?>"
             class="mt-2 block w-full rounded-md border-0 placeholder:text-gray-400 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 py-1.5 focus:ring-primary focus:ring-2 focus:ring-inset sm:max-w-md sm:text-sm sm:leading-6"
-            placeholder="<?php echo esc_attr($this->placeholder); ?>"
+            placeholder="<?php echo esc_attr($this->placeholder) ?>"
             <?php if ($this->autofocus): ?>
                 autofocus
-            <?php endif; ?>
-            value="<?php echo esc_attr(Setting::get($this->getKey())); ?>"
+            <?php endif ?>
+            value="<?php echo esc_attr(Setting::get($this->getKey())) ?>"
         >
         <?php if ($this->description): ?>
         <p class="mt-2 text-sm text-gray-500">
-            <?php echo esc_html($this->description); ?>
+            <?php echo esc_html($this->description) ?>
         </p>
-    <?php endif; ?>
+    <?php endif ?>
         <?php
     }
 
