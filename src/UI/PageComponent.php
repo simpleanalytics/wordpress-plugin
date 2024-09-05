@@ -99,8 +99,8 @@ readonly class PageComponent
 
     protected function findTabBySlug(array $tabs, string $slug): ?Tab
     {
-        foreach ($tabs as $tab) if ($tab->getSlug() === $slug) {
-            return $tab;
+        foreach ($tabs as $tab) {
+            if ($tab->getSlug() === $slug) return $tab;
         }
 
         return null;

@@ -9,6 +9,7 @@ readonly class TabListComponent
     public function __construct(
         private string $pageSlug,
         private Tab    $currentTab,
+        /** @var Tab[] */
         private array  $tabs = [],
     ) {
     }
