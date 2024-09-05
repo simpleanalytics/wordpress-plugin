@@ -3,6 +3,7 @@
 namespace SimpleAnalytics\Settings;
 
 use SimpleAnalytics\Settings\Fields\Field;
+use SimpleAnalytics\UI\PageComponent;
 
 readonly class PageRegistrar
 {
@@ -26,7 +27,7 @@ readonly class PageRegistrar
             $this->page->getTitle(),
             'manage_options',
             $this->page->getSlug(),
-            $this->page->render(...),
+            (new PageComponent($this->page)),
         );
     }
 

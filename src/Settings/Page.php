@@ -3,7 +3,6 @@
 namespace SimpleAnalytics\Settings;
 
 use SimpleAnalytics\Support\Str;
-use SimpleAnalytics\UI\PageComponent;
 
 class Page
 {
@@ -59,10 +58,5 @@ class Page
     public function register(): void
     {
         (new PageRegistrar($this))->register();
-    }
-
-    public function render(): void
-    {
-        (new PageComponent($this))->render();
     }
 }

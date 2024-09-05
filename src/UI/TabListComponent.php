@@ -7,13 +7,13 @@ use SimpleAnalytics\Settings\Tab;
 readonly class TabListComponent
 {
     public function __construct(
-        protected string $pageSlug,
-        protected Tab    $currentTab,
-        protected array  $tabs = [],
+        private string $pageSlug,
+        private Tab    $currentTab,
+        private array  $tabs = [],
     ) {
     }
 
-    public function render(): void
+    public function __invoke(): void
     {
         ?>
         <nav class="-mb-px flex gap-5">

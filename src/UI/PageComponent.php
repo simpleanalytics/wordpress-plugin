@@ -7,11 +7,11 @@ use const SimpleAnalytics\PLUGIN_URL;
 
 readonly class PageComponent
 {
-    public function __construct(protected Page $page)
+    public function __construct(private Page $page)
     {
     }
 
-    public function render(): void
+    public function __invoke(): void
     {
         $tabs = $this->page->getTabs();
         $currentTab = $this->getCurrentTab($tabs);
@@ -51,7 +51,7 @@ readonly class PageComponent
 
                         <!-- Tabs -->
                         <div class="mt-4 sm:mt-0">
-                            <?php (new TabListComponent($this->page->getSlug(), $currentTab, $tabs))->render() ?>
+                            <?php (new TabListComponent($this->page->getSlug(), $currentTab, $tabs))() ?>
                         </div>
                     </div>
                 </header>

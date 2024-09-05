@@ -4,6 +4,7 @@ namespace SimpleAnalytics\Settings\Fields;
 
 use SimpleAnalytics\Setting;
 use SimpleAnalytics\Settings\Concerns\ManagesDocs;
+use SimpleAnalytics\UI\LabelComponent;
 
 class Input extends Field
 {
@@ -23,15 +24,7 @@ class Input extends Field
     public function render(): void
     {
         ?>
-        <label
-            for="<?php echo esc_attr($this->getKey()) ?>"
-            class="block text-sm font-medium leading-6 text-gray-900"
-        >
-            <?php echo esc_html($this->getLabel()) ?>
-            <?php if ($this->docs): ?>
-                <a href="<?php echo esc_url($this->docs) ?>" target="_blank" class="text-primary">(docs)</a>
-            <?php endif ?>
-        </label>
+        <?php (new LabelComponent($this->getLabel(), $this->getKey(), $this->docs))() ?>
         <input
             type="<?php echo esc_attr($this->type) ?>"
             name="<?php echo esc_attr($this->getKey()) ?>"

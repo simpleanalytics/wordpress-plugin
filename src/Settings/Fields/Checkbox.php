@@ -4,6 +4,7 @@ namespace SimpleAnalytics\Settings\Fields;
 
 use SimpleAnalytics\Setting;
 use SimpleAnalytics\Settings\Concerns\ManagesDocs;
+use SimpleAnalytics\UI\LabelComponent;
 
 class Checkbox extends Field
 {
@@ -31,16 +32,7 @@ class Checkbox extends Field
                 >
             </div>
             <div class="text-sm leading-6">
-                <label
-                    for="<?php echo esc_attr($this->getKey()) ?>"
-                    class="font-medium text-gray-900"
-                >
-                    <?php echo esc_html($this->getLabel()) ?>
-
-                    <?php if ($this->docs): ?>
-                        <a href="<?php echo esc_url($this->docs) ?>" target="_blank" class="text-primary">(docs)</a>
-                    <?php endif ?>
-                </label>
+                <?php (new LabelComponent($this->getLabel(), $this->getKey(), $this->docs))() ?>
 
                 <?php if ($this->description): ?>
                     <p class="text-gray-500">

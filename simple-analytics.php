@@ -49,6 +49,7 @@ require __DIR__ . '/src/Settings/Fields/Field.php';
 require __DIR__ . '/src/Settings/Fields/Input.php';
 require __DIR__ . '/src/Settings/Fields/Checkbox.php';
 require __DIR__ . '/src/Settings/Tab.php';
+require __DIR__ . '/src/UI/LabelComponent.php';
 require __DIR__ . '/src/UI/TabListComponent.php';
 require __DIR__ . '/src/UI/PageComponent.php';
 require __DIR__ . '/src/Settings/PageRegistrar.php';
