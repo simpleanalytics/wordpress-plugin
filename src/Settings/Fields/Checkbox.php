@@ -3,11 +3,11 @@
 namespace SimpleAnalytics\Settings\Fields;
 
 use SimpleAnalytics\Setting;
+use SimpleAnalytics\Settings\Concerns\ManagesDocs;
 
 class Checkbox extends Field
 {
-    protected ?string $description = null;
-    protected ?string $docs = null;
+    use ManagesDocs;
 
     public function getSanitizer(): callable
     {
@@ -51,19 +51,5 @@ class Checkbox extends Field
         </div>
 
         <?php
-    }
-
-    public function description(string $description): self
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function docs(string $docs): self
-    {
-        $this->docs = $docs;
-
-        return $this;
     }
 }

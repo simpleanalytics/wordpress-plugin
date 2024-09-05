@@ -42,14 +42,16 @@ require __DIR__ . '/src/Actions/Action.php';
 require __DIR__ . '/src/Actions/FooterContents.php';
 require __DIR__ . '/src/Actions/AnalyticsCode.php';
 require __DIR__ . '/src/Support/Str.php';
+require __DIR__ . '/src/Settings/Concerns/ManagesDocs.php';
 require __DIR__ . '/src/Settings/Concerns/ManagesFields.php';
 require __DIR__ . '/src/Settings/Page.php';
 require __DIR__ . '/src/Settings/Fields/Field.php';
 require __DIR__ . '/src/Settings/Fields/Input.php';
 require __DIR__ . '/src/Settings/Fields/Checkbox.php';
 require __DIR__ . '/src/Settings/Tab.php';
+require __DIR__ . '/src/UI/TabListComponent.php';
+require __DIR__ . '/src/UI/PageComponent.php';
 require __DIR__ . '/src/Settings/PageRegistrar.php';
-require __DIR__ . '/src/Settings/PageRenderer.php';
 
 use SimpleAnalytics\Plugin;
 

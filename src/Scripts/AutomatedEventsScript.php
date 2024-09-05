@@ -5,7 +5,7 @@ namespace SimpleAnalytics\Scripts;
 use SimpleAnalytics\Enums\SettingName;
 use SimpleAnalytics\Setting;
 
-class AutomatedEventsScript implements Script, HasAttributes
+class AutomatedEventsScript implements Script, HasAttributes, HideScriptId
 {
     public function path(): string
     {
@@ -23,7 +23,7 @@ class AutomatedEventsScript implements Script, HasAttributes
     public function attributes(): array
     {
         return array_filter([
-            'data-collect'    => Setting::get(SettingName::EVENT_COLLECT),
+            'data-collect'    => Setting::get(SettingName::EVENT_COLLECT_DOWNLOADS),
             'data-extensions' => Setting::get(SettingName::EVENT_EXTENSIONS),
             'data-use-title'  => Setting::get(SettingName::EVENT_USE_TITLE),
             'data-full-urls'  => Setting::get(SettingName::EVENT_FULL_URLS),

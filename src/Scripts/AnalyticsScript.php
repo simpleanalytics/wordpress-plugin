@@ -23,12 +23,13 @@ class AnalyticsScript implements Script, HasAttributes, HideScriptId
     public function attributes(): array
     {
         return array_filter([
-            'data-mode'         => Setting::get(SettingName::HASH_MODE),
-            'data-collect-dnt'  => Setting::get(SettingName::COLLECT_DNT),
+            'data-mode'         => Setting::boolean(SettingName::HASH_MODE) ? 'hash' : null,
+            'data-collect-dnt'  => Setting::boolean(SettingName::COLLECT_DNT) ? 'true' : null,
             'data-ignore-pages' => Setting::get(SettingName::IGNORE_PAGES),
-            'data-auto-collect' => Setting::get(SettingName::MANUAL_COLLECT),
+            'data-auto-collect' => Setting::get(SettingName::MANUAL_COLLECT) ? 'true' : null,
             'data-onload'       => Setting::get(SettingName::ONLOAD_CALLBACK),
             'data-sa-global'    => Setting::get(SettingName::SA_GLOBAL),
+            'data-hostname'     => Setting::get(SettingName::HOSTNAME),
         ]);
     }
 }

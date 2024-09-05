@@ -7,16 +7,10 @@ use SimpleAnalytics\Settings\Fields\Field;
 readonly class PageRegistrar
 {
     protected Page $page;
-    protected PageRenderer $renderer;
 
-    public function __construct(Page $settings)
+    public function __construct(Page $page)
     {
-        $this->page = $settings;
-        $this->renderer = new PageRenderer(
-            $settings->getTitle(),
-            $settings->getSlug(),
-            $settings->getTabs(),
-        );
+        $this->page = $page;
     }
 
     public function register(): void
@@ -32,7 +26,7 @@ readonly class PageRegistrar
             $this->page->getTitle(),
             'manage_options',
             $this->page->getSlug(),
-            $this->renderer,
+            $this->page->render(...),
         );
     }
 
@@ -49,7 +43,7 @@ readonly class PageRegistrar
             $this->page->getSlug() . '-' . $tab->getSlug(),
             $field->getKey(),
             [
-                'type' => 'string',
+                'type'              => 'string',
                 'default'           => $field->getDefault(),
                 'sanitize_callback' => $field->getSanitizer(),
             ]

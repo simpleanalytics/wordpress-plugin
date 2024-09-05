@@ -20,7 +20,8 @@ class SettingName
     const string HOSTNAME = 'simpleanalytics_hostname';
     const string SA_GLOBAL = 'simpleanalytics_sa_global';
     const string ENABLED = 'simpleanalytics_enabled';
-    const string EVENT_COLLECT = 'simpleanalytics_event_collect';
+    const string AUTOMATED_EVENTS = 'simpleanalytics_automated_events';
+    const string EVENT_COLLECT_DOWNLOADS = 'simpleanalytics_event_collect_downloads';
     const string EVENT_EXTENSIONS = 'simpleanalytics_event_extensions';
     const string EVENT_USE_TITLE = 'simpleanalytics_event_use_title';
     const string EVENT_FULL_URLS = 'simpleanalytics_event_full_urls';

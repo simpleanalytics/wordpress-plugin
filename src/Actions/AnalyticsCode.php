@@ -34,7 +34,7 @@ class AnalyticsCode extends Action
             $scripts->add(new InactiveScript);
         }
 
-        if (Setting::get(SettingName::EVENT_COLLECT)) {
+        if (Setting::boolean(SettingName::AUTOMATED_EVENTS)) {
             $scripts->add(new AutomatedEventsScript);
         }
 

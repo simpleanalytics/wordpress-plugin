@@ -1,24 +1,21 @@
 <?php
 
-namespace SimpleAnalytics\Settings;
+namespace SimpleAnalytics\UI;
 
+use SimpleAnalytics\Settings\{Page, Tab};
 use const SimpleAnalytics\PLUGIN_URL;
 
-class PageRenderer
+readonly class PageComponent
 {
-    public function __construct(
-        protected string $pageTitle,
-        protected string $pageSlug,
-        /** @var Tab[] */
-        protected array  $tabs,
-    ) {
+    public function __construct(protected Page $page)
+    {
     }
 
-    public function __invoke(): void
+    public function render(): void
     {
-        $tabs = $this->tabs;
+        $tabs = $this->page->getTabs();
         $currentTab = $this->getCurrentTab($tabs);
-        $optionGroup = $this->pageSlug . '-' . $currentTab->getSlug();
+        $optionGroup = $this->page->getSlug() . '-' . $currentTab->getSlug();
         ?>
         <style>
             #wpwrap {
@@ -54,23 +51,7 @@ class PageRenderer
 
                         <!-- Tabs -->
                         <div class="mt-4 sm:mt-0">
-                            <nav class="-mb-px flex gap-5">
-                                <?php foreach ($tabs as $tab): ?>
-                                    <a
-                                        href="<?php echo add_query_arg(['page' => $this->pageSlug, 'tab' => $tab->getSlug()], admin_url('options-general.php')) ?>"
-                                        class="<?php echo implode(' ', [
-                                            'pb-2 border-b-3 px-3.5',
-                                            'whitespace-nowrap text-sm font-medium',
-                                            $currentTab->getSlug() === $tab->getSlug()
-                                                ? 'border-primary text-primary'
-                                                : 'text-littleMuted border-transparent hover:border-gray-300 hover:text-gray-700'
-                                        ]) ?>"
-                                    >
-                                        <?php if ($icon = $tab->getIcon()) echo $icon(['class' => 'mr-1 inline-block h-4 w-4']) ?>
-                                        <?php echo $tab->getTitle() ?>
-                                    </a>
-                                <?php endforeach ?>
-                            </nav>
+                            <?php (new TabListComponent($this->page->getSlug(), $currentTab, $tabs))->render() ?>
                         </div>
                     </div>
                 </header>
@@ -78,13 +59,7 @@ class PageRenderer
                 <!-- Fields / Layout -->
                 <div class="mx-auto max-w-3xl bg-white px-4 py-6 sm:px-4 lg:px-0">
                     <div class="border-b border-gray-900/10 pb-7">
-                        <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                            <?php foreach ($currentTab->getFields() as $field): ?>
-                                <div class="sm:col-span-4">
-                                    <?php $field->render() ?>
-                                </div>
-                            <?php endforeach ?>
-                        </div>
+                        <?php $currentTab->render() ?>
                     </div>
 
                     <div class="mt-6 flex items-center justify-start gap-x-6">
@@ -99,18 +74,18 @@ class PageRenderer
             </form>
         </template>
         <script>
-        // Polyfill in case the browser has no support for shadowRootMode
-        // 1. https://developer.chrome.com/docs/css-ui/declarative-shadow-dom#polyfill
-        // 2. https://caniuse.com/mdn-html_elements_template_shadowrootmode
-        (function attachShadowRoots(root) {
-            root.querySelectorAll("template[shadowrootmode]").forEach(template => {
-                const mode = template.getAttribute("shadowrootmode");
-                const shadowRoot = template.parentNode.attachShadow({ mode });
-                shadowRoot.appendChild(template.content);
-                template.remove();
-                attachShadowRoots(shadowRoot);
-            });
-        })(document);
+            // Polyfill in case the browser has no support for shadowRootMode
+            // 1. https://developer.chrome.com/docs/css-ui/declarative-shadow-dom#polyfill
+            // 2. https://caniuse.com/mdn-html_elements_template_shadowrootmode
+            (function attachShadowRoots(root) {
+                root.querySelectorAll("template[shadowrootmode]").forEach(template => {
+                    const mode = template.getAttribute("shadowrootmode");
+                    const shadowRoot = template.parentNode.attachShadow({ mode });
+                    shadowRoot.appendChild(template.content);
+                    template.remove();
+                    attachShadowRoots(shadowRoot);
+                });
+            })(document);
         </script>
         <?php
     }

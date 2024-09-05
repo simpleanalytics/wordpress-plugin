@@ -67,9 +67,16 @@ class Plugin
                     ->docs('https://docs.simpleanalytics.com/events#the-variable-sa_event-is-already-used');
             })
             ->tab('Events', function (Tab $tab) {
-                $tab->icon(get_icon('events'));
+                $tab->title('Automated events')
+                    ->icon(get_icon('events'))
+                    ->description("It will track outbound links, email addresses clicks,
+                                            and amount of downloads for common files (pdf, csv, docx, xIsx).
+                                            Events will appear on your events page on simpleanalytics.com")
+                ;
 
-                $tab->input(SettingName::EVENT_COLLECT, 'Auto collect downloads')
+                $tab->checkbox(SettingName::AUTOMATED_EVENTS, 'Collect automated events');
+
+                $tab->input(SettingName::EVENT_COLLECT_DOWNLOADS, 'Auto collect downloads')
                     ->placeholder('Example: outbound,emails,downloads')
                     ->docs('https://docs.simpleanalytics.com/automated-events');
 

@@ -1,7 +1,7 @@
 {
     "private": true,
     "scripts": {
-        "start": "tailwindcss -i css/settings.css -o assets/css/settings.css --watch",
+        "dev": "tailwindcss -i css/settings.css -o assets/css/settings.css --watch",
         "build": "tailwindcss build -i css/settings.css -o assets/css/settings.css"
     },
     "devDependencies": {
