@@ -4,11 +4,12 @@ namespace SimpleAnalytics\Settings\Blocks\Fields;
 
 use Closure;
 use SimpleAnalytics\Setting;
+use SimpleAnalytics\Settings\Concerns\HasDocs;
 use SimpleAnalytics\UI\LabelComponent;
 
 class Checkboxes extends Field
 {
-    use Concerns\HasDocs;
+    use HasDocs;
 
     /** @var array<mixed, string> */
     protected array $options;

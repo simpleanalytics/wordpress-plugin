@@ -3,12 +3,14 @@
 namespace SimpleAnalytics\Settings\Blocks\Fields;
 
 use SimpleAnalytics\Setting;
+use SimpleAnalytics\Settings\Concerns\HasDocs;
+use SimpleAnalytics\Settings\Concerns\HasPlaceholder;
 use SimpleAnalytics\UI\LabelComponent;
 
 class IpList extends Field
 {
-    use Concerns\HasDocs;
-    use Concerns\HasPlaceholder;
+    use HasDocs;
+    use HasPlaceholder;
 
     #[\Override]
     public function getSanitizer(): callable

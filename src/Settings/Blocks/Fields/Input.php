@@ -3,12 +3,14 @@
 namespace SimpleAnalytics\Settings\Blocks\Fields;
 
 use SimpleAnalytics\Setting;
+use SimpleAnalytics\Settings\Concerns\HasDocs;
+use SimpleAnalytics\Settings\Concerns\HasPlaceholder;
 use SimpleAnalytics\UI\LabelComponent;
 
 class Input extends Field
 {
-    use Concerns\HasDocs;
-    use Concerns\HasPlaceholder;
+    use HasDocs;
+    use HasPlaceholder;
 
     protected string $type = 'text';
 

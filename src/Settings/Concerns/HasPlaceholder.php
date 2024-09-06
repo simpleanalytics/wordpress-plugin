@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleAnalytics\Settings\Blocks\Fields\Concerns;
+namespace SimpleAnalytics\Settings\Concerns;
 
 trait HasPlaceholder
 {

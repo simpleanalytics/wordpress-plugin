@@ -6,7 +6,7 @@ use SimpleAnalytics\Support\SvgIcon;
 
 class Tab
 {
-    use Blocks\Fields\Concerns\HasDocs;
+    use Concerns\HasDocs;
     use Concerns\ManagesBlocks;
 
     protected readonly string $name;
