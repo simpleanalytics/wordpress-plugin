@@ -8,7 +8,7 @@ use SimpleAnalytics\Support\SvgIcon;
 class Tab
 {
     use Concerns\ManagesFields;
-    use Concerns\ManagesDocs;
+    use Concerns\HasDocs;
 
     protected readonly string $name;
 

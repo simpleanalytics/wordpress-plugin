@@ -41,6 +41,10 @@ class Plugin
 
                 $tab->multiCheckbox(SettingName::EXCLUDED_ROLES, 'Exclude User Roles')
                     ->options(fn() => wp_roles()->get_names());
+
+                $tab->ipList(SettingName::EXCLUDED_IP_ADDRESSES, 'Exclude IP Addresses')
+                    ->placeholder("127.0.0.1\n192.168.0.1")
+                    ->description('IP addresses to exclude from tracking.');
             })
             ->tab('Advanced', function (Tab $tab) {
                 $tab->icon(get_icon('cog'));

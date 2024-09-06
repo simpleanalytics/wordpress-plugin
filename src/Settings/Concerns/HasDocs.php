@@ -2,7 +2,7 @@
 
 namespace SimpleAnalytics\Settings\Concerns;
 
-trait ManagesDocs
+trait HasDocs
 {
     protected ?string $description = null;
 

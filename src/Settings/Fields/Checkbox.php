@@ -3,12 +3,12 @@
 namespace SimpleAnalytics\Settings\Fields;
 
 use SimpleAnalytics\Setting;
-use SimpleAnalytics\Settings\Concerns\ManagesDocs;
+use SimpleAnalytics\Settings\Concerns\HasDocs;
 use SimpleAnalytics\UI\LabelComponent;
 
 class Checkbox extends Field
 {
-    use ManagesDocs;
+    use HasDocs;
 
     #[\Override]
     public function getSanitizer(): callable

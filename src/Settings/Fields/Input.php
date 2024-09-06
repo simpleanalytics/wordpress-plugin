@@ -3,12 +3,14 @@
 namespace SimpleAnalytics\Settings\Fields;
 
 use SimpleAnalytics\Setting;
-use SimpleAnalytics\Settings\Concerns\ManagesDocs;
+use SimpleAnalytics\Settings\Concerns\HasDocs;
+use SimpleAnalytics\Settings\Concerns\HasPlaceholder;
 use SimpleAnalytics\UI\LabelComponent;
 
 class Input extends Field
 {
-    use ManagesDocs;
+    use HasDocs;
+    use HasPlaceholder;
 
     protected string $type = 'text';
 
@@ -40,19 +42,12 @@ class Input extends Field
         <p class="mt-2 text-sm text-gray-500">
             <?php echo esc_html($this->description) ?>
         </p>
-        <?php endif;
+    <?php endif;
     }
 
     public function type(string $type): self
     {
         $this->type = $type;
-
-        return $this;
-    }
-
-    public function placeholder(string $placeholder): self
-    {
-        $this->placeholder = $placeholder;
 
         return $this;
     }

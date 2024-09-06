@@ -26,9 +26,9 @@ abstract class Field
         return $this->label;
     }
 
-    abstract public function render(): void;
-
     abstract public function getSanitizer(): callable;
+
+    abstract public function render(): void;
 
     public function default(mixed $default): static
     {
