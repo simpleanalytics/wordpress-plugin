@@ -2,8 +2,8 @@
 
 namespace SimpleAnalytics\Actions;
 
-use SimpleAnalytics\Enums\SettingName;
 use SimpleAnalytics\Setting;
+use SimpleAnalytics\SettingName;
 
 class FooterContents extends Action
 {

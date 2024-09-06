@@ -2,8 +2,8 @@
 
 namespace SimpleAnalytics\Scripts;
 
-use SimpleAnalytics\Enums\SettingName;
 use SimpleAnalytics\Setting;
+use SimpleAnalytics\SettingName;
 
 class AnalyticsScript implements Script, HasAttributes, HideScriptId
 {

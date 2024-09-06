@@ -1,11 +1,11 @@
 <?php
 
-namespace SimpleAnalytics\Enums;
+namespace SimpleAnalytics;
 
 defined('\\ABSPATH') || exit;
 
 /**
- * We use this class to avoid using magic strings in our code.
+ * We use these values to avoid using magic strings in our code.
  */
 class SettingName
 {

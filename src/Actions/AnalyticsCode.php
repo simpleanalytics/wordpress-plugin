@@ -2,10 +2,10 @@
 
 namespace SimpleAnalytics\Actions;
 
-use SimpleAnalytics\Enums\SettingName;
 use SimpleAnalytics\ScriptCollection;
 use SimpleAnalytics\Scripts\{AnalyticsScript, AutomatedEventsScript, InactiveScript};
 use SimpleAnalytics\Setting;
+use SimpleAnalytics\SettingName;
 use SimpleAnalytics\TrackingPolicy;
 
 class AnalyticsCode extends Action

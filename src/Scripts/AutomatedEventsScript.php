@@ -2,8 +2,8 @@
 
 namespace SimpleAnalytics\Scripts;
 
-use SimpleAnalytics\Enums\SettingName;
 use SimpleAnalytics\Setting;
+use SimpleAnalytics\SettingName;
 
 class AutomatedEventsScript implements Script, HasAttributes, HideScriptId
 {

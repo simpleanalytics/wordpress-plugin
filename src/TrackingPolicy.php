@@ -2,8 +2,6 @@
 
 namespace SimpleAnalytics;
 
-use SimpleAnalytics\Enums\SettingName;
-
 class TrackingPolicy
 {
     public function shouldCollectAnalytics(): bool

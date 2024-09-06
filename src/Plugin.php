@@ -3,8 +3,7 @@
 namespace SimpleAnalytics;
 
 use SimpleAnalytics\Actions\AnalyticsCode;
-use SimpleAnalytics\Enums\SettingName;
-use SimpleAnalytics\Settings\{Tab, Page};
+use SimpleAnalytics\Settings\{Page, Tab};
 
 class Plugin
 {
