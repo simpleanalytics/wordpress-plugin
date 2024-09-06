@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleAnalytics\Settings\Blocks;
+namespace SimpleAnalytics\Settings;
 
 interface Block
 {

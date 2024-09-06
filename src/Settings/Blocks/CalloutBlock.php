@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Settings\Blocks;
 
+use SimpleAnalytics\Settings\Block;
+
 readonly class CalloutBlock implements Block
 {
     public function __construct(

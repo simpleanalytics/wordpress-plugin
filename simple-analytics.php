@@ -42,11 +42,12 @@ require __DIR__ . '/src/Actions/Action.php';
 require __DIR__ . '/src/Actions/FooterContents.php';
 require __DIR__ . '/src/Actions/AnalyticsCode.php';
 require __DIR__ . '/src/Support/Str.php';
-require __DIR__ . '/src/Settings/Blocks/Block.php';
+require __DIR__ . '/src/Settings/Block.php';
 require __DIR__ . '/src/Settings/Blocks/CalloutBlock.php';
-require __DIR__ . '/src/Settings/Concerns/HasDocs.php';
-require __DIR__ . '/src/Settings/Concerns/HasPlaceholder.php';
+require __DIR__ . '/src/Settings/Blocks/Fields/Concerns/HasDocs.php';
+require __DIR__ . '/src/Settings/Blocks/Fields/Concerns/HasPlaceholder.php';
 require __DIR__ . '/src/Settings/Concerns/ManagesBlocks.php';
+require __DIR__ . '/src/Settings/Concerns/WordPressPageIntegration.php';
 require __DIR__ . '/src/Settings/Page.php';
 require __DIR__ . '/src/Settings/Blocks/Fields/Field.php';
 require __DIR__ . '/src/Settings/Blocks/Fields/Input.php';
@@ -57,7 +58,6 @@ require __DIR__ . '/src/Settings/Tab.php';
 require __DIR__ . '/src/UI/LabelComponent.php';
 require __DIR__ . '/src/UI/TabListComponent.php';
 require __DIR__ . '/src/UI/PageComponent.php';
-require __DIR__ . '/src/Settings/PageRegistrar.php';
 
 use SimpleAnalytics\Plugin;
 

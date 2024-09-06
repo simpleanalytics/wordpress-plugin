@@ -2,10 +2,13 @@
 
 namespace SimpleAnalytics\Settings;
 
+use SimpleAnalytics\Settings\Concerns\WordPressPageIntegration;
 use SimpleAnalytics\Support\Str;
 
 class Page
 {
+    use WordPressPageIntegration;
+
     protected string $title;
 
     protected string $slug;
@@ -53,10 +56,5 @@ class Page
     public function getTabs(): array
     {
         return $this->tabs;
-    }
-
-    public function register(): void
-    {
-        (new PageRegistrar($this))->register();
     }
 }

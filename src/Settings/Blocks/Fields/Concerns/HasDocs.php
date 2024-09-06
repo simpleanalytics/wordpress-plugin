@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleAnalytics\Settings\Concerns;
+namespace SimpleAnalytics\Settings\Blocks\Fields\Concerns;
 
 trait HasDocs
 {

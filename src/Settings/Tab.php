@@ -2,12 +2,11 @@
 
 namespace SimpleAnalytics\Settings;
 
-use SimpleAnalytics\Settings\Blocks\Block;
 use SimpleAnalytics\Support\SvgIcon;
 
 class Tab
 {
-    use Concerns\HasDocs;
+    use Blocks\Fields\Concerns\HasDocs;
     use Concerns\ManagesBlocks;
 
     protected readonly string $name;

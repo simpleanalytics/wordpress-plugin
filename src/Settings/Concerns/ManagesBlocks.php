@@ -2,7 +2,7 @@
 
 namespace SimpleAnalytics\Settings\Concerns;
 
-use SimpleAnalytics\Settings\Blocks\Block;
+use SimpleAnalytics\Settings\Block;
 use SimpleAnalytics\Settings\Blocks\CalloutBlock;
 use SimpleAnalytics\Settings\Blocks\Fields\Checkbox;
 use SimpleAnalytics\Settings\Blocks\Fields\Checkboxes;

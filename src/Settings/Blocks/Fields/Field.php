@@ -2,7 +2,7 @@
 
 namespace SimpleAnalytics\Settings\Blocks\Fields;
 
-use SimpleAnalytics\Settings\Blocks\Block;
+use SimpleAnalytics\Settings\Block;
 
 abstract class Field implements Block
 {
