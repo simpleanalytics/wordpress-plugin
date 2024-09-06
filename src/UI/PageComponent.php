@@ -72,38 +72,38 @@ readonly class PageComponent
                 </div>
             </form>
             <script>
-                /**
-                 * Add value as a new line to textarea
-                 *
-                 * @param textarea HTMLTextAreaElement
-                 * @param value string
-                 */
-                function sa_textarea_add_value(textarea, value) {
-                    if (textarea.value.includes(value)) {
-                        return;
-                    }
-
-                    if (textarea.value.trim() === "") {
-                        textarea.value = value;
-                    } else {
-                        textarea.value += `\n${value}`;
-                    }
+            /**
+             * Add value as a new line to textarea
+             *
+             * @param textarea HTMLTextAreaElement
+             * @param value string
+             */
+            function sa_textarea_add_value(textarea, value) {
+                if (textarea.value.includes(value)) {
+                    return;
                 }
+
+                if (textarea.value.trim() === "") {
+                    textarea.value = value;
+                } else {
+                    textarea.value += `\n${value}`;
+                }
+            }
             </script>
         </template>
         <script>
-            // Polyfill in case the browser has no support for shadowRootMode
-            // 1. https://developer.chrome.com/docs/css-ui/declarative-shadow-dom#polyfill
-            // 2. https://caniuse.com/mdn-html_elements_template_shadowrootmode
-            (function attachShadowRoots(root) {
-                root.querySelectorAll("template[shadowrootmode]").forEach(template => {
-                    const mode = template.getAttribute("shadowrootmode");
-                    const shadowRoot = template.parentNode.attachShadow({ mode });
-                    shadowRoot.appendChild(template.content);
-                    template.remove();
-                    attachShadowRoots(shadowRoot);
-                });
-            })(document);
+        // Polyfill in case the browser has no support for shadowRootMode
+        // 1. https://developer.chrome.com/docs/css-ui/declarative-shadow-dom#polyfill
+        // 2. https://caniuse.com/mdn-html_elements_template_shadowrootmode
+        (function attachShadowRoots(root) {
+            root.querySelectorAll("template[shadowrootmode]").forEach(template => {
+                const mode = template.getAttribute("shadowrootmode");
+                const shadowRoot = template.parentNode.attachShadow({ mode });
+                shadowRoot.appendChild(template.content);
+                template.remove();
+                attachShadowRoots(shadowRoot);
+            });
+        })(document);
         </script>
         <?php
     }
