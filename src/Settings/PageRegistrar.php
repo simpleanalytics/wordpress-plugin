@@ -2,7 +2,7 @@
 
 namespace SimpleAnalytics\Settings;
 
-use SimpleAnalytics\Settings\Fields\Field;
+use SimpleAnalytics\Settings\Blocks\Fields\Block;
 use SimpleAnalytics\UI\PageComponent;
 
 readonly class PageRegistrar
@@ -40,14 +40,14 @@ readonly class PageRegistrar
 
     protected function registerTab(Tab $tab): void
     {
-        $fields = array_filter($tab->getBlocks(), fn($block) => $block instanceof Field);
+        $fields = array_filter($tab->getBlocks(), fn($block) => $block instanceof Block);
 
         foreach ($fields as $field) {
             $this->registerField($field, $tab);
         }
     }
 
-    protected function registerField(Field $field, Tab $tab): void
+    protected function registerField(Block $field, Tab $tab): void
     {
         register_setting(
             $this->page->getSlug() . '-' . $tab->getSlug(),

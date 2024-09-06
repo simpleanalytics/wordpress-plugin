@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleAnalytics\Settings\Fields;
+namespace SimpleAnalytics\Settings\Blocks\Fields;
 
 use SimpleAnalytics\Setting;
 use SimpleAnalytics\Settings\Concerns\HasDocs;

@@ -3,13 +3,11 @@
 namespace SimpleAnalytics\Settings;
 
 use SimpleAnalytics\Settings\Blocks\Block;
-use SimpleAnalytics\Settings\Fields\Field;
 use SimpleAnalytics\Support\SvgIcon;
 
 class Tab
 {
     use Concerns\HasDocs;
-    use Concerns\ManagesFields;
     use Concerns\ManagesBlocks;
 
     protected readonly string $name;
@@ -62,14 +60,6 @@ class Tab
     protected function addBlock(Block $block): self
     {
         $this->blocks[] = $block;
-
-        return $this;
-    }
-
-    #[\Override]
-    protected function addField(Field $field): self
-    {
-        $this->addBlock($field);
 
         return $this;
     }

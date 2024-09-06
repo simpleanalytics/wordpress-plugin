@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleAnalytics\Settings\Fields;
+namespace SimpleAnalytics\Settings\Blocks\Fields;
 
 use Closure;
 use SimpleAnalytics\Setting;
