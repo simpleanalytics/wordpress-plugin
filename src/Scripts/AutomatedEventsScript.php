@@ -7,6 +7,7 @@ use SimpleAnalytics\Setting;
 
 class AutomatedEventsScript implements Script, HasAttributes, HideScriptId
 {
+    #[\Override]
     public function path(): string
     {
         return sprintf(
@@ -15,11 +16,13 @@ class AutomatedEventsScript implements Script, HasAttributes, HideScriptId
         );
     }
 
+    #[\Override]
     public function handle(): string
     {
         return 'simpleanalytics_auto_events';
     }
 
+    #[\Override]
     public function attributes(): array
     {
         return array_filter([
