@@ -30,6 +30,6 @@ class TrackingPolicy
 
     protected function containsExcludedRole(array $roles): bool
     {
-        return array_intersect(Setting::get(SettingName::EXCLUDED_ROLES, []), $roles) !== [];
+        return array_intersect(Setting::array(SettingName::EXCLUDED_ROLES), $roles) !== [];
     }
 }

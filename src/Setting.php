@@ -19,4 +19,11 @@ class Setting
     {
         return (bool)self::get($key, false);
     }
+
+    public static function array(string $key): array
+    {
+        $value = self::get($key, []);
+
+        return is_array($value) ? $value : [$value];
+    }
 }

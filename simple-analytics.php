@@ -47,6 +47,7 @@ require __DIR__ . '/src/Settings/Concerns/ManagesFields.php';
 require __DIR__ . '/src/Settings/Page.php';
 require __DIR__ . '/src/Settings/Fields/Field.php';
 require __DIR__ . '/src/Settings/Fields/Input.php';
+require __DIR__ . '/src/Settings/Fields/Checkboxes.php';
 require __DIR__ . '/src/Settings/Fields/Checkbox.php';
 require __DIR__ . '/src/Settings/Tab.php';
 require __DIR__ . '/src/UI/LabelComponent.php';

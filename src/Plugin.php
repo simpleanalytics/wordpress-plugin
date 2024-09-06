@@ -26,18 +26,24 @@ class Plugin
                     ->placeholder('Enter your custom domain or leave it empty.')
                     ->description('E.g. api.example.com. Leave empty to use the default domain (most users).')
                     ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
+
+                $tab->checkbox(SettingName::ENABLED, 'Enabled')
+                    ->description('Enable or disable Simple Analytics on your website.')
+                    ->default(true);
             })
-            ->tab('Advanced', function (Tab $tab) {
-                $tab->icon(get_icon('cog'));
+            ->tab('Ignore Rules', function (Tab $tab) {
+                $tab->icon(get_icon('forbidden-eyes'));
 
                 $tab->input(SettingName::IGNORE_PAGES, 'Ignore Pages')
                     ->description('Comma separated list of pages to ignore. E.g. /contact, /about')
                     ->placeholder('Example: /page1, /page2, /category/*')
                     ->docs('https://docs.simpleanalytics.com/ignore-pages');
 
-                $tab->checkbox(SettingName::ENABLED, 'Enabled')
-                    ->description('Enable or disable Simple Analytics on your website.')
-                    ->default(true);
+                $tab->multiCheckbox(SettingName::EXCLUDED_ROLES, 'Exclude User Roles')
+                    ->options(fn() => wp_roles()->get_names());
+            })
+            ->tab('Advanced', function (Tab $tab) {
+                $tab->icon(get_icon('cog'));
 
                 $tab->checkbox(SettingName::COLLECT_DNT, 'Collect Do Not Track')
                     ->description('If you want to collect visitors with Do Not Track enabled, turn this on.')
@@ -71,8 +77,7 @@ class Plugin
                     ->icon(get_icon('events'))
                     ->description("It will track outbound links, email addresses clicks,
                                             and amount of downloads for common files (pdf, csv, docx, xIsx).
-                                            Events will appear on your events page on simpleanalytics.com")
-                ;
+                                            Events will appear on your events page on simpleanalytics.com");
 
                 $tab->checkbox(SettingName::AUTOMATED_EVENTS, 'Collect automated events');
 

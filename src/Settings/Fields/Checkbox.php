@@ -26,9 +26,7 @@ class Checkbox extends Field
                     type="checkbox"
                     value="1"
                     class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                    <?php if (Setting::get($this->getKey())): ?>
-                        checked
-                    <?php endif ?>
+                    <?php if (Setting::get($this->getKey())) echo 'checked' ?>
                 >
             </div>
             <div class="text-sm leading-6">
@@ -41,7 +39,6 @@ class Checkbox extends Field
                 <?php endif ?>
             </div>
         </div>
-
         <?php
     }
 }
