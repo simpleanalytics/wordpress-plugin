@@ -15,7 +15,6 @@ readonly class PageComponent
     {
         $tabs = $this->page->getTabs();
         $currentTab = $this->getCurrentTab($tabs);
-        $optionGroup = $this->page->getSlug() . '-' . $currentTab->getSlug();
         ?>
         <style>
             #wpwrap {
@@ -31,7 +30,7 @@ readonly class PageComponent
             <link rel="stylesheet" href="<?php echo PLUGIN_URL ?>build/css/settings.css">
             <form method="post" action="options.php">
                 <!-- Hidden fields -->
-                <?php settings_fields($optionGroup) ?>
+                <?php settings_fields($this->page->getOptionGroup($currentTab)) ?>
 
                 <!-- Header / Nav -->
                 <header class="pt-5 bg-primaryBg">

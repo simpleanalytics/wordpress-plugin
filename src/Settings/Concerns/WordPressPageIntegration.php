@@ -14,6 +14,11 @@ trait WordPressPageIntegration
         add_action('admin_init', [$this, 'wpAddFields']);
     }
 
+    public function getOptionGroup(Tab $tab): string
+    {
+        return $this->getSlug() . '-' . $tab->getSlug();
+    }
+
     /** @internal */
     public function wpAddMenu(): void
     {
@@ -46,7 +51,7 @@ trait WordPressPageIntegration
     protected function registerField(Field $field, Tab $tab): void
     {
         register_setting(
-            $this->getSlug() . '-' . $tab->getSlug(),
+            $this->getOptionGroup($tab),
             $field->getKey(),
             [
                 'type'              => 'string',
