@@ -62,6 +62,10 @@ class IpList extends Field
              * @param string value
              */
             function sa_textarea_add_value(textarea, value) {
+                if (textarea.value.includes(value)) {
+                    return;
+                }
+
                 if (textarea.value.trim() === "") {
                     textarea.value = value;
                 } else {
