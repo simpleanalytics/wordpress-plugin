@@ -31,7 +31,7 @@ require __DIR__ . '/src/Plugin.php';
 require __DIR__ . '/src/Setting.php';
 require __DIR__ . '/src/SettingName.php';
 require __DIR__ . '/src/TrackingPolicy.php';
-require __DIR__ . '/src/ScriptCollection.php';
+require __DIR__ . '/src/ScriptManager.php';
 require __DIR__ . '/src/Scripts/Contracts/Script.php';
 require __DIR__ . '/src/Scripts/Contracts/HideScriptId.php';
 require __DIR__ . '/src/Scripts/Contracts/HasAttributes.php';

@@ -9,7 +9,7 @@ use SimpleAnalytics\Scripts\Contracts\Script;
 /**
  * Register scripts with WordPress.
  */
-final class ScriptCollection
+final class ScriptManager
 {
     public function __construct(
         /** @var Script[] */

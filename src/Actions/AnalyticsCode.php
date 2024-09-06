@@ -2,7 +2,7 @@
 
 namespace SimpleAnalytics\Actions;
 
-use SimpleAnalytics\ScriptCollection;
+use SimpleAnalytics\ScriptManager;
 use SimpleAnalytics\Scripts\{AnalyticsScript, AutomatedEventsScript, InactiveScript};
 use SimpleAnalytics\Setting;
 use SimpleAnalytics\SettingName;
@@ -27,7 +27,7 @@ class AnalyticsCode extends Action
 
     protected function addScripts(bool $collect): void
     {
-        $scripts = new ScriptCollection;
+        $scripts = new ScriptManager;
 
         if ($collect) {
             $scripts->add(new AnalyticsScript);

@@ -10,7 +10,7 @@ class InactiveScript implements Script
     #[\Override]
     public function path(): string
     {
-        return PLUGIN_URL . 'js/inactive.js';
+        return PLUGIN_URL . 'resources/js/inactive.js';
     }
 
     #[\Override]
