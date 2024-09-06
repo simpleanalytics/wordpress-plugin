@@ -3,9 +3,9 @@
 Contributors: simpleanalytics
 Donate link: https://simpleanalytics.com
 Tags: privacy-first, privacy-friendly, free analytics, website analytics, simple analytics, analytics, statistics
-Requires at least: 2.0
+Requires at least: 5.2
 Tested up to: 6.6.1
-Requires PHP: 5.2.4
+Requires PHP: 7.2.0
 Stable tag: 1.25
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
