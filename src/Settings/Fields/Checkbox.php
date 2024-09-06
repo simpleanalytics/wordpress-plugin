@@ -30,7 +30,7 @@ class Checkbox extends Field
                 >
             </div>
             <div class="text-sm leading-6">
-                <?php (new LabelComponent($this->getLabel(), $this->getKey(), $this->docs))() ?>
+                <?php (new LabelComponent(value: $this->getLabel(), docs: $this->docs, for: $this->getKey()))() ?>
 
                 <?php if ($this->description): ?>
                     <p class="text-gray-500">

@@ -24,7 +24,7 @@ class Input extends Field
     public function render(): void
     {
         ?>
-        <?php (new LabelComponent($this->getLabel(), $this->getKey(), $this->docs))() ?>
+        <?php (new LabelComponent(value: $this->getLabel(), docs: $this->docs, for: $this->getKey()))() ?>
         <input
             type="<?php echo esc_attr($this->type) ?>"
             name="<?php echo esc_attr($this->getKey()) ?>"
