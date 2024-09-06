@@ -2,6 +2,9 @@
 
 namespace SimpleAnalytics\Scripts;
 
+use SimpleAnalytics\Scripts\Contracts\HasAttributes;
+use SimpleAnalytics\Scripts\Contracts\HideScriptId;
+use SimpleAnalytics\Scripts\Contracts\Script;
 use SimpleAnalytics\Setting;
 use SimpleAnalytics\SettingName;
 

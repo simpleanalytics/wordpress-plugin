@@ -1,8 +1,8 @@
 {
     "private": true,
     "scripts": {
-        "dev": "tailwindcss -i css/settings.css -o assets/css/settings.css --watch",
-        "build": "tailwindcss build -i css/settings.css -o assets/css/settings.css"
+        "dev": "tailwindcss -i css/settings.css -o build/css/settings.css --watch",
+        "build": "tailwindcss build -i css/settings.css -o build/css/settings.css"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.8",

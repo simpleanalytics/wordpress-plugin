@@ -1,6 +1,6 @@
 <?php
 
-namespace SimpleAnalytics\Scripts;
+namespace SimpleAnalytics\Scripts\Contracts;
 
 interface Script
 {

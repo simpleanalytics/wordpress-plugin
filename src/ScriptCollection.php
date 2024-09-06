@@ -2,7 +2,9 @@
 
 namespace SimpleAnalytics;
 
-use SimpleAnalytics\Scripts\{HasAttributes, HideScriptId, Script};
+use SimpleAnalytics\Scripts\Contracts\HasAttributes;
+use SimpleAnalytics\Scripts\Contracts\HideScriptId;
+use SimpleAnalytics\Scripts\Contracts\Script;
 
 /**
  * Register scripts with WordPress.
@@ -33,13 +35,7 @@ final class ScriptCollection
     protected function enqueueScripts(): void
     {
         foreach ($this->scripts as $script) {
-            wp_enqueue_script(
-                $script->handle(),
-                $script->path(),
-                [],
-                null,
-                true
-            );
+            wp_enqueue_script($script->handle(), $script->path(), [], null, true);
         }
     }
 

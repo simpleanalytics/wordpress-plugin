@@ -28,7 +28,7 @@ readonly class PageComponent
         </style>
         <template shadowrootmode="open">
             <link rel="preconnect" href="https://fonts.bunny.net">
-            <link rel="stylesheet" href="<?php echo PLUGIN_URL ?>assets/css/settings.css">
+            <link rel="stylesheet" href="<?php echo PLUGIN_URL ?>build/css/settings.css">
             <form method="post" action="options.php">
                 <!-- Hidden fields -->
                 <?php settings_fields($optionGroup) ?>
