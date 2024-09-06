@@ -17,6 +17,7 @@ class AnalyticsCode extends Action
     ) {
     }
 
+    #[\Override]
     public function handle(): void
     {
         $collect = $this->trackingPolicy->shouldCollectAnalytics();

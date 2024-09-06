@@ -16,11 +16,13 @@ class Input extends Field
 
     protected ?string $placeholder = null;
 
+    #[\Override]
     public function getSanitizer(): callable
     {
         return 'sanitize_text_field';
     }
 
+    #[\Override]
     public function render(): void
     {
         ?>

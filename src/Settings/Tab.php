@@ -56,6 +56,7 @@ class Tab
         return $this;
     }
 
+    #[\Override]
     protected function addField(Field $field): self
     {
         $this->fields[] = $field;

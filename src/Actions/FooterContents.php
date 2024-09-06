@@ -14,6 +14,7 @@ class FooterContents extends Action
     ) {
     }
 
+    #[\Override]
     public function handle(): void
     {
         if ($this->shouldCollect) {

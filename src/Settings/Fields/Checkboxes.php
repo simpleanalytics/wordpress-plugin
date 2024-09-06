@@ -14,6 +14,14 @@ class Checkboxes extends Field
     /** @var array<mixed, string> */
     protected array $options;
 
+    public function options(array|Closure $options): self
+    {
+        $this->options = $options instanceof Closure ? $options() : $options;
+
+        return $this;
+    }
+
+    #[\Override]
     public function getSanitizer(): callable
     {
         return function ($value) {
@@ -23,13 +31,7 @@ class Checkboxes extends Field
         };
     }
 
-    public function options(array|Closure $options): self
-    {
-        $this->options = $options instanceof Closure ? $options() : $options;
-
-        return $this;
-    }
-
+    #[\Override]
     public function render(): void
     {
         $currentValue = Setting::array($this->getKey());

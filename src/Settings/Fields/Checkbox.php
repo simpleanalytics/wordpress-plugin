@@ -10,11 +10,13 @@ class Checkbox extends Field
 {
     use ManagesDocs;
 
+    #[\Override]
     public function getSanitizer(): callable
     {
         return 'intval';
     }
 
+    #[\Override]
     public function render(): void
     {
         ?>
