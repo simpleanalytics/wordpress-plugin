@@ -2,13 +2,15 @@
 
 namespace SimpleAnalytics\Settings;
 
+use SimpleAnalytics\Settings\Blocks\Block;
 use SimpleAnalytics\Settings\Fields\Field;
 use SimpleAnalytics\Support\SvgIcon;
 
 class Tab
 {
-    use Concerns\ManagesFields;
     use Concerns\HasDocs;
+    use Concerns\ManagesFields;
+    use Concerns\ManagesBlocks;
 
     protected readonly string $name;
 
@@ -18,8 +20,8 @@ class Tab
 
     protected ?string $title;
 
-    /** @var Field[] */
-    protected array $fields = [];
+    /** @var Block[] */
+    protected array $blocks = [];
 
     public function __construct(string $name, string $slug)
     {
@@ -57,16 +59,24 @@ class Tab
     }
 
     #[\Override]
-    protected function addField(Field $field): self
+    protected function addBlock(Block $block): self
     {
-        $this->fields[] = $field;
+        $this->blocks[] = $block;
 
         return $this;
     }
 
-    public function getFields(): array
+    #[\Override]
+    protected function addField(Field $field): self
     {
-        return $this->fields;
+        $this->addBlock($field);
+
+        return $this;
+    }
+
+    public function getBlocks(): array
+    {
+        return $this->blocks;
     }
 
     public function render(): void
@@ -92,9 +102,9 @@ class Tab
                 </div>
             <?php endif ?>
 
-            <?php foreach ($this->getFields() as $field): ?>
+            <?php foreach ($this->getBlocks() as $block): ?>
                 <div class="sm:col-span-4">
-                    <?php $field->render() ?>
+                    <?php $block->render() ?>
                 </div>
             <?php endforeach ?>
         </div>

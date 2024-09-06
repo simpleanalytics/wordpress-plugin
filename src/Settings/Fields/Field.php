@@ -2,7 +2,9 @@
 
 namespace SimpleAnalytics\Settings\Fields;
 
-abstract class Field
+use SimpleAnalytics\Settings\Blocks\Block;
+
+abstract class Field implements Block
 {
     protected string $key;
 

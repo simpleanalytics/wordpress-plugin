@@ -33,7 +33,16 @@ readonly class PageRegistrar
 
     public function registerFields(): void
     {
-        foreach ($this->page->getTabs() as $tab) foreach ($tab->getFields() as $field) {
+        foreach ($this->page->getTabs() as $tab) {
+            $this->registerTab($tab);
+        }
+    }
+
+    protected function registerTab(Tab $tab): void
+    {
+        $fields = array_filter($tab->getBlocks(), fn($block) => $block instanceof Field);
+
+        foreach ($fields as $field) {
             $this->registerField($field, $tab);
         }
     }

@@ -39,6 +39,8 @@ class Plugin
                     ->placeholder('Example: /page1, /page2, /category/*')
                     ->docs('https://docs.simpleanalytics.com/ignore-pages');
 
+                $tab->callout('IP and roles exclusion only works without page caching.');
+
                 $tab->multiCheckbox(SettingName::EXCLUDED_ROLES, 'Exclude User Roles')
                     ->options(fn() => wp_roles()->get_names());
 
