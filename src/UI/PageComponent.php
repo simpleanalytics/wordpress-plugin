@@ -43,7 +43,7 @@ readonly class PageComponent
                         >
                             <img
                                 alt="SimpleAnalytics logo"
-                                src="<?php echo PLUGIN_URL ?>assets/logo.svg"
+                                src="<?php echo PLUGIN_URL ?>logo.svg"
                                 class="mr-2 inline-block h-10 w-auto text-primary"
                             >
                         </a>

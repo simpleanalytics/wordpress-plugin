@@ -30,9 +30,9 @@ class IpList extends Field
     public function render(): void
     {
         $value = implode("\n", Setting::array($this->getKey()));
-        $current_ip = $_SERVER['REMOTE_ADDR'];
+        $currentIp = $_SERVER['REMOTE_ADDR'];
         ?>
-        <?php (new LabelComponent(value: $this->getLabel(), docs: $this->docs, for: $this->getKey()))() ?>
+        <?php (new LabelComponent(value: $this->getLabel(), docs: $this->docs, for: esc_attr($this->getKey())))() ?>
         <div class="mt-2">
             <textarea
                 name="<?php echo esc_attr($this->getKey()) ?>"
@@ -47,15 +47,28 @@ class IpList extends Field
         <div class="mt-2">
             <button
                 type="button"
-                onclick="document.getElementById('<?php echo esc_js($this->getKey()); ?>').value += (document.getElementById('<?php echo esc_js($this->getKey()); ?>').value ? '\n' : '') + '<?php echo esc_js($current_ip); ?>'"
+                onclick="sa_textarea_add_value(this.form.elements['<?php echo esc_js($this->getKey()) ?>'], '<?php echo esc_js($currentIp) ?>')"
                 class="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
             >
-                Add Current IP (<?php echo esc_html($current_ip); ?>)
+                Add Current IP (<?php echo esc_html($currentIp); ?>)
             </button>
         </div>
         <p class="mt-2 text-sm text-gray-500">
             Enter IP addresses to exclude from tracking, one per line.
         </p>
+        <script>
+            /**
+             * @param HTMLTextAreaElement textarea
+             * @param string value
+             */
+            function sa_textarea_add_value(textarea, value) {
+                if (textarea.value.trim() === "") {
+                    textarea.value = value;
+                } else {
+                    textarea.value += `\n${value}`;
+                }
+            }
+        </script>
         <?php
     }
 }
