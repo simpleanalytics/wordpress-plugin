@@ -56,23 +56,6 @@ class IpList extends Field
         <p class="mt-2 text-sm text-gray-500">
             Enter IP addresses to exclude from tracking, one per line.
         </p>
-        <script>
-            /**
-             * @param HTMLTextAreaElement textarea
-             * @param string value
-             */
-            function sa_textarea_add_value(textarea, value) {
-                if (textarea.value.includes(value)) {
-                    return;
-                }
-
-                if (textarea.value.trim() === "") {
-                    textarea.value = value;
-                } else {
-                    textarea.value += `\n${value}`;
-                }
-            }
-        </script>
         <?php
     }
 }

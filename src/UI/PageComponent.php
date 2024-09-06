@@ -71,6 +71,25 @@ readonly class PageComponent
                     </div>
                 </div>
             </form>
+            <script>
+                /**
+                 * Add value as a new line to textarea
+                 *
+                 * @param textarea HTMLTextAreaElement
+                 * @param value string
+                 */
+                function sa_textarea_add_value(textarea, value) {
+                    if (textarea.value.includes(value)) {
+                        return;
+                    }
+
+                    if (textarea.value.trim() === "") {
+                        textarea.value = value;
+                    } else {
+                        textarea.value += `\n${value}`;
+                    }
+                }
+            </script>
         </template>
         <script>
             // Polyfill in case the browser has no support for shadowRootMode
