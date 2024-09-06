@@ -2,11 +2,11 @@
 
 Contributors: simpleanalytics
 Donate link: https://simpleanalytics.com
-Tags: wordpress, plugin, simple analytics, analytics
+Tags: privacy-first, privacy-friendly, free analytics, website analytics, simple analytics, analytics, statistics
 Requires at least: 2.0
-Tested up to: 6.4.3
+Tested up to: 6.6.1
 Requires PHP: 5.2.4
-Stable tag: 1.18
+Stable tag: 1.25
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,34 @@ You can [leave your feedback here](https://simpleanalytics.com/feedback?ref=word
 No changes needed for upgrades.
 
 == Changelog ==
+
+= 1.25 =
+* 2024-07-30
+* Upgraded to WordPress 6.6.1
+
+= 1.24 =
+* 2024-07-22
+* Upgraded to WordPress 6.6
+
+= 1.23 =
+* 2024-07-01
+* Upgraded to WordPress 6.5.5
+
+= 1.22 =
+* 2024-06-10
+* Upgraded to WordPress 6.5.4
+
+= 1.21 =
+* 2024-05-13
+* Upgraded to WordPress 6.5.3
+
+= 1.20 =
+* 2024-04-15
+* Upgraded to WordPress 6.5.2
+
+= 1.19 =
+* 2024-04-08
+* Upgraded to WordPress 6.5
 
 = 1.18 =
 * 2024-02-05
