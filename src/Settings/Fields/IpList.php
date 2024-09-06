@@ -15,13 +15,21 @@ class IpList extends Field
     #[\Override]
     public function getSanitizer(): callable
     {
-        return 'esc_textarea';
+        return function ($value) {
+            $ips = explode("\n", $value);
+            $ips = array_map('trim', $ips);
+            $ips = array_filter($ips, function ($ip) {
+                return filter_var($ip, FILTER_VALIDATE_IP) !== false;
+            });
+            $ips = array_unique($ips);
+            return array_values($ips);
+        };
     }
 
     #[\Override]
     public function render(): void
     {
-        $value = Setting::get($this->getKey(), '');
+        $value = implode("\n", Setting::array($this->getKey()));
         $current_ip = $_SERVER['REMOTE_ADDR'];
         ?>
         <?php (new LabelComponent(value: $this->getLabel(), docs: $this->docs, for: $this->getKey()))() ?>

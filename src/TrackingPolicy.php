@@ -8,7 +8,7 @@ class TrackingPolicy
 {
     public function shouldCollectAnalytics(): bool
     {
-        if (Setting::get(SettingName::ENABLED) === false) {
+        if (Setting::boolean(SettingName::ENABLED) === false) {
             return false;
         }
 
@@ -25,7 +25,7 @@ class TrackingPolicy
 
     protected function clientIpExcluded(string $ip): bool
     {
-        return str_contains(Setting::get(SettingName::EXCLUDED_IP_ADDRESSES, ''), $ip);
+        return in_array($ip, Setting::array(SettingName::EXCLUDED_IP_ADDRESSES), true);
     }
 
     protected function containsExcludedRole(array $roles): bool
