@@ -29,7 +29,7 @@ require __DIR__ . '/src/Support/SvgIcon.php';
 require __DIR__ . '/helpers.php';
 require __DIR__ . '/src/Plugin.php';
 require __DIR__ . '/src/Setting.php';
-require __DIR__ . '/src/Enums/SettingName.php';
+require __DIR__ . '/src/SettingName.php';
 require __DIR__ . '/src/TrackingPolicy.php';
 require __DIR__ . '/src/ScriptCollection.php';
 require __DIR__ . '/src/Scripts/Script.php';
