@@ -5,7 +5,7 @@ namespace SimpleAnalytics\UI;
 use SimpleAnalytics\Settings\{Page, Tab};
 use const SimpleAnalytics\PLUGIN_URL;
 
-readonly class PageComponent
+readonly class PageLayoutComponent
 {
     public function __construct(private Page $page)
     {
@@ -13,8 +13,7 @@ readonly class PageComponent
 
     public function __invoke(): void
     {
-        $tabs = $this->page->getTabs();
-        $currentTab = $this->getCurrentTab($tabs);
+        $currentTab = $this->getCurrentTab($this->page->getTabs());
         ?>
         <style>
             #wpwrap {
@@ -50,7 +49,11 @@ readonly class PageComponent
 
                         <!-- Tabs -->
                         <div class="mt-4 sm:mt-0">
-                            <?php (new TabListComponent($this->page->getSlug(), $currentTab, $tabs))() ?>
+                            <?php (new TabListComponent(
+                                pageSlug  : $this->page->getSlug(),
+                                currentTab: $currentTab,
+                                tabs      : $this->page->getTabs(),
+                            ))() ?>
                         </div>
                     </div>
                 </header>
@@ -72,38 +75,38 @@ readonly class PageComponent
                 </div>
             </form>
             <script>
-            /**
-             * Add value as a new line to textarea
-             *
-             * @param textarea HTMLTextAreaElement
-             * @param value string
-             */
-            function sa_textarea_add_value(textarea, value) {
-                if (textarea.value.includes(value)) {
-                    return;
-                }
+                /**
+                 * Add value as a new line to textarea
+                 *
+                 * @param textarea HTMLTextAreaElement
+                 * @param value string
+                 */
+                function sa_textarea_add_value(textarea, value) {
+                    if (textarea.value.includes(value)) {
+                        return;
+                    }
 
-                if (textarea.value.trim() === "") {
-                    textarea.value = value;
-                } else {
-                    textarea.value += `\n${value}`;
+                    if (textarea.value.trim() === "") {
+                        textarea.value = value;
+                    } else {
+                        textarea.value += `\n${value}`;
+                    }
                 }
-            }
             </script>
         </template>
         <script>
-        // Polyfill in case the browser has no support for shadowRootMode
-        // 1. https://developer.chrome.com/docs/css-ui/declarative-shadow-dom#polyfill
-        // 2. https://caniuse.com/mdn-html_elements_template_shadowrootmode
-        (function attachShadowRoots(root) {
-            root.querySelectorAll("template[shadowrootmode]").forEach(template => {
-                const mode = template.getAttribute("shadowrootmode");
-                const shadowRoot = template.parentNode.attachShadow({ mode });
-                shadowRoot.appendChild(template.content);
-                template.remove();
-                attachShadowRoots(shadowRoot);
-            });
-        })(document);
+            // Polyfill in case the browser has no support for shadowRootMode
+            // 1. https://developer.chrome.com/docs/css-ui/declarative-shadow-dom#polyfill
+            // 2. https://caniuse.com/mdn-html_elements_template_shadowrootmode
+            (function attachShadowRoots(root) {
+                root.querySelectorAll("template[shadowrootmode]").forEach(template => {
+                    const mode = template.getAttribute("shadowrootmode");
+                    const shadowRoot = template.parentNode.attachShadow({ mode });
+                    shadowRoot.appendChild(template.content);
+                    template.remove();
+                    attachShadowRoots(shadowRoot);
+                });
+            })(document);
         </script>
         <?php
     }

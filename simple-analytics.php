@@ -57,7 +57,7 @@ require __DIR__ . '/src/Settings/Blocks/Fields/IpList.php';
 require __DIR__ . '/src/Settings/Tab.php';
 require __DIR__ . '/src/UI/LabelComponent.php';
 require __DIR__ . '/src/UI/TabListComponent.php';
-require __DIR__ . '/src/UI/PageComponent.php';
+require __DIR__ . '/src/UI/PageLayoutComponent.php';
 
 use SimpleAnalytics\Plugin;
 

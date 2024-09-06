@@ -4,7 +4,7 @@ namespace SimpleAnalytics\Settings\Concerns;
 
 use SimpleAnalytics\Settings\Blocks\Fields\Field;
 use SimpleAnalytics\Settings\Tab;
-use SimpleAnalytics\UI\PageComponent;
+use SimpleAnalytics\UI\PageLayoutComponent;
 
 trait WordPressPageIntegration
 {
@@ -27,7 +27,7 @@ trait WordPressPageIntegration
             $this->getTitle(),
             'manage_options',
             $this->getSlug(),
-            (new PageComponent($this)),
+            (new PageLayoutComponent($this)),
         );
     }
 
