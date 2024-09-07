@@ -2,22 +2,55 @@
 
 namespace SimpleAnalytics;
 
-use SimpleAnalytics\Actions\AnalyticsCode;
 use SimpleAnalytics\Settings\{Page, Tab};
+use SimpleAnalytics\Actions\AddInactiveComment;
+use SimpleAnalytics\Actions\AddNoScriptTag;
+use SimpleAnalytics\Scripts\AnalyticsScript;
+use SimpleAnalytics\Scripts\AutomatedEventsScript;
+use SimpleAnalytics\Scripts\InactiveScript;
 
 class Plugin
 {
-    public function register(): void
+    public function boot(): void
     {
-        AnalyticsCode::register();
+        add_action('init', $this->onInit(...));
+        is_admin() && $this->defineAdminPage();
+    }
 
-        $this->defineAdminPage();
+    public function onInit(): void
+    {
+        $shouldCollect = (new TrackingPolicy)->shouldCollectAnalytics();
+
+        $this->addScripts($shouldCollect);
+
+        if (! $shouldCollect) {
+            AddInactiveComment::register();
+        }
+
+        if ($shouldCollect && Setting::boolean(SettingName::NOSCRIPT)) {
+            AddNoScriptTag::register();
+        }
+    }
+
+    protected function addScripts(bool $collect): void
+    {
+        $scripts = new ScriptManager;
+
+        if ($collect) {
+            $scripts->add(new AnalyticsScript);
+        } else {
+            $scripts->add(new InactiveScript);
+        }
+
+        if (Setting::boolean(SettingName::AUTOMATED_EVENTS)) {
+            $scripts->add(new AutomatedEventsScript);
+        }
+
+        $scripts->register();
     }
 
     protected function defineAdminPage(): void
     {
-        if (! is_admin()) return;
-
         Page::title('Simple Analytics')
             ->slug('simpleanalytics')
             ->tab('General', function (Tab $tab) {
@@ -61,6 +94,10 @@ class Plugin
                 $tab->checkbox(SettingName::MANUAL_COLLECT, 'Manually collect page views')
                     ->description('In case you don’t want to auto collect page views, but via `sa_pageview` function in JavaScript.')
                     ->docs('https://docs.simpleanalytics.com/trigger-custom-page-views#use-custom-collection-anyway');
+
+                $tab->checkbox(SettingName::NOSCRIPT, 'Support no JavaScript mode')
+                    ->description('Collect analytics from visitors with disabled or no JavaScript.')
+                    ->default(false);
 
                 $tab->input(SettingName::ONLOAD_CALLBACK, 'Onload Callback')
                     ->description('JavaScript function to call when the script is loaded.')

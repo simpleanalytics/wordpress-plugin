@@ -39,8 +39,8 @@ require __DIR__ . '/src/Scripts/AnalyticsScript.php';
 require __DIR__ . '/src/Scripts/AutomatedEventsScript.php';
 require __DIR__ . '/src/Scripts/InactiveScript.php';
 require __DIR__ . '/src/Actions/Action.php';
-require __DIR__ . '/src/Actions/FooterContents.php';
-require __DIR__ . '/src/Actions/AnalyticsCode.php';
+require __DIR__ . '/src/Actions/AddInactiveComment.php';
+require __DIR__ . '/src/Actions/AddNoScriptTag.php';
 require __DIR__ . '/src/Support/Str.php';
 require __DIR__ . '/src/Settings/Block.php';
 require __DIR__ . '/src/Settings/Blocks/CalloutBlock.php';
@@ -61,4 +61,4 @@ require __DIR__ . '/src/UI/PageLayoutComponent.php';
 
 use SimpleAnalytics\Plugin;
 
-(new Plugin)->register();
+(new Plugin)->boot();

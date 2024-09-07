@@ -10,6 +10,7 @@ defined('\\ABSPATH') || exit;
 class SettingName
 {
     const string CUSTOM_DOMAIN = 'simpleanalytics_custom_domain';
+    const string NOSCRIPT = 'simpleanalytics_noscript';
     const string EXCLUDED_IP_ADDRESSES = 'simpleanalytics_excluded_ip_addresses';
     const string EXCLUDED_ROLES = 'simpleanalytics_exclude_user_roles';
     const string HASH_MODE = 'simpleanalytics_hash_mode';
