@@ -52,7 +52,7 @@ readonly class TabListComponent
     protected function tabIcon(Tab $tab): ?string
     {
         if ($icon = $tab->getIcon()) {
-            return $icon(['class' => 'mr-1 inline-block h-4 w-4']);
+            return $icon->class('mr-1 inline-block h-4 w-4');
         }
 
         return null;

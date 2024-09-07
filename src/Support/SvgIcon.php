@@ -10,9 +10,9 @@ class SvgIcon implements \Stringable
     {
     }
 
-    public function __invoke(array $attributes): self
+    public function class(string $class): self
     {
-        $this->attributes = $attributes;
+        $this->attributes['class'] = $class;
 
         return $this;
     }

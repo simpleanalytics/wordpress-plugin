@@ -31,7 +31,7 @@ class Plugin
                     ->default(true);
             })
             ->tab('Ignore Rules', function (Tab $tab) {
-                $tab->icon(get_icon('forbidden-eyes'));
+                $tab->icon(get_icon('eye-slash'));
 
                 $tab->input(SettingName::IGNORE_PAGES, 'Ignore Pages')
                     ->description('Comma separated list of pages to ignore. E.g. /contact, /about')
