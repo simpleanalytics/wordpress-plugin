@@ -19,9 +19,15 @@ class Input extends Field
     protected ?string $placeholder = null;
 
     #[\Override]
-    public function getSanitizer(): callable
+    public function getValueSanitizer(): callable
     {
         return 'sanitize_text_field';
+    }
+
+    #[\Override]
+    public function getValueType(): string
+    {
+        return 'string';
     }
 
     #[\Override]

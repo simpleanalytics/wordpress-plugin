@@ -11,9 +11,15 @@ class Checkbox extends Field
     use HasDocs;
 
     #[\Override]
-    public function getSanitizer(): callable
+    public function getValueSanitizer(): callable
     {
         return 'intval';
+    }
+
+    #[\Override]
+    public function getValueType(): string
+    {
+        return 'boolean';
     }
 
     #[\Override]

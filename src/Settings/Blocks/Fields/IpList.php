@@ -13,7 +13,7 @@ class IpList extends Field
     use HasPlaceholder;
 
     #[\Override]
-    public function getSanitizer(): callable
+    public function getValueSanitizer(): callable
     {
         return function ($value) {
             $ips = explode("\n", $value);
@@ -24,6 +24,12 @@ class IpList extends Field
             $ips = array_unique($ips);
             return array_values($ips);
         };
+    }
+
+    #[\Override]
+    public function getValueType(): string
+    {
+        return 'array';
     }
 
     #[\Override]

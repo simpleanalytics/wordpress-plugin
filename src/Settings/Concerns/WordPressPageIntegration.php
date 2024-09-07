@@ -54,9 +54,9 @@ trait WordPressPageIntegration
             $this->getOptionGroup($tab),
             $field->getKey(),
             [
-                'type'              => 'string',
-                'default'           => $field->getDefault(),
-                'sanitize_callback' => $field->getSanitizer(),
+                'type'              => $field->getValueType(),
+                'default'           => $field->getDefaultValue(),
+                'sanitize_callback' => $field->getValueSanitizer(),
             ]
         );
     }

@@ -22,7 +22,13 @@ class Checkboxes extends Field
     }
 
     #[\Override]
-    public function getSanitizer(): callable
+    public function getValueType(): string
+    {
+        return 'array';
+    }
+
+    #[\Override]
+    public function getValueSanitizer(): callable
     {
         return function ($value) {
             if (! is_array($value)) $value = [$value];

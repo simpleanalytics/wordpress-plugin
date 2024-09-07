@@ -28,7 +28,9 @@ abstract class Field implements Block
         return $this->label;
     }
 
-    abstract public function getSanitizer(): callable;
+    abstract public function getValueSanitizer(): callable;
+
+    abstract public function getValueType(): string;
 
     abstract public function render(): void;
 
@@ -39,7 +41,7 @@ abstract class Field implements Block
         return $this;
     }
 
-    public function getDefault(): mixed
+    public function getDefaultValue(): mixed
     {
         return $this->default;
     }
