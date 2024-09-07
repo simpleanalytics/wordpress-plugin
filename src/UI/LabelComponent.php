@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\UI;
 
+use SimpleAnalytics\Support\Str;
+
 readonly class LabelComponent
 {
     public function __construct(
@@ -25,17 +27,10 @@ readonly class LabelComponent
         echo sprintf(
             '<%1$s %2$s>%3$s%4$s</%1$s>',
             $this->as,
-            $this->formatAttributes($attributes),
+            Str::htmlAttributes($attributes),
             esc_html($this->value),
             $this->docs ? $this->renderDocsLink() : ''
         );
-    }
-
-    protected function formatAttributes(array $attributes): string
-    {
-        return implode(' ', array_map(function ($key, $value) {
-            return sprintf('%s="%s"', $key, esc_attr($value));
-        }, array_keys($attributes), $attributes));
     }
 
     protected function renderDocsLink(): string

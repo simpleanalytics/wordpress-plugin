@@ -19,17 +19,6 @@ class SvgIcon implements \Stringable
 
     public function __toString(): string
     {
-        return str_replace('<svg', '<svg ' . $this->attributesToHtml(), $this->icon);
-    }
-
-    protected function attributesToHtml(): string
-    {
-        $attributes = '';
-
-        foreach ($this->attributes as $key => $value) {
-            $attributes .= $key . '="' . $value . '" ';
-        }
-
-        return trim($attributes);
+        return str_replace('<svg', '<svg ' . Str::htmlAttributes($this->attributes), $this->icon);
     }
 }
