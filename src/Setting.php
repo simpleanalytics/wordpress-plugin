@@ -15,9 +15,9 @@ class Setting
         return $value;
     }
 
-    public static function boolean(string $key): bool
+    public static function boolean(string $key, bool $default = false): bool
     {
-        return (bool)self::get($key, false);
+        return (bool)self::get($key, $default);
     }
 
     public static function array(string $key): array

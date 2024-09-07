@@ -6,7 +6,7 @@ class TrackingPolicy
 {
     public function shouldCollectAnalytics(): bool
     {
-        if (Setting::boolean(SettingName::ENABLED) === false) {
+        if (Setting::boolean(SettingName::ENABLED, true) === false) {
             return false;
         }
 
