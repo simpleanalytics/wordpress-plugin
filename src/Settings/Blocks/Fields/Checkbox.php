@@ -13,13 +13,13 @@ class Checkbox extends Field
     #[\Override]
     public function getValueSanitizer(): callable
     {
-        return 'intval';
+        return 'absint';
     }
 
     #[\Override]
     public function getValueType(): string
     {
-        return 'boolean';
+        return 'integer';
     }
 
     #[\Override]
