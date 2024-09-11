@@ -11,10 +11,21 @@ use SimpleAnalytics\Scripts\InactiveScript;
 
 class Plugin
 {
-    public function boot(): void
+    use PluginLifecycle;
+
+    protected function onBoot(): void
     {
-        add_action('init', $this->onInit(...));
-        is_admin() && $this->defineAdminPage();
+        if (is_admin()) $this->defineAdminPage();
+    }
+
+    public function onActivation(): void
+    {
+
+    }
+
+    public function onDeactivation(): void
+    {
+
     }
 
     public function onInit(): void

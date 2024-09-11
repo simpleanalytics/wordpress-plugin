@@ -21,12 +21,14 @@ defined('\\ABSPATH') || exit;
 
 define('SimpleAnalytics\\PLUGIN_URL', plugin_dir_url(__FILE__));
 define('SimpleAnalytics\\PLUGIN_PATH', plugin_dir_path(__FILE__));
+define('SimpleAnalytics\\ENTRYPOINT_FILE', __FILE__);
 
 /**
  * @note Manual loading rather than Composer to avoid potential conflict with plugins/themes that ship older autoloader.
  */
 require __DIR__ . '/src/Support/SvgIcon.php';
 require __DIR__ . '/helpers.php';
+require __DIR__ . '/src/PluginLifecycle.php';
 require __DIR__ . '/src/Plugin.php';
 require __DIR__ . '/src/Setting.php';
 require __DIR__ . '/src/SettingName.php';
