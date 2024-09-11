@@ -27,4 +27,9 @@ class SettingName
     const string EVENT_USE_TITLE = 'simpleanalytics_event_use_title';
     const string EVENT_FULL_URLS = 'simpleanalytics_event_full_urls';
     const string EVENT_SA_GLOBAL = 'simpleanalytics_event_sa_global';
+
+    static function cases(): array
+    {
+        return (new \ReflectionClass(__CLASS__))->getConstants();
+    }
 }

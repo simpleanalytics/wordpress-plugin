@@ -18,5 +18,5 @@ trait PluginLifecycle
 
     abstract public function onActivation(): void;
 
-    abstract public function onDeactivation(): void;
+    abstract public function onUninstall(): void;
 }

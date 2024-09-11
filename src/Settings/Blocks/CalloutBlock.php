@@ -12,6 +12,7 @@ readonly class CalloutBlock implements Block
     ) {
     }
 
+    #[\Override]
     public function render(): void
     {
         ?>

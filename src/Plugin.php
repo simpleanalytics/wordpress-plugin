@@ -9,25 +9,29 @@ use SimpleAnalytics\Scripts\AnalyticsScript;
 use SimpleAnalytics\Scripts\AutomatedEventsScript;
 use SimpleAnalytics\Scripts\InactiveScript;
 
-class Plugin
+final class Plugin
 {
     use PluginLifecycle;
 
+    #[\Override]
     protected function onBoot(): void
     {
         if (is_admin()) $this->defineAdminPage();
     }
 
+    #[\Override]
     public function onActivation(): void
     {
-
+        $this->registerOptions();
     }
 
-    public function onDeactivation(): void
+    #[\Override]
+    public function onUninstall(): void
     {
-
+        $this->deleteOptions();
     }
 
+    #[\Override]
     public function onInit(): void
     {
         $shouldCollect = (new TrackingPolicy)->shouldCollectAnalytics();
@@ -40,6 +44,25 @@ class Plugin
 
         if ($shouldCollect && Setting::boolean(SettingName::NOSCRIPT)) {
             AddNoScriptTag::register();
+        }
+    }
+
+    /**
+     * Register all options with autoload=true
+     * to preload them on each page and avoid
+     * extra database queries.
+     */
+    protected function registerOptions(): void
+    {
+        foreach (SettingName::cases() as $name) {
+            add_option($name, null, null, true);
+        }
+    }
+
+    protected function deleteOptions(): void
+    {
+        foreach (SettingName::cases() as $name) {
+            delete_option($name);
         }
     }
 
