@@ -54,8 +54,9 @@ final class Plugin
     /**
      * Register plugin options and autoload them.
      *
-     * @note Uses multiple options for flexibility, native hooks integration and safety.
      * @note Eliminates any unnecessary database lookups by preloading on each request.
+     * @note Due to the preloading we don't have to use a single serialized option but several instead.
+     *       This allows the usage native hooks and filters and reduces the chances of data corruption.
      */
     protected function addOptions(): void
     {
