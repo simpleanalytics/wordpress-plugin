@@ -48,9 +48,10 @@ final class Plugin
     }
 
     /**
-     * Register all options with autoload=true
-     * to preload them on each page and avoid
-     * extra database queries.
+     * Register plugin options and autoload them.
+     *
+     * @note Uses multiple options for flexibility, native hooks integration and safety.
+     * @note Eliminates any unnecessary database lookups by preloading on each request.
      */
     protected function addOptions(): void
     {
