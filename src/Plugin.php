@@ -85,7 +85,7 @@ final class Plugin
 
         if ($collect) {
             $scripts->add(new AnalyticsScript);
-        } else {
+        } elseif (is_user_logged_in()) {
             $scripts->add(new InactiveScript);
         }
 
