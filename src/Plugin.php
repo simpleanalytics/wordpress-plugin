@@ -22,7 +22,7 @@ final class Plugin
     #[\Override]
     public function onActivation(): void
     {
-        $this->registerOptions();
+        $this->addOptions();
     }
 
     #[\Override]
@@ -52,9 +52,17 @@ final class Plugin
      * to preload them on each page and avoid
      * extra database queries.
      */
-    protected function registerOptions(): void
+    protected function addOptions(): void
     {
-        foreach (SettingName::cases() as $name) {
+        // Add options with default values
+        add_option(SettingName::ENABLED, '1', null, true);
+
+        // Autoload the option introduced in a previous release.
+        update_option(SettingName::CUSTOM_DOMAIN, get_option(SettingName::CUSTOM_DOMAIN), true);
+
+        // Add all remaining options
+        $optionNames = array_diff(SettingName::cases(), [SettingName::ENABLED]);
+        foreach ($optionNames as $name) {
             add_option($name, null, null, true);
         }
     }
@@ -94,8 +102,7 @@ final class Plugin
                     ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
 
                 $tab->checkbox(SettingName::ENABLED, 'Enabled')
-                    ->description('Enable or disable Simple Analytics on your website.')
-                    ->default(true);
+                    ->description('Enable or disable Simple Analytics on your website.');
             })
             ->tab('Ignore Rules', function (Tab $tab) {
                 $tab->icon(get_icon('eye-slash'));
@@ -130,8 +137,7 @@ final class Plugin
                     ->docs('https://docs.simpleanalytics.com/trigger-custom-page-views#use-custom-collection-anyway');
 
                 $tab->checkbox(SettingName::NOSCRIPT, 'Support no JavaScript mode')
-                    ->description('Collect analytics from visitors with disabled or no JavaScript.')
-                    ->default(false);
+                    ->description('Collect analytics from visitors with disabled or no JavaScript.');
 
                 $tab->input(SettingName::ONLOAD_CALLBACK, 'Onload Callback')
                     ->description('JavaScript function to call when the script is loaded.')

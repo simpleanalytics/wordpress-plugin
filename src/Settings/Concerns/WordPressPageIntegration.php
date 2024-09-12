@@ -55,7 +55,6 @@ trait WordPressPageIntegration
             $field->getKey(),
             [
                 'type'              => $field->getValueType(),
-                'default'           => $field->getDefaultValue(),
                 'sanitize_callback' => $field->getValueSanitizer(),
             ]
         );
