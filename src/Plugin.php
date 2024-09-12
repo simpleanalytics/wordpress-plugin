@@ -5,6 +5,7 @@ namespace SimpleAnalytics;
 use SimpleAnalytics\Settings\{Page, Tab};
 use SimpleAnalytics\Actions\AddInactiveComment;
 use SimpleAnalytics\Actions\AddNoScriptTag;
+use SimpleAnalytics\Actions\AddPluginSettingsLink;
 use SimpleAnalytics\Scripts\AnalyticsScript;
 use SimpleAnalytics\Scripts\AutomatedEventsScript;
 use SimpleAnalytics\Scripts\InactiveScript;
@@ -16,7 +17,10 @@ final class Plugin
     #[\Override]
     protected function onBoot(): void
     {
-        if (is_admin()) $this->defineAdminPage();
+        if (is_admin()) {
+            $this->defineAdminPage();
+            AddPluginSettingsLink::register();
+        }
     }
 
     #[\Override]

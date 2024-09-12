@@ -21,6 +21,7 @@ defined('\\ABSPATH') || exit;
 
 define('SimpleAnalytics\\PLUGIN_URL', plugin_dir_url(__FILE__));
 define('SimpleAnalytics\\PLUGIN_PATH', plugin_dir_path(__FILE__));
+define('SimpleAnalytics\\PLUGIN_BASENAME', plugin_basename(__FILE__));
 define('SimpleAnalytics\\ENTRYPOINT_FILE', __FILE__);
 
 /**
@@ -43,6 +44,7 @@ require __DIR__ . '/src/Scripts/InactiveScript.php';
 require __DIR__ . '/src/Actions/Action.php';
 require __DIR__ . '/src/Actions/AddInactiveComment.php';
 require __DIR__ . '/src/Actions/AddNoScriptTag.php';
+require __DIR__ . '/src/Actions/AddPluginSettingsLink.php';
 require __DIR__ . '/src/Support/Str.php';
 require __DIR__ . '/src/Settings/Block.php';
 require __DIR__ . '/src/Settings/Blocks/CalloutBlock.php';

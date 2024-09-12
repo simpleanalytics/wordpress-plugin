@@ -5,11 +5,12 @@ namespace SimpleAnalytics\Actions;
 use SimpleAnalytics\Setting;
 use SimpleAnalytics\SettingName;
 
-class AddNoScriptTag extends Action
+class AddNoScriptTag
 {
+    use Action;
+
     protected string $hook = 'wp_footer';
 
-    #[\Override]
     public function handle(): void
     {
         echo sprintf("<noscript><img src=\"%s\" alt=\"\" referrerpolicy=\"no-referrer-when-downgrade\"></noscript>\n", $this->getCustomDomain());

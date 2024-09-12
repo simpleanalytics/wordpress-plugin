@@ -2,11 +2,12 @@
 
 namespace SimpleAnalytics\Actions;
 
-class AddInactiveComment extends Action
+class AddInactiveComment
 {
+    use Action;
+
     protected string $hook = 'wp_footer';
 
-    #[\Override]
     public function handle(): void
     {
         echo "<!-- Simple Analytics: Not logging requests from admins -->\n";

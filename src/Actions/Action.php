@@ -2,12 +2,8 @@
 
 namespace SimpleAnalytics\Actions;
 
-abstract class Action
+trait Action
 {
-    protected string $hook;
-
-    abstract public function handle();
-
     protected function hook(): string
     {
         return $this->hook;
