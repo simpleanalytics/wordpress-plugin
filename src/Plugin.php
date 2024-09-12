@@ -58,14 +58,14 @@ final class Plugin
         // Add options with default values
         add_option(SettingName::ENABLED, '1', null, true);
 
-        // Autoload the option introduced in a previous release.
-        update_option(SettingName::CUSTOM_DOMAIN, get_option(SettingName::CUSTOM_DOMAIN), true);
-
         // Add all remaining options
         $optionNames = array_diff(SettingName::cases(), [SettingName::ENABLED]);
         foreach ($optionNames as $name) {
             add_option($name, null, null, true);
         }
+
+        // Legacy. Update the option introduced in a previous release to use autoloading.
+        update_option(SettingName::CUSTOM_DOMAIN, get_option(SettingName::CUSTOM_DOMAIN), true);
     }
 
     protected function deleteOptions(): void
