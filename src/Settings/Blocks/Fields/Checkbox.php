@@ -44,7 +44,7 @@ class Checkbox extends Field
                     <p class="text-gray-500">
                         <?php echo esc_html($this->description); ?>
                     </p>
-                <?php endif ?>
+                <?php endif; ?>
             </div>
         </div>
         <?php

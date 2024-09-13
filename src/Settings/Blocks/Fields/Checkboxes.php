@@ -72,7 +72,7 @@ class Checkboxes extends Field
                 <p class="mt-2 text-gray-500">
                     <?php echo esc_html($this->description); ?>
                 </p>
-            <?php endif ?>
+            <?php endif; ?>
         </fieldset>
         <?php
     }

@@ -80,22 +80,22 @@ class Tab
                             <?php if (isset($this->docs)): ?>
                                 <a href="<?php echo esc_url($this->docs); ?>" target="_blank"
                                    class="text-primary">(docs)</a>
-                            <?php endif ?>
+                            <?php endif; ?>
                         </h1>
-                    <?php endif ?>
+                    <?php endif; ?>
                     <?php if (isset($this->description)): ?>
                         <p class="mt-2 text-sm text-gray-500">
                             <?php echo esc_html($this->description); ?>
                         </p>
-                    <?php endif ?>
+                    <?php endif; ?>
                 </div>
-            <?php endif ?>
+            <?php endif; ?>
 
             <?php foreach ($this->getBlocks() as $block): ?>
                 <div class="sm:col-span-4">
                     <?php $block->render(); ?>
                 </div>
-            <?php endforeach ?>
+            <?php endforeach; ?>
         </div>
         <?php
     }

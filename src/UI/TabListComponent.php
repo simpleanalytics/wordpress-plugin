@@ -26,7 +26,7 @@ readonly class TabListComponent
                     <?php echo $this->tabIcon($tab); ?>
                     <?php echo $tab->getName(); ?>
                 </a>
-            <?php endforeach ?>
+            <?php endforeach; ?>
         </nav>
         <?php
     }
