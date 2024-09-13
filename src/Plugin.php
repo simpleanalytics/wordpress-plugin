@@ -14,7 +14,6 @@ final class Plugin
 {
     use PluginLifecycle;
 
-    #[\Override]
     protected function onBoot(): void
     {
         if (is_admin()) {
@@ -23,29 +22,23 @@ final class Plugin
         }
     }
 
-    #[\Override]
     public function onActivation(): void
     {
         $this->addOptions();
     }
 
-    #[\Override]
     public function onUninstall(): void
     {
         $this->deleteOptions();
     }
 
-    #[\Override]
     public function onInit(): void
     {
         $shouldCollect = (new TrackingPolicy)->shouldCollectAnalytics();
-
         $this->addScripts($shouldCollect);
-
         if (! $shouldCollect) {
             AddInactiveComment::register();
         }
-
         if ($shouldCollect && Setting::boolean(SettingName::NOSCRIPT)) {
             AddNoScriptTag::register();
         }
@@ -121,7 +114,9 @@ final class Plugin
                 $tab->callout('IP and role exclusion only works when there is no page caching.');
 
                 $tab->multiCheckbox(SettingName::EXCLUDED_ROLES, 'Exclude User Roles')
-                    ->options(fn() => wp_roles()->get_names());
+                    ->options(function () {
+                        return wp_roles()->get_names();
+                    });
 
                 $tab->ipList(SettingName::EXCLUDED_IP_ADDRESSES, 'Exclude IP Addresses')
                     ->placeholder("127.0.0.1\n192.168.0.1")

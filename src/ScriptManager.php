@@ -11,10 +11,11 @@ use SimpleAnalytics\Scripts\Contracts\Script;
  */
 final class ScriptManager
 {
-    public function __construct(
+    private $scripts = [];
+    public function __construct($scripts = [])
+    {
         /** @var Script[] */
-        private $scripts = []
-    ) {
+        $this->scripts = $scripts;
     }
 
     public function add(Script $script): void
@@ -45,7 +46,7 @@ final class ScriptManager
      */
     protected function addAttributes(): void
     {
-        add_filter('wp_script_attributes', $this->addAttributesFilter(...), 10, 2);
+        add_filter('wp_script_attributes', \Closure::fromCallable([$this, 'addAttributesFilter']), 10, 2);
     }
 
     protected function addAttributesFilter($attributes)
@@ -55,7 +56,7 @@ final class ScriptManager
                 $script instanceof HasAttributes &&
                 $script->handle() . '-js' === $attributes['id']
             ) {
-                return [...$attributes, ...$script->attributes()];
+                return array_merge(is_array($attributes) ? $attributes : iterator_to_array($attributes), $script->attributes());
             }
         }
 
@@ -64,7 +65,7 @@ final class ScriptManager
 
     protected function removeIds(): void
     {
-        add_filter('script_loader_tag', $this->removeIdsFilter(...), 10, 2);
+        add_filter('script_loader_tag', \Closure::fromCallable([$this, 'removeIdsFilter']), 10, 2);
     }
 
     protected function removeIdsFilter($tag, $handle): string

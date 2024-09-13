@@ -10,22 +10,16 @@ use SimpleAnalytics\SettingName;
 
 class AutomatedEventsScript implements Script, HasAttributes, HideScriptId
 {
-    #[\Override]
     public function path(): string
     {
-        return sprintf(
-            "https://%s/auto-events.js",
-            Setting::get(SettingName::CUSTOM_DOMAIN, 'scripts.simpleanalyticscdn.com'),
-        );
+        return sprintf("https://%s/auto-events.js", Setting::get(SettingName::CUSTOM_DOMAIN, 'scripts.simpleanalyticscdn.com'));
     }
 
-    #[\Override]
     public function handle(): string
     {
         return 'simpleanalytics_auto_events';
     }
 
-    #[\Override]
     public function attributes(): array
     {
         return array_filter([

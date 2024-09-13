@@ -4,16 +4,30 @@ namespace SimpleAnalytics\UI;
 
 use SimpleAnalytics\Settings\Tab;
 
-readonly class TabListComponent
+class TabListComponent
 {
-    public function __construct(
-        private string $pageSlug,
-        private Tab    $currentTab,
+    /**
+     * @readonly
+     * @var string
+     */
+    private $pageSlug;
+    /**
+     * @readonly
+     * @var \SimpleAnalytics\Settings\Tab
+     */
+    private $currentTab;
+    /**
+     * @readonly
+     * @var mixed[]
+     */
+    private $tabs = [];
+    public function __construct(string $pageSlug, Tab    $currentTab, array  $tabs = [])
+    {
+        $this->pageSlug = $pageSlug;
+        $this->currentTab = $currentTab;
         /** @var Tab[] */
-        private array  $tabs = [],
-    ) {
+        $this->tabs = $tabs;
     }
-
     public function __invoke(): void
     {
         ?>

@@ -4,7 +4,10 @@ namespace SimpleAnalytics\Settings\Concerns;
 
 trait HasPlaceholder
 {
-    protected ?string $placeholder = null;
+    /**
+     * @var string|null
+     */
+    protected $placeholder;
 
     public function placeholder(string $placeholder): self
     {

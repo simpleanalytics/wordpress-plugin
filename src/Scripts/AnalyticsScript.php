@@ -10,22 +10,16 @@ use SimpleAnalytics\SettingName;
 
 class AnalyticsScript implements Script, HasAttributes, HideScriptId
 {
-    #[\Override]
     public function path(): string
     {
-        return sprintf(
-            "https://%s/latest.js",
-            Setting::get(SettingName::CUSTOM_DOMAIN, 'scripts.simpleanalyticscdn.com'),
-        );
+        return sprintf("https://%s/latest.js", Setting::get(SettingName::CUSTOM_DOMAIN, 'scripts.simpleanalyticscdn.com'));
     }
 
-    #[\Override]
     public function handle(): string
     {
         return 'simpleanalytics';
     }
 
-    #[\Override]
     public function attributes(): array
     {
         return array_filter([

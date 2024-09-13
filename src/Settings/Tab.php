@@ -9,16 +9,30 @@ class Tab
     use Concerns\HasDocs;
     use Concerns\ManagesBlocks;
 
-    protected readonly string $name;
+    /**
+     * @readonly
+     * @var string
+     */
+    protected $name;
 
-    protected readonly string $slug;
+    /**
+     * @readonly
+     * @var string
+     */
+    protected $slug;
 
-    protected ?SvgIcon $icon = null;
+    /**
+     * @var \SimpleAnalytics\Support\SvgIcon|null
+     */
+    protected $icon;
 
-    protected ?string $title;
+    /**
+     * @var string|null
+     */
+    protected $title;
 
     /** @var Block[] */
-    protected array $blocks = [];
+    protected $blocks = [];
 
     public function __construct(string $name, string $slug)
     {
@@ -55,11 +69,9 @@ class Tab
         return $this;
     }
 
-    #[\Override]
     protected function addBlock(Block $block): self
     {
         $this->blocks[] = $block;
-
         return $this;
     }
 

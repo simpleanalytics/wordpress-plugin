@@ -9,12 +9,18 @@ class Page
 {
     use WordPressPageIntegration;
 
-    protected string $title;
+    /**
+     * @var string
+     */
+    protected $title;
 
-    protected string $slug;
+    /**
+     * @var string
+     */
+    protected $slug;
 
     /** @var Tab[] */
-    protected array $tabs = [];
+    protected $tabs = [];
 
     public function __construct(string $title)
     {

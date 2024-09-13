@@ -12,40 +12,45 @@ class Checkboxes extends Field
     use HasDocs;
 
     /** @var array<mixed, string> */
-    protected array $options;
+    protected $options;
 
-    public function options(array|Closure $options): self
+    /**
+     * @param mixed[]|\Closure $options
+     */
+    public function options($options): self
     {
         $this->options = $options instanceof Closure ? $options() : $options;
 
         return $this;
     }
 
-    #[\Override]
     public function getValueType(): string
     {
         return 'array';
     }
 
-    #[\Override]
     public function getValueSanitizer(): callable
     {
         return function ($value) {
             if (! is_array($value)) $value = [$value];
 
-            return array_filter($value, fn($item) => array_key_exists($item, $this->options));
+            return array_filter($value, function ($item) {
+                return array_key_exists($item, $this->options);
+            });
         };
     }
 
-    #[\Override]
     public function render(): void
     {
         $currentValue = Setting::array($this->getKey());
         ?>
         <fieldset>
-            <?php (new LabelComponent(value: $this->getLabel(), docs: $this->docs, as: 'legend'))(); ?>
+            <?php 
+        (new LabelComponent($this->getLabel(), $this->docs, null, 'legend'))();
+        ?>
             <div class="mt-2 space-y-2">
-                <?php foreach ($this->options as $value => $label): ?>
+                <?php 
+        foreach ($this->options as $value => $label): ?>
                     <div class="relative flex items-start">
                         <div class="flex h-6 items-center">
                             <input
@@ -66,14 +71,17 @@ class Checkboxes extends Field
                             </label>
                         </div>
                     </div>
-                <?php endforeach; ?>
+                <?php endforeach;
+        ?>
             </div>
-            <?php if ($this->description): ?>
+            <?php 
+        if ($this->description): ?>
                 <p class="mt-2 text-gray-500">
                     <?php echo esc_html($this->description); ?>
                 </p>
-            <?php endif; ?>
+            <?php endif;
+        ?>
         </fieldset>
-        <?php
+        <?php 
     }
 }

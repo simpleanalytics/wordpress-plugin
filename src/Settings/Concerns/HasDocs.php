@@ -4,9 +4,15 @@ namespace SimpleAnalytics\Settings\Concerns;
 
 trait HasDocs
 {
-    protected ?string $description = null;
+    /**
+     * @var string|null
+     */
+    protected $description;
 
-    protected ?string $docs = null;
+    /**
+     * @var string|null
+     */
+    protected $docs;
 
     public function description(string $description): self
     {

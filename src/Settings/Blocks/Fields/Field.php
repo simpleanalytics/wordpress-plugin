@@ -6,9 +6,15 @@ use SimpleAnalytics\Settings\Block;
 
 abstract class Field implements Block
 {
-    protected string $key;
+    /**
+     * @var string
+     */
+    protected $key;
 
-    protected string $label;
+    /**
+     * @var string
+     */
+    protected $label;
 
     public function __construct(string $key, string $label)
     {

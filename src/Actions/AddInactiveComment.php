@@ -6,7 +6,10 @@ class AddInactiveComment
 {
     use Action;
 
-    protected string $hook = 'wp_footer';
+    /**
+     * @var string
+     */
+    protected $hook = 'wp_footer';
 
     public function handle(): void
     {

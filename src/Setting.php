@@ -4,7 +4,10 @@ namespace SimpleAnalytics;
 
 class Setting
 {
-    public static function get(string $key, $default = null): mixed
+    /**
+     * @return mixed
+     */
+    public static function get(string $key, $default = null)
     {
         $value = get_option($key);
 

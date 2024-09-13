@@ -11,7 +11,10 @@ class AddPluginSettingsLink
 {
     use Action;
 
-    protected string $hook = 'plugin_action_links_' . PLUGIN_BASENAME;
+    /**
+     * @var string
+     */
+    protected $hook = 'plugin_action_links_' . PLUGIN_BASENAME;
 
     public function handle($links): array
     {

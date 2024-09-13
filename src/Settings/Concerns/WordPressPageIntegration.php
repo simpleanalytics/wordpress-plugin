@@ -22,13 +22,7 @@ trait WordPressPageIntegration
     /** @internal */
     public function wpAddMenu(): void
     {
-        add_options_page(
-            $this->getTitle(),
-            $this->getTitle(),
-            'manage_options',
-            $this->getSlug(),
-            (new PageLayoutComponent($this)),
-        );
+        add_options_page($this->getTitle(), $this->getTitle(), 'manage_options', $this->getSlug(), (new PageLayoutComponent($this)));
     }
 
     /** @internal */
@@ -41,7 +35,9 @@ trait WordPressPageIntegration
 
     protected function registerTab(Tab $tab): void
     {
-        $fields = array_filter($tab->getBlocks(), fn($block) => $block instanceof Field);
+        $fields = array_filter($tab->getBlocks(), function ($block) {
+            return $block instanceof Field;
+        });
 
         foreach ($fields as $field) {
             $this->registerField($field, $tab);

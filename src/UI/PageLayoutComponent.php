@@ -6,10 +6,16 @@ use SimpleAnalytics\Settings\{Page, Tab};
 use function SimpleAnalytics\get_icon;
 use const SimpleAnalytics\PLUGIN_URL;
 
-readonly class PageLayoutComponent
+class PageLayoutComponent
 {
-    public function __construct(private Page $page)
+    /**
+     * @readonly
+     * @var \SimpleAnalytics\Settings\Page
+     */
+    private $page;
+    public function __construct(Page $page)
     {
+        $this->page = $page;
     }
 
     public function __invoke(): void
@@ -61,11 +67,7 @@ readonly class PageLayoutComponent
 
                         <!-- Tabs -->
                         <div class="mt-4 sm:mt-0">
-                            <?php (new TabListComponent(
-                                pageSlug  : $this->page->getSlug(),
-                                currentTab: $currentTab,
-                                tabs      : $this->page->getTabs(),
-                            ))(); ?>
+                            <?php (new TabListComponent($this->page->getSlug(), $currentTab, $this->page->getTabs()))(); ?>
                         </div>
                     </div>
                 </header>

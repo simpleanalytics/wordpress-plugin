@@ -7,9 +7,9 @@ trait PluginLifecycle
     public function boot(): void
     {
         $this->onBoot();
-        add_action('init', $this->onInit(...));
-        register_activation_hook(ENTRYPOINT_FILE, $this->onActivation(...));
-        register_deactivation_hook(ENTRYPOINT_FILE, $this->onUninstall(...));
+        add_action('init', \Closure::fromCallable([$this, 'onInit']));
+        register_activation_hook(ENTRYPOINT_FILE, \Closure::fromCallable([$this, 'onActivation']));
+        register_deactivation_hook(ENTRYPOINT_FILE, \Closure::fromCallable([$this, 'onUninstall']));
     }
 
     /** @internal */

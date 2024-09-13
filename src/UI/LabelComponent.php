@@ -4,16 +4,35 @@ namespace SimpleAnalytics\UI;
 
 use SimpleAnalytics\Support\Str;
 
-readonly class LabelComponent
+class LabelComponent
 {
-    public function __construct(
-        private string  $value,
-        private ?string $docs,
-        private ?string $for = null,
-        private string  $as = 'label',
-    ) {
+    /**
+     * @readonly
+     * @var string
+     */
+    private $value;
+    /**
+     * @readonly
+     * @var string|null
+     */
+    private $docs;
+    /**
+     * @readonly
+     * @var string|null
+     */
+    private $for;
+    /**
+     * @readonly
+     * @var string
+     */
+    private $as = 'label';
+    public function __construct(string  $value, ?string $docs, ?string $for = null, string  $as = 'label')
+    {
+        $this->value = $value;
+        $this->docs = $docs;
+        $this->for = $for;
+        $this->as = $as;
     }
-
     public function __invoke(): void
     {
         $attributes = [
