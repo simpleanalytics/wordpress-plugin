@@ -22,7 +22,7 @@ class Setting
     {
         $value = get_option($key);
 
-        if (empty($value)) {
+        if ($value === null || $value === '') {
             return $default;
         }
 
