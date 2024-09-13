@@ -43,7 +43,7 @@ class Checkboxes extends Field
         $currentValue = Setting::array($this->getKey());
         ?>
         <fieldset>
-            <?php (new LabelComponent(value: $this->getLabel(), docs: $this->docs, as: 'legend'))() ?>
+            <?php (new LabelComponent(value: $this->getLabel(), docs: $this->docs, as: 'legend'))(); ?>
             <div class="mt-2 space-y-2">
                 <?php foreach ($this->options as $value => $label): ?>
                     <div class="relative flex items-start">
@@ -70,7 +70,7 @@ class Checkboxes extends Field
             </div>
             <?php if ($this->description): ?>
                 <p class="mt-2 text-gray-500">
-                    <?php echo esc_html($this->description) ?>
+                    <?php echo esc_html($this->description); ?>
                 </p>
             <?php endif ?>
         </fieldset>

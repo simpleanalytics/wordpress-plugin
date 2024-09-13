@@ -43,22 +43,26 @@ class IpList extends Field
         $value = implode("\n", Setting::array($this->getKey()));
         $currentIp = $_SERVER['REMOTE_ADDR'];
         ?>
-        <?php (new LabelComponent(value: $this->getLabel(), docs: $this->docs, for: esc_attr($this->getKey())))() ?>
+        <?php (new LabelComponent(
+            value: $this->getLabel(),
+            docs: $this->docs,
+            for: esc_attr($this->getKey()))
+        )(); ?>
         <div class="mt-2">
             <textarea
-                name="<?php echo esc_attr($this->getKey()) ?>"
-                id="<?php echo esc_attr($this->getKey()) ?>"
+                name="<?php echo esc_attr($this->getKey()); ?>"
+                id="<?php echo esc_attr($this->getKey()); ?>"
                 rows="5"
                 class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:py-1.5 sm:text-sm sm:leading-6"
                 <?php if ($this->placeholder): ?>
-                    placeholder="<?php echo esc_attr($this->placeholder) ?>"
+                    placeholder="<?php echo esc_attr($this->placeholder); ?>"
                 <?php endif ?>
-            ><?php echo esc_textarea($value) ?></textarea>
+            ><?php echo esc_textarea($value); ?></textarea>
         </div>
         <div class="mt-2">
             <button
                 type="button"
-                onclick="sa_textarea_add_value(this.form.elements['<?php echo esc_js($this->getKey()) ?>'], '<?php echo esc_js($currentIp) ?>')"
+                onclick="sa_textarea_add_value(this.form.elements['<?php echo esc_js($this->getKey()); ?>'], '<?php echo esc_js($currentIp); ?>')"
                 class="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
             >
                 Add Current IP (<?php echo esc_html($currentIp); ?>)

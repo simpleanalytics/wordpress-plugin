@@ -30,7 +30,7 @@ readonly class PageLayoutComponent
             <link rel="stylesheet" href="<?php echo PLUGIN_URL ?>build/css/settings.css">
             <form method="post" action="options.php">
                 <!-- Hidden fields -->
-                <?php settings_fields($this->page->getOptionGroup($currentTab)) ?>
+                <?php settings_fields($this->page->getOptionGroup($currentTab)); ?>
 
                 <!-- Header / Nav -->
                 <header class="pt-5 bg-primaryBg">
@@ -54,7 +54,7 @@ readonly class PageLayoutComponent
                                 target="_blank"
                                 class="inline-flex items-center rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                             >
-                                <?php echo get_icon('external')->class('w-3.5 h-3.5 mr-0.5') ?>
+                                <?php echo get_icon('external')->class('w-3.5 h-3.5 mr-0.5'); ?>
                                 Open Dashboard
                             </a>
                         </div>
@@ -65,7 +65,7 @@ readonly class PageLayoutComponent
                                 pageSlug  : $this->page->getSlug(),
                                 currentTab: $currentTab,
                                 tabs      : $this->page->getTabs(),
-                            ))() ?>
+                            ))(); ?>
                         </div>
                     </div>
                 </header>
@@ -73,7 +73,7 @@ readonly class PageLayoutComponent
                 <!-- Fields / Layout -->
                 <div class="mx-auto max-w-3xl bg-white px-4 py-6 sm:px-4 lg:px-0">
                     <div class="border-b border-gray-900/10 pb-7">
-                        <?php $currentTab->render() ?>
+                        <?php $currentTab->render(); ?>
                     </div>
 
                     <div class="mt-6 flex items-center justify-start gap-x-6">

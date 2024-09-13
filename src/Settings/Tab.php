@@ -76,16 +76,16 @@ class Tab
                 <div class="sm:col-span-4">
                     <?php if (isset($this->title)): ?>
                         <h1 class="text-sm font-medium leading-6 text-gray-900">
-                            <?php echo esc_html($this->title) ?>
+                            <?php echo esc_html($this->title); ?>
                             <?php if (isset($this->docs)): ?>
-                                <a href="<?php echo esc_url($this->docs) ?>" target="_blank"
+                                <a href="<?php echo esc_url($this->docs); ?>" target="_blank"
                                    class="text-primary">(docs)</a>
                             <?php endif ?>
                         </h1>
                     <?php endif ?>
                     <?php if (isset($this->description)): ?>
                         <p class="mt-2 text-sm text-gray-500">
-                            <?php echo esc_html($this->description) ?>
+                            <?php echo esc_html($this->description); ?>
                         </p>
                     <?php endif ?>
                 </div>
@@ -93,7 +93,7 @@ class Tab
 
             <?php foreach ($this->getBlocks() as $block): ?>
                 <div class="sm:col-span-4">
-                    <?php $block->render() ?>
+                    <?php $block->render(); ?>
                 </div>
             <?php endforeach ?>
         </div>
