@@ -23,7 +23,7 @@ class TrackingPolicy
 
     protected function clientIpExcluded(string $ip): bool
     {
-        return in_array($ip, Setting::array(SettingName::EXCLUDED_IP_ADDRESSES), true);
+        return in_array($ip, Setting::array(SettingName::EXCLUDED_IP_ADDRESSES));
     }
 
     protected function containsExcludedRole(array $roles): bool
