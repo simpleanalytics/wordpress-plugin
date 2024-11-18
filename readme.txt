@@ -4,9 +4,9 @@ Contributors: simpleanalytics
 Donate link: https://simpleanalytics.com
 Tags: privacy-first, privacy-friendly, free analytics, website analytics, simple analytics, analytics, statistics
 Requires at least: 5.2
-Tested up to: 6.6.2
+Tested up to: 6.7
 Requires PHP: 7.2.0
-Stable tag: 1.26
+Stable tag: 1.27
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,10 @@ You can [leave your feedback here](https://simpleanalytics.com/feedback?ref=word
 No changes needed for upgrades.
 
 == Changelog ==
+
+= 1.27 =
+* 2024-11-18
+* Upgraded to WordPress 6.7
 
 = 1.26 =
 * 2024-09-13
