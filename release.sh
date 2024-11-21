@@ -78,10 +78,16 @@ if [[ "$CODE_CHANGED" == true ]]; then
 fi
 
 # Insert the new changelog entry below the line "== Changelog =="
-# Use sed to insert the changelog entry
-sed -i "/== Changelog ==/a \\
-\\
-$CHANGELOG_ENTRY" ./readme.txt
+# Create a temporary file with the new content
+ESCAPED_CHANGELOG_ENTRY=$(echo "$CHANGELOG_ENTRY" | sed 's/[\/&*]/\\&/g')
+awk -v entry="$ESCAPED_CHANGELOG_ENTRY" '
+/== Changelog ==/ {
+    print $0
+    print ""
+    print entry
+    next
+}
+{ print }' readme.txt > readme.txt.tmp && mv readme.txt.tmp readme.txt
 
 # Update the config.json file
 echo "{
