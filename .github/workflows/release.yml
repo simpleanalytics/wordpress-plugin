@@ -3,16 +3,13 @@ name: Release
 on:
   schedule:
     - cron: "0 8 * * 1" # At 08:00 on Monday.
-  push:
-    branches:
-      - main
-      - master
+  workflow_dispatch:
 
 jobs:
   update:
     name: Update version
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 10
 
     steps:
       - name: Check out repository
@@ -21,7 +18,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-            version: 9
+          version: 9
 
       - name: Install Node.js LTS
         uses: actions/setup-node@v4
@@ -36,12 +33,12 @@ jobs:
         run: pnpm build
 
       - name: Install PHP
-        uses: "shivammathur/setup-php@v2"
+        uses: shivammathur/setup-php@v2
         with:
-            php-version: "latest"
+          php-version: 'latest'
 
       - name: Install Composer
-        uses: "ramsey/composer-install@v3"
+        uses: ramsey/composer-install@v3
 
       - name: Downgrade PHP code to the minimum version WordPress requires
         run: vendor/bin/rector --ansi
@@ -50,8 +47,7 @@ jobs:
         run: find . -name "*.php" -type f -not \( -path "./vendor/*" -o -path "./node_modules/*" \) -print0 | xargs -0 -n1 php -l
 
       - name: Install jq
-        run: |
-          sudo apt-get install -y jq
+        run: sudo apt-get install -y jq
 
       - name: Run release.sh script
         id: script
@@ -65,9 +61,9 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git pull
+          git pull --rebase
           git add .
-          git commit -m "Update version to support WordPress ${{ steps.script.outputs.tested-up-to }}"
+          git commit -m "${{ steps.script.outputs.release-name }}"
           git push
 
       - name: Create release
@@ -78,8 +74,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.script.outputs.stable-tag }}
-          release_name: Add support for WordPress ${{ steps.script.outputs.tested-up-to }}
-          body: Upgrade to WordPress ${{ steps.script.outputs.tested-up-to }}
+          release_name: ${{ steps.script.outputs.release-name }}
+          body: ${{ steps.script.outputs.release-body }}
           draft: false
           prerelease: false
 
