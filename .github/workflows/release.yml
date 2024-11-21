@@ -1,107 +1,107 @@
 name: Release
 
 on:
-  schedule:
-    - cron: "0 8 * * 1" # At 08:00 on Monday.
-  workflow_dispatch: # Allows manual triggering
+    schedule:
+        - cron: "0 8 * * 1" # At 08:00 on Monday.
+    workflow_dispatch: # Allows manual triggering
 
 jobs:
-  update:
-    name: Update version
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    update:
+        name: Update version
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
 
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0       # Fetch all history so we can access tags and commits
-          fetch-tags: true     # Ensure tags are fetched
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0 # Fetch all history so we can access tags and commits
+                  fetch-tags: true # Ensure tags are fetched
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 9
 
-      - name: Install Node.js LTS
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: 'pnpm'
+            - name: Install Node.js LTS
+              uses: actions/setup-node@v4
+              with:
+                  node-version: lts/*
+                  cache: "pnpm"
 
-      - name: Install dependencies
-        run: pnpm install
+            - name: Install dependencies
+              run: pnpm install
 
-      - name: Build assets
-        run: pnpm build
+            - name: Build assets
+              run: pnpm build
 
-      - name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 'latest'
+            - name: Install PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: "latest"
 
-      - name: Install Composer
-        uses: ramsey/composer-install@v3
+            - name: Install Composer
+              uses: ramsey/composer-install@v3
 
-      - name: Downgrade PHP code to the minimum version WordPress requires
-        run: vendor/bin/rector --ansi
+            - name: Downgrade PHP code to the minimum version WordPress requires
+              run: vendor/bin/rector --ansi
 
-      - name: Validate PHP syntax to prevent fatal errors
-        run: find . -name "*.php" -type f -not \( -path "./vendor/*" -o -path "./node_modules/*" \) -print0 | xargs -0 -n1 php -l
+            - name: Validate PHP syntax to prevent fatal errors
+              run: find . -name "*.php" -type f -not \( -path "./vendor/*" -o -path "./node_modules/*" \) -print0 | xargs -0 -n1 php -l
 
-      - name: Install jq
-        run: sudo apt-get install -y jq
+            - name: Install jq
+              run: sudo apt-get install -y jq
 
-      - name: Run release.sh script
-        id: script
-        shell: bash
-        run: |
-          chmod +x ./release.sh
-          ./release.sh
+            - name: Run release.sh script
+              id: script
+              shell: bash
+              run: |
+                  chmod +x ./release.sh
+                  ./release.sh
 
-      - name: Commit and push changes
-        if: steps.script.outputs.has-changed == 'true'
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add .
-          git commit -m "${{ steps.script.outputs.release-name }}"
-          # Push changes, handling potential conflicts
-          git push || git pull --rebase origin ${{ github.ref_name }} && git push
+            - name: Commit and push changes
+              if: steps.script.outputs.has-changed == 'true'
+              run: |
+                  git config user.name "GitHub Actions"
+                  git config user.email "actions@github.com"
+                  git add .
+                  git commit -m "${{ steps.script.outputs.release-name }}"
+                  # Push changes, handling potential conflicts
+                  git push || git pull --rebase origin ${{ github.ref_name }} && git push
 
-      - name: Create release
-        id: release
-        if: steps.script.outputs.has-changed == 'true'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.script.outputs.stable-tag }}
-          release_name: ${{ steps.script.outputs.release-name }}
-          body: ${{ steps.script.outputs.release-body }}
-          draft: false
-          prerelease: false
+            - name: Create release
+              id: release
+              if: steps.script.outputs.has-changed == 'true'
+              uses: actions/create-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: ${{ steps.script.outputs.stable-tag }}
+                  release_name: ${{ steps.script.outputs.release-name }}
+                  body: ${{ steps.script.outputs.release-body }}
+                  draft: false
+                  prerelease: false
 
-      - name: WordPress Plugin Deploy
-        if: steps.script.outputs.has-changed == 'true'
-        id: deploy
-        uses: 10up/action-wordpress-plugin-deploy@2.2.2
-        with:
-          generate-zip: true
-        env:
-          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-          SLUG: simpleanalytics
-          VERSION: ${{ steps.script.outputs.stable-tag }}
-          ASSETS_DIR: assets
+            - name: WordPress Plugin Deploy
+              if: steps.script.outputs.has-changed == 'true'
+              id: deploy
+              uses: 10up/action-wordpress-plugin-deploy@2.2.2
+              with:
+                  generate-zip: true
+              env:
+                  SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+                  SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+                  SLUG: simpleanalytics
+                  VERSION: ${{ steps.script.outputs.stable-tag }}
+                  ASSETS_DIR: assets
 
-      - name: Upload release asset
-        if: steps.script.outputs.has-changed == 'true'
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.release.outputs.upload_url }}
-          asset_path: ${{ steps.deploy.outputs.zip-path }}
-          asset_name: ${{ github.event.repository.name }}.zip
-          asset_content_type: application/zip
+            - name: Upload release asset
+              if: steps.script.outputs.has-changed == 'true'
+              uses: actions/upload-release-asset@v1.0.2
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.release.outputs.upload_url }}
+                  asset_path: ${{ steps.deploy.outputs.zip-path }}
+                  asset_name: ${{ github.event.repository.name }}.zip
+                  asset_content_type: application/zip
