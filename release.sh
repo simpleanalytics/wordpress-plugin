@@ -46,19 +46,19 @@ if [[ "$CODE_CHANGED" == false && "$WP_VERSION_CHANGED" == false ]]; then
 fi
 
 # Increment the STABLE_TAG value
-STABLE_TAG=$(echo "$PREVIOUS_STABLE_TAG" | awk -F. '{$NF+=1} 1' OFS=.)
+STABLE_TAG=$(echo "$PREVIOUS_STABLE_TAG" | awk -F. '{$NF+=1} 1' OFS='.')
 
 echo "### :rocket: Updated versions :rocket:" >> $GITHUB_STEP_SUMMARY
-echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
+echo "" >> $GITHUB_STEP_SUMMARY
 echo "- New stable tag: $STABLE_TAG (was $PREVIOUS_STABLE_TAG)" >> $GITHUB_STEP_SUMMARY
 echo "- New WordPress version: $TESTED_UP_TO (was $CONFIG_TESTED_UP_TO)" >> $GITHUB_STEP_SUMMARY
 
 # Use sed to replace the version lines in some files
-sed -i -e "s/Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
-       -e "s/Stable tag: [0-9.]*$/Stable tag: $STABLE_TAG/" ./readme.txt
+sed -i -e "s/^Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
+       -e "s/^Stable tag: [0-9.]*$/Stable tag: $STABLE_TAG/" ./readme.txt
 
-sed -i -e "s/Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
-       -e "s/Version: [0-9.]*$/Version: $STABLE_TAG/" ./simple-analytics.php
+sed -i -e "s/^Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
+       -e "s/^Version: [0-9.]*$/Version: $STABLE_TAG/" ./simple-analytics.php
 
 # Get the current date in the specified format
 DATE=$(date +"%Y-%m-%d")
@@ -68,12 +68,13 @@ CHANGELOG_ENTRY="= $STABLE_TAG =\n* $DATE"
 
 # Add WordPress version update to changelog if it has changed
 if [[ "$WP_VERSION_CHANGED" == true ]]; then
-    CHANGELOG_ENTRY="$CHANGELOG_ENTRY\n* Upgraded to WordPress $TESTED_UP_TO"
+    CHANGELOG_ENTRY="$CHANGELOG_ENTRY\n* Tested up to WordPress $TESTED_UP_TO"
 fi
 
 # Add commit messages to changelog if there are code changes
 if [[ "$CODE_CHANGED" == true ]]; then
-    CHANGELOG_ENTRY="$CHANGELOG_ENTRY\n* Changes:\n$COMMITS_SINCE_TAG"
+    CHANGELOG_ENTRY="$CHANGELOG_ENTRY\n* Changes:"
+    CHANGELOG_ENTRY="$CHANGELOG_ENTRY\n$COMMITS_SINCE_TAG"
 fi
 
 # Insert the new changelog entry below the line "== Changelog =="
@@ -88,7 +89,24 @@ echo "{
   \"STABLE_TAG\": \"$STABLE_TAG\"
 }" > config.json
 
-# Output the new version information for use in subsequent GitHub Actions steps
+# Prepare release name and body
+if [[ "$WP_VERSION_CHANGED" == true && "$CODE_CHANGED" == true ]]; then
+    RELEASE_NAME="Release $STABLE_TAG: Code updates and support for WordPress $TESTED_UP_TO"
+elif [[ "$WP_VERSION_CHANGED" == true ]]; then
+    RELEASE_NAME="Release $STABLE_TAG: Support for WordPress $TESTED_UP_TO"
+elif [[ "$CODE_CHANGED" == true ]]; then
+    RELEASE_NAME="Release $STABLE_TAG: Code updates"
+else
+    RELEASE_NAME="Release $STABLE_TAG"
+fi
+
+RELEASE_BODY="$CHANGELOG_ENTRY"
+
+# Output to GitHub Actions
 echo "tested-up-to=$TESTED_UP_TO" >> $GITHUB_OUTPUT
 echo "stable-tag=$STABLE_TAG" >> $GITHUB_OUTPUT
 echo "has-changed=true" >> $GITHUB_OUTPUT
+echo "code-changed=$CODE_CHANGED" >> $GITHUB_OUTPUT
+echo "wp-version-changed=$WP_VERSION_CHANGED" >> $GITHUB_OUTPUT
+echo "release-name=$RELEASE_NAME" >> $GITHUB_OUTPUT
+echo "release-body=$RELEASE_BODY" >> $GITHUB_OUTPUT
