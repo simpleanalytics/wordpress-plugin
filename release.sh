@@ -38,9 +38,9 @@ fi
 
 # Exit early if no code changes and WordPress version hasn't changed
 if [[ "$CODE_CHANGED" == false && "$WP_VERSION_CHANGED" == false ]]; then
-    echo "### :no_good_woman: Didn't update versions :no_good:" >> $GITHUB_STEP_SUMMARY
-    echo "" >> $GITHUB_STEP_SUMMARY
-    echo "Stopped because there are no changes since the last release." >> $GITHUB_STEP_SUMMARY
+    echo "### :no_good_woman: Didn't update versions :no_good:" >> "$GITHUB_STEP_SUMMARY"
+    echo "" >> "$GITHUB_STEP_SUMMARY"
+    echo "Stopped because there are no changes since the last release." >> "$GITHUB_STEP_SUMMARY"
     echo "No changes detected. Exiting..."
     exit 0
 fi
@@ -48,10 +48,10 @@ fi
 # Increment the STABLE_TAG value
 STABLE_TAG=$(echo "$PREVIOUS_STABLE_TAG" | awk -F. '{$NF+=1} 1' OFS='.')
 
-echo "### :rocket: Updated versions :rocket:" >> $GITHUB_STEP_SUMMARY
-echo "" >> $GITHUB_STEP_SUMMARY
-echo "- New stable tag: $STABLE_TAG (was $PREVIOUS_STABLE_TAG)" >> $GITHUB_STEP_SUMMARY
-echo "- New WordPress version: $TESTED_UP_TO (was $CONFIG_TESTED_UP_TO)" >> $GITHUB_STEP_SUMMARY
+echo "### :rocket: Updated versions :rocket:" >> "$GITHUB_STEP_SUMMARY"
+echo "" >> "$GITHUB_STEP_SUMMARY"
+echo "- New stable tag: $STABLE_TAG (was $PREVIOUS_STABLE_TAG)" >> "$GITHUB_STEP_SUMMARY"
+echo "- New WordPress version: $TESTED_UP_TO (was $CONFIG_TESTED_UP_TO)" >> "$GITHUB_STEP_SUMMARY"
 
 # Use sed to replace the version lines in some files
 sed -i -e "s/^Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
@@ -74,20 +74,17 @@ fi
 # Add commit messages to changelog if there are code changes
 if [[ "$CODE_CHANGED" == true ]]; then
     CHANGELOG_ENTRY=$(printf "%s\n* Changes:" "$CHANGELOG_ENTRY")
-    while IFS= read -r line; do
-        CHANGELOG_ENTRY=$(printf "%s\n%s" "$CHANGELOG_ENTRY" "$line")
-    done < <(echo "$COMMITS_SINCE_TAG")
+    CHANGELOG_ENTRY=$(printf "%s\n%s" "$CHANGELOG_ENTRY" "$COMMITS_SINCE_TAG")
 fi
 
 # Insert the new changelog entry below the line "== Changelog =="
-awk '
-/== Changelog ==/ {
-    print $0
-    print ""
-    printf "%s\n", ENVIRON["CHANGELOG_ENTRY"]
-    next
-}
-{ print }' readme.txt > readme.txt.tmp && mv readme.txt.tmp readme.txt
+awk -v changelog="$CHANGELOG_ENTRY" '
+    /== Changelog ==/ {
+        print $0 "\n"
+        print changelog "\n"
+        next
+    }
+    { print }' readme.txt > readme.txt.tmp && mv readme.txt.tmp readme.txt
 
 # Update the config.json file
 echo "{
@@ -108,11 +105,17 @@ fi
 
 RELEASE_BODY="$CHANGELOG_ENTRY"
 
-# Output to GitHub Actions
-echo "tested-up-to=$TESTED_UP_TO" >> $GITHUB_OUTPUT
-echo "stable-tag=$STABLE_TAG" >> $GITHUB_OUTPUT
-echo "has-changed=true" >> $GITHUB_OUTPUT
-echo "code-changed=$CODE_CHANGED" >> $GITHUB_OUTPUT
-echo "wp-version-changed=$WP_VERSION_CHANGED" >> $GITHUB_OUTPUT
-echo "release-name=$RELEASE_NAME" >> $GITHUB_OUTPUT
-echo "release-body=$RELEASE_BODY" >> $GITHUB_OUTPUT
+# Output to GitHub Actions using the multiline syntax
+echo "tested-up-to=$TESTED_UP_TO" >> "$GITHUB_OUTPUT"
+echo "stable-tag=$STABLE_TAG" >> "$GITHUB_OUTPUT"
+echo "has-changed=true" >> "$GITHUB_OUTPUT"
+echo "code-changed=$CODE_CHANGED" >> "$GITHUB_OUTPUT"
+echo "wp-version-changed=$WP_VERSION_CHANGED" >> "$GITHUB_OUTPUT"
+
+# Output RELEASE_NAME (in case it contains special characters)
+echo "release-name=$RELEASE_NAME" >> "$GITHUB_OUTPUT"
+
+# Output RELEASE_BODY using the multiline syntax
+echo "release-body<<EOF" >> "$GITHUB_OUTPUT"
+echo "$RELEASE_BODY" >> "$GITHUB_OUTPUT"
+echo "EOF" >> "$GITHUB_OUTPUT"
