@@ -101,6 +101,7 @@ final class Plugin
                     ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
 
                 $tab->checkbox(SettingName::ENABLED, 'Enabled')
+                    ->default(true)
                     ->description('Enable or disable Simple Analytics on your website.');
             })
             ->tab('Ignore Rules', function (Tab $tab) {
