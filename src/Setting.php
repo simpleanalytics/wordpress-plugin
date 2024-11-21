@@ -20,7 +20,7 @@ class Setting
 
     public static function boolean(string $key, ?bool $default = null): ?bool
     {
-        $value = get_option($key);
+        $value = get_option($key, null);
 
         if ($value === null || $value === '') {
             return $default;
