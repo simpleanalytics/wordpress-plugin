@@ -10,7 +10,10 @@ class Checkbox extends Field
 {
     use HasDocs;
 
-    protected bool $default = false;
+    /**
+     * @var bool
+     */
+    protected $default = false;
 
     public function getValueSanitizer(): callable
     {

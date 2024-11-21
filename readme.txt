@@ -4,9 +4,9 @@ Contributors: simpleanalytics
 Donate link: https://simpleanalytics.com
 Tags: privacy-first, privacy-friendly, free analytics, website analytics, simple analytics, analytics, statistics
 Requires at least: 5.2
-Tested up to: 6.7
+Tested up to: 6.7.1
 Requires PHP: 7.2.0
-Stable tag: 1.27
+Stable tag: 1.28
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,23 @@ You can [leave your feedback here](https://simpleanalytics.com/feedback?ref=word
 No changes needed for upgrades.
 
 == Changelog ==
+
+= 1.28 =
+* 2024-11-21
+* Tested up to WordPress 6.7.1
+* Changes:
+* Fix invalid changelog multiline format
+* Fix invalid changelog format
+* Run awk instead of sed to consistently run on mac and linux
+* Run prettier to cleanup code
+* Remove rebase in git pull
+* Improve release.sh script and changelog
+* Use changelog from release script
+* Allow regualar commits
+* Set the checkbox default in the UI when empty
+* Fix boolean value default retrieval
+* Update version to support WordPress 6.7
+
 
 = 1.27 =
 * 2024-11-18
