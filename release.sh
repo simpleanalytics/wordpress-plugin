@@ -11,17 +11,39 @@ TESTED_UP_TO=$(echo "$JSON_DATA" | jq -r 'to_entries[] | select(.value == "lates
 # Read the TESTED_UP_TO value from config.json
 CONFIG_TESTED_UP_TO=$(jq -r '.TESTED_UP_TO' ./config.json)
 
-# Compare the two values and exit if they are the same
-if [[ "$TESTED_UP_TO" == "$CONFIG_TESTED_UP_TO" ]]; then
-    echo "### :no_good_woman: Didn't update versions :no_good:" >> $GITHUB_STEP_SUMMARY
-    echo "" >> $GITHUB_STEP_SUMMARY
-    echo "Stopped because WordPress version ($TESTED_UP_TO) has not changed." >> $GITHUB_STEP_SUMMARY
-    echo "TESTED_UP_TO has not changed. Exiting..."
-    exit 0
-fi
-
 # Fetch the current STABLE_TAG value from config.json
 PREVIOUS_STABLE_TAG=$(jq -r '.STABLE_TAG' config.json)
+
+# Get the latest git tag
+LATEST_TAG=$(git describe --tags --abbrev=0 || echo "")
+
+# Check if there are commits since the latest tag
+if [ -n "$LATEST_TAG" ]; then
+    COMMITS_SINCE_TAG=$(git log "$LATEST_TAG"..HEAD --pretty=format:"* %s")
+else
+    COMMITS_SINCE_TAG=$(git log --pretty=format:"* %s")
+fi
+
+# Determine if there are code changes since the last tag
+CODE_CHANGED=false
+if [[ -n "$COMMITS_SINCE_TAG" ]]; then
+    CODE_CHANGED=true
+fi
+
+# Determine if the WordPress version has changed
+WP_VERSION_CHANGED=false
+if [[ "$TESTED_UP_TO" != "$CONFIG_TESTED_UP_TO" ]]; then
+    WP_VERSION_CHANGED=true
+fi
+
+# Exit early if no code changes and WordPress version hasn't changed
+if [[ "$CODE_CHANGED" == false && "$WP_VERSION_CHANGED" == false ]]; then
+    echo "### :no_good_woman: Didn't update versions :no_good:" >> $GITHUB_STEP_SUMMARY
+    echo "" >> $GITHUB_STEP_SUMMARY
+    echo "Stopped because there are no changes since the last release." >> $GITHUB_STEP_SUMMARY
+    echo "No changes detected. Exiting..."
+    exit 0
+fi
 
 # Increment the STABLE_TAG value
 STABLE_TAG=$(echo "$PREVIOUS_STABLE_TAG" | awk -F. '{$NF+=1} 1' OFS=.)
@@ -41,20 +63,24 @@ sed -i -e "s/Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
 # Get the current date in the specified format
 DATE=$(date +"%Y-%m-%d")
 
-# Generate the new changelog item
-NEW_ENTRY=$(cat <<EOL
-= $STABLE_TAG =
-* $DATE
-* Upgraded to WordPress $TESTED_UP_TO
-EOL
-)
+# Prepare the changelog entry
+CHANGELOG_ENTRY="= $STABLE_TAG =\n* $DATE"
 
-# Use sed to insert the new changelog item below the line "== Changelog =="
-sed -i -e "/== Changelog ==/a\\
+# Add WordPress version update to changelog if it has changed
+if [[ "$WP_VERSION_CHANGED" == true ]]; then
+    CHANGELOG_ENTRY="$CHANGELOG_ENTRY\n* Upgraded to WordPress $TESTED_UP_TO"
+fi
+
+# Add commit messages to changelog if there are code changes
+if [[ "$CODE_CHANGED" == true ]]; then
+    CHANGELOG_ENTRY="$CHANGELOG_ENTRY\n* Changes:\n$COMMITS_SINCE_TAG"
+fi
+
+# Insert the new changelog entry below the line "== Changelog =="
+# Use sed to insert the changelog entry
+sed -i "/== Changelog ==/a \\
 \\
-= $STABLE_TAG =\\
-* $DATE\\
-* Upgraded to WordPress $TESTED_UP_TO" ./readme.txt
+$CHANGELOG_ENTRY" ./readme.txt
 
 # Update the config.json file
 echo "{
