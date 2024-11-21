@@ -64,27 +64,27 @@ sed -i -e "s/^Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
 DATE=$(date +"%Y-%m-%d")
 
 # Prepare the changelog entry
-CHANGELOG_ENTRY="= $STABLE_TAG =\n* $DATE"
+CHANGELOG_ENTRY=$(printf "= %s =\n* %s" "$STABLE_TAG" "$DATE")
 
 # Add WordPress version update to changelog if it has changed
 if [[ "$WP_VERSION_CHANGED" == true ]]; then
-    CHANGELOG_ENTRY="$CHANGELOG_ENTRY\n* Tested up to WordPress $TESTED_UP_TO"
+    CHANGELOG_ENTRY=$(printf "%s\n* Tested up to WordPress %s" "$CHANGELOG_ENTRY" "$TESTED_UP_TO")
 fi
 
 # Add commit messages to changelog if there are code changes
 if [[ "$CODE_CHANGED" == true ]]; then
-    CHANGELOG_ENTRY="$CHANGELOG_ENTRY\n* Changes:"
-    CHANGELOG_ENTRY="$CHANGELOG_ENTRY\n$COMMITS_SINCE_TAG"
+    CHANGELOG_ENTRY=$(printf "%s\n* Changes:" "$CHANGELOG_ENTRY")
+    while IFS= read -r line; do
+        CHANGELOG_ENTRY=$(printf "%s\n%s" "$CHANGELOG_ENTRY" "$line")
+    done < <(echo "$COMMITS_SINCE_TAG")
 fi
 
 # Insert the new changelog entry below the line "== Changelog =="
-# Create a temporary file with the new content
-ESCAPED_CHANGELOG_ENTRY=$(echo "$CHANGELOG_ENTRY" | sed 's/[\/&*]/\\&/g')
-awk -v entry="$ESCAPED_CHANGELOG_ENTRY" '
+awk '
 /== Changelog ==/ {
     print $0
     print ""
-    print entry
+    printf "%s\n", ENVIRON["CHANGELOG_ENTRY"]
     next
 }
 { print }' readme.txt > readme.txt.tmp && mv readme.txt.tmp readme.txt
