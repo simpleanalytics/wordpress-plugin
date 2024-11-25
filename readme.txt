@@ -6,7 +6,7 @@ Tags: privacy-first, privacy-friendly, free analytics, website analytics, simple
 Requires at least: 5.2
 Tested up to: 6.7.1
 Requires PHP: 7.2.0
-Stable tag: 1.28
+Stable tag: 1.29
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,12 @@ You can [leave your feedback here](https://simpleanalytics.com/feedback?ref=word
 No changes needed for upgrades.
 
 == Changelog ==
+
+= 1.29 =
+* 2024-11-25
+* Changes:
+* Release 1.28: Code updates and support for WordPress 6.7.1
+
 
 = 1.28 =
 * 2024-11-21
