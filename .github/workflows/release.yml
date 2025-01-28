@@ -85,7 +85,7 @@ jobs:
             - name: WordPress Plugin Deploy
               if: steps.script.outputs.has-changed == 'true'
               id: deploy
-              uses: 10up/action-wordpress-plugin-deploy@2.2.2
+              uses: 10up/action-wordpress-plugin-deploy@2.3.0
               with:
                   generate-zip: true
               env:
