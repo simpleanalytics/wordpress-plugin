@@ -12,7 +12,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Simple, free, and privacy-friendly website analytics
 
-{Add product GFI}
+https://vimeo.com/1033359807/dde00e7f39
 
 == Description ==
 
@@ -36,19 +36,19 @@ Use it for free as long as you need, or if you're happy, consider one of our pai
 **Events**
 -   Event Tracking: Monitor specific user interactions that are not captured by standard page views, such as button clicks, form submissions, or video plays.
 
-{Add Events dashboard screenshot}
+![The Events Explorer](https://assets.simpleanalytics.com/plugins/wordpress/event-explorer.png)
 
 **Goals**
 -   Goal Tracking: Set specific goals to monitor user interactions on your website, such as conversions or engagement metrics.
 -   Goal Cards: Visual representations of your goals that allow for quick performance assessments.
 -   Custom Filters: Create filters to refine the data associated with each goal, making it easier to analyze specific user behaviors.
 
-{Add Goals dashboard screenshot}
+![Goals dashboard](https://assets.simpleanalytics.com/plugins/wordpress/goals.png)
 
 **Ai Analytics**
 -   Chat with your analytics to generate custom insights and dashboards.
 
-{Add Ai analytics GIF}
+https://vimeo.com/1033359881/7e93b527ab
 
 **Custom Views**
 -   Permanent Filters: Establish permanent filters on your dashboard to focus on specific data sets.
