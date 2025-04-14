@@ -1,0 +1,28 @@
+name: Playwright Tests for WordPress
+on:
+  push:
+  pull_request:
+
+jobs:
+  playwright-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+      node-version: 18
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+
+    # - name: Run Playwright Tests
+    #     env:
+    #     BASE_URL: https://your-wordpress-site.com
+    #     run: npx playwright test
