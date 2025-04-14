@@ -6,10 +6,6 @@ class TrackingPolicy
 {
     public function shouldCollectAnalytics(): bool
     {
-        if (Setting::boolean(SettingName::ENABLED, true) === false) {
-            return false;
-        }
-
         if ($this->clientIpExcluded($_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'])) {
             return false;
         }

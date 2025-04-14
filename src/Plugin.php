@@ -99,10 +99,6 @@ final class Plugin
                     ->placeholder('Enter your custom domain or leave it empty.')
                     ->description('E.g. api.example.com. Leave empty to use the default domain (most users).')
                     ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
-
-                $tab->checkbox(SettingName::ENABLED, 'Enabled')
-                    ->default(true)
-                    ->description('Enable or disable Simple Analytics on your website.');
             })
             ->tab('Ignore Rules', function (Tab $tab) {
                 $tab->icon(get_icon('eye-slash'));
