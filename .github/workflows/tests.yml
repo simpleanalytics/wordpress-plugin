@@ -62,9 +62,7 @@ jobs:
                   sed -i "s/database_name_here/${WP_DB_NAME}/" wordpress/wp-config.php
                   sed -i "s/username_here/${WP_DB_USER}/" wordpress/wp-config.php
                   sed -i "s/password_here/${WP_DB_PASS}/" wordpress/wp-config.php
-                  echo "define( 'DB_HOST', '${WP_DB_HOST}' );" >> wordpress/wp-config.php
-                  echo "define( 'WP_HOME', '${WP_SITE_URL}' );" >> wordpress/wp-config.php
-                  echo "define( 'WP_SITEURL', '${WP_SITE_URL}' );" >> wordpress/wp-config.php
+                  sed -i "s/localhost/${WP_DB_HOST}/" wordpress/wp-config.php
 
             - name: Install WordPress
               run: |
