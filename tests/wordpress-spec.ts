@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { createLoggedInPage, loginToWordPress } from "./helpers/login";
 
 test.beforeAll(async ({ browser }) => {
     await loginToWordPress(browser);
