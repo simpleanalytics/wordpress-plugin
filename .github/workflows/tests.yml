@@ -90,15 +90,21 @@ jobs:
                   php -S localhost:8888 -t wordpress > /dev/null 2>&1 &
                   sleep 5
 
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 10
+
             - name: Setup Node
               uses: actions/setup-node@v4
               with:
-                  node-version: 20
+                  node-version: lts/*
+                  cache: "pnpm"
 
             - name: Install Playwright and dependencies
               run: |
-                  npm ci
-                  npx playwright install --with-deps
+                  pnpm install
+                  pnpx playwright install --with-deps
 
             - name: Run Playwright tests
               run: npx playwright test
