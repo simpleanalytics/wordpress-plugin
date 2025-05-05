@@ -6,7 +6,18 @@ on:
 
 jobs:
     e2e:
+        name: PHP ${{ matrix.php }} - WP ${{ matrix.wordpress }}
         runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                php: [ '7.4', '8.0', '8.1', '8.2' ]
+                wordpress: [ '5.9', '6.0', '6.3', '6.5.3' ]
+                exclude:
+                    # Exclude older PHP versions with newer WordPress
+                    - php: '7.4'
+                      wordpress: '6.5.3'
+
         services:
             mysql:
                 image: mysql:8.0
@@ -21,7 +32,7 @@ jobs:
                     --health-retries=5
 
         env:
-            WP_VERSION: 6.5.3
+            WP_VERSION: ${{ matrix.wordpress }}
             WP_SITE_URL: http://localhost:8888
             WP_DB_NAME: wordpress
             WP_DB_USER: root
@@ -35,7 +46,10 @@ jobs:
             - name: Set up PHP
               uses: shivammathur/setup-php@v2
               with:
-                  php-version: 8.2
+                  php-version: ${{ matrix.php }}
+                  extensions: mysqli, zip, gd
+                  coverage: none
+                  tools: wp-cli
 
             - name: Install dependencies
               run: |
@@ -47,7 +61,7 @@ jobs:
               uses: actions/cache@v3
               with:
                   path: wordpress
-                  key: wp-${{ env.WP_VERSION }}
+                  key: wp-${{ matrix.wordpress }}-php-${{ matrix.php }}
 
             - name: Download WordPress
               if: steps.cache-wordpress.outputs.cache-hit != 'true'
@@ -63,12 +77,11 @@ jobs:
                   sed -i "s/username_here/${WP_DB_USER}/" wordpress/wp-config.php
                   sed -i "s/password_here/${WP_DB_PASS}/" wordpress/wp-config.php
                   sed -i "s/localhost/${WP_DB_HOST}/" wordpress/wp-config.php
+                  # Add WP_DEBUG settings
+                  sed -i "/define( 'DB_COLLATE', '' );/a define( 'WP_DEBUG', true );\ndefine( 'WP_DEBUG_LOG', true );" wordpress/wp-config.php
 
             - name: Install WordPress
               run: |
-                  curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-                  chmod +x wp-cli.phar
-                  sudo mv wp-cli.phar /usr/local/bin/wp
                   wp core install \
                     --url="${WP_SITE_URL}" \
                     --title="Test Site" \
@@ -108,3 +121,13 @@ jobs:
 
             - name: Run Playwright tests
               run: npx playwright test
+
+            - name: Upload test results
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: test-results-php${{ matrix.php }}-wp${{ matrix.wordpress }}
+                  path: |
+                      playwright-report/
+                      test-results/
+                  retention-days: 30
