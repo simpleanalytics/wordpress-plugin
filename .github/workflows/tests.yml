@@ -1,28 +1,106 @@
-name: Playwright Tests for WordPress
+name: E2E Tests
+
 on:
-  push:
-  pull_request:
+    push:
+    pull_request:
 
 jobs:
-  playwright-tests:
-    runs-on: ubuntu-latest
+    e2e:
+        runs-on: ubuntu-latest
+        services:
+            mysql:
+                image: mysql:8.0
+                env:
+                    MYSQL_DATABASE: wordpress
+                    MYSQL_ROOT_PASSWORD: root
+                ports: [ 3306:3306 ]
+                options: >-
+                    --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=5
 
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+        env:
+            WP_VERSION: 6.5.3
+            WP_SITE_URL: http://localhost:8888
+            WP_DB_NAME: wordpress
+            WP_DB_USER: root
+            WP_DB_PASS: root
+            WP_DB_HOST: 127.0.0.1
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
+        steps:
+            - name: Checkout plugin
+              uses: actions/checkout@v4
 
-    - name: Install Dependencies
-      run: npm install
+            - name: Set up PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: 8.2
 
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+            - name: Install dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y unzip curl jq
 
-    # - name: Run Playwright Tests
-    #     env:
-    #     BASE_URL: https://your-wordpress-site.com
-    #     run: npx playwright test
+            - name: Cache WordPress archive
+              id: cache-wordpress
+              uses: actions/cache@v3
+              with:
+                  path: wordpress
+                  key: wp-${{ env.WP_VERSION }}
+
+            - name: Download WordPress
+              if: steps.cache-wordpress.outputs.cache-hit != 'true'
+              run: |
+                  curl -O https://wordpress.org/wordpress-${WP_VERSION}.tar.gz
+                  tar -xzf wordpress-${WP_VERSION}.tar.gz
+                  rm wordpress-${WP_VERSION}.tar.gz
+
+            - name: Configure WordPress
+              run: |
+                  cp wordpress/wp-config-sample.php wordpress/wp-config.php
+                  sed -i "s/database_name_here/${WP_DB_NAME}/" wordpress/wp-config.php
+                  sed -i "s/username_here/${WP_DB_USER}/" wordpress/wp-config.php
+                  sed -i "s/password_here/${WP_DB_PASS}/" wordpress/wp-config.php
+                  echo "define( 'DB_HOST', '${WP_DB_HOST}' );" >> wordpress/wp-config.php
+                  echo "define( 'WP_HOME', '${WP_SITE_URL}' );" >> wordpress/wp-config.php
+                  echo "define( 'WP_SITEURL', '${WP_SITE_URL}' );" >> wordpress/wp-config.php
+
+            - name: Install WordPress
+              run: |
+                  curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+                  chmod +x wp-cli.phar
+                  sudo mv wp-cli.phar /usr/local/bin/wp
+                  wp core install \
+                    --url="${WP_SITE_URL}" \
+                    --title="Test Site" \
+                    --admin_user=admin \
+                    --admin_password=admin \
+                    --admin_email=test@example.com \
+                    --path=wordpress \
+                    --skip-email \
+                    --allow-root
+
+            - name: Install plugin
+              run: |
+                  PLUGIN_SLUG=$(basename "$GITHUB_WORKSPACE")
+                  ln -s "$GITHUB_WORKSPACE" "wordpress/wp-content/plugins/simpleanalytics"
+                  wp plugin activate simpleanalytics --path=wordpress --allow-root
+
+            - name: Start PHP server
+              run: |
+                  php -S localhost:8888 -t wordpress > /dev/null 2>&1 &
+                  sleep 5
+
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+
+            - name: Install Playwright and dependencies
+              run: |
+                  npm ci
+                  npx playwright install --with-deps
+
+            - name: Run Playwright tests
+              run: npx playwright test

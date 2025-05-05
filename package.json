@@ -1,11 +1,13 @@
 {
-    "private": true,
-    "scripts": {
-        "dev": "tailwindcss -i resources/css/settings.css -o build/css/settings.css --watch",
-        "build": "tailwindcss build -i resources/css/settings.css -o build/css/settings.css"
-    },
-    "devDependencies": {
-        "@tailwindcss/forms": "^0.5.8",
-        "tailwindcss": "^3.4.10"
-    }
+  "private": true,
+  "scripts": {
+    "dev": "tailwindcss -i resources/css/settings.css -o build/css/settings.css --watch",
+    "build": "tailwindcss build -i resources/css/settings.css -o build/css/settings.css"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "@tailwindcss/forms": "^0.5.8",
+    "@types/node": "^22.15.3",
+    "tailwindcss": "^3.4.10"
+  }
 }
