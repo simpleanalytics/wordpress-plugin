@@ -117,10 +117,10 @@ jobs:
             - name: Install Playwright and dependencies
               run: |
                   pnpm install
-                  pnpx playwright install --with-deps
+                  pnpm run tests:install
 
             - name: Run Playwright tests
-              run: npx playwright test
+              run: pnpm run tests
 
             - name: Upload test results
               if: always()
