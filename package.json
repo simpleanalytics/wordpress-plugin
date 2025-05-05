@@ -3,8 +3,8 @@
   "scripts": {
     "dev": "tailwindcss -i resources/css/settings.css -o build/css/settings.css --watch",
     "build": "tailwindcss build -i resources/css/settings.css -o build/css/settings.css",
-    "test:install": "playwright install --with-deps",
-    "test": "playwright test"
+    "tests:install": "playwright install --with-deps",
+    "tests": "playwright test"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",
