@@ -1,0 +1,133 @@
+name: E2E Tests
+
+on:
+    push:
+    pull_request:
+
+jobs:
+    e2e:
+        name: PHP ${{ matrix.php }} - WP ${{ matrix.wordpress }}
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                php: [ '7.4', '8.0', '8.1', '8.2' ]
+                wordpress: [ '5.9', '6.0', '6.3', '6.5.3' ]
+                exclude:
+                    # Exclude older PHP versions with newer WordPress
+                    - php: '7.4'
+                      wordpress: '6.5.3'
+
+        services:
+            mysql:
+                image: mysql:8.0
+                env:
+                    MYSQL_DATABASE: wordpress
+                    MYSQL_ROOT_PASSWORD: root
+                ports: [ 3306:3306 ]
+                options: >-
+                    --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=5
+
+        env:
+            WP_VERSION: ${{ matrix.wordpress }}
+            WP_SITE_URL: http://localhost:8888
+            WP_DB_NAME: wordpress
+            WP_DB_USER: root
+            WP_DB_PASS: root
+            WP_DB_HOST: 127.0.0.1
+
+        steps:
+            - name: Checkout plugin
+              uses: actions/checkout@v4
+
+            - name: Set up PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+                  extensions: mysqli, zip, gd
+                  coverage: none
+                  tools: wp-cli
+
+            - name: Install dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y unzip curl jq
+
+            - name: Cache WordPress archive
+              id: cache-wordpress
+              uses: actions/cache@v3
+              with:
+                  path: wordpress
+                  key: wp-${{ matrix.wordpress }}-php-${{ matrix.php }}
+
+            - name: Download WordPress
+              if: steps.cache-wordpress.outputs.cache-hit != 'true'
+              run: |
+                  curl -O https://wordpress.org/wordpress-${WP_VERSION}.tar.gz
+                  tar -xzf wordpress-${WP_VERSION}.tar.gz
+                  rm wordpress-${WP_VERSION}.tar.gz
+
+            - name: Configure WordPress
+              run: |
+                  cp wordpress/wp-config-sample.php wordpress/wp-config.php
+                  sed -i "s/database_name_here/${WP_DB_NAME}/" wordpress/wp-config.php
+                  sed -i "s/username_here/${WP_DB_USER}/" wordpress/wp-config.php
+                  sed -i "s/password_here/${WP_DB_PASS}/" wordpress/wp-config.php
+                  sed -i "s/localhost/${WP_DB_HOST}/" wordpress/wp-config.php
+                  # Add WP_DEBUG settings
+                  sed -i "/define( 'DB_COLLATE', '' );/a define( 'WP_DEBUG', true );\ndefine( 'WP_DEBUG_LOG', true );" wordpress/wp-config.php
+
+            - name: Install WordPress
+              run: |
+                  wp core install \
+                    --url="${WP_SITE_URL}" \
+                    --title="Test Site" \
+                    --admin_user=admin \
+                    --admin_password=admin \
+                    --admin_email=test@example.com \
+                    --path=wordpress \
+                    --skip-email \
+                    --allow-root
+
+            - name: Install plugin
+              run: |
+                  PLUGIN_SLUG=$(basename "$GITHUB_WORKSPACE")
+                  ln -s "$GITHUB_WORKSPACE" "wordpress/wp-content/plugins/simpleanalytics"
+                  wp plugin activate simpleanalytics --path=wordpress --allow-root
+
+            - name: Start PHP server
+              run: |
+                  php -S localhost:8888 -t wordpress > /dev/null 2>&1 &
+                  sleep 5
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 10
+
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: lts/*
+                  cache: "pnpm"
+
+            - name: Install Playwright and dependencies
+              run: |
+                  pnpm install
+                  pnpm run tests:install
+
+            - name: Run Playwright tests
+              run: pnpm run tests
+
+            - name: Upload test results
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: test-results-php${{ matrix.php }}-wp${{ matrix.wordpress }}
+                  path: |
+                      playwright-report/
+                      test-results/
+                  retention-days: 30
