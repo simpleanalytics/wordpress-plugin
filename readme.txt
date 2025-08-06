@@ -6,7 +6,7 @@ Tags: privacy-first, privacy-friendly, free analytics, website analytics, simple
 Requires at least: 5.2
 Tested up to: 6.8.2
 Requires PHP: 7.2.0
-Stable tag: 1.67
+Stable tag: 1.68
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,6 +136,13 @@ You can [leave your feedback here](https://simpleanalytics.com/feedback?ref=word
 No changes needed for upgrades.
 
 == Changelog ==
+
+= 1.68 =
+* 2025-08-06
+* Changes:
+* fix: Handle IP address absence
+* Release 1.67: Code updates
+
 
 = 1.67 =
 * 2025-08-04
