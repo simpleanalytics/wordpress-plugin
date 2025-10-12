@@ -4,9 +4,9 @@ Contributors: simpleanalytics
 Donate link: https://simpleanalytics.com
 Tags: privacy-first, privacy-friendly, free analytics, website analytics, simple analytics, analytics, statistics, website traffic, traffic monitoring
 Requires at least: 5.2
-Tested up to: 6.7.2
+Tested up to: 6.8.2
 Requires PHP: 7.2.0
-Stable tag: 1.50
+Stable tag: 1.66
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,6 +136,106 @@ You can [leave your feedback here](https://simpleanalytics.com/feedback?ref=word
 No changes needed for upgrades.
 
 == Changelog ==
+
+= 1.66 =
+* 2025-07-28
+* Changes:
+* Release 1.65: Code updates and support for WordPress 6.8.2
+
+
+= 1.65 =
+* 2025-07-21
+* Tested up to WordPress 6.8.2
+* Changes:
+* Release 1.64: Code updates
+
+
+= 1.64 =
+* 2025-07-14
+* Changes:
+* Release 1.63: Code updates
+
+
+= 1.63 =
+* 2025-07-07
+* Changes:
+* Release 1.62: Code updates
+
+
+= 1.62 =
+* 2025-06-30
+* Changes:
+* Release 1.61: Code updates
+
+
+= 1.61 =
+* 2025-06-23
+* Changes:
+* Release 1.60: Code updates
+
+
+= 1.60 =
+* 2025-06-16
+* Changes:
+* Release 1.59: Code updates
+
+
+= 1.59 =
+* 2025-06-09
+* Changes:
+* Release 1.58: Code updates
+
+
+= 1.58 =
+* 2025-06-02
+* Changes:
+* Release 1.57: Code updates
+
+
+= 1.57 =
+* 2025-05-19
+* Changes:
+* Release 1.56: Code updates
+
+
+= 1.56 =
+* 2025-05-12
+* Changes:
+* Release 1.55: Code updates and support for WordPress 6.8.1
+
+
+= 1.55 =
+* 2025-05-05
+* Tested up to WordPress 6.8.1
+* Changes:
+* Release 1.54: Code updates
+
+
+= 1.54 =
+* 2025-04-28
+* Changes:
+* Release 1.53: Code updates
+
+
+= 1.53 =
+* 2025-04-22
+* Changes:
+* Remove "Enabled" checkbox
+* Release 1.52: Code updates and support for WordPress 6.8
+
+
+= 1.52 =
+* 2025-04-21
+* Tested up to WordPress 6.8
+* Changes:
+* Release 1.51: Code updates
+
+
+= 1.51 =
+* 2025-04-14
+* Changes:
+* Release 1.50: Code updates
+
 
 = 1.50 =
 * 2025-04-07
