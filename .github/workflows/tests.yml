@@ -33,7 +33,7 @@ jobs:
 
         env:
             WP_VERSION: ${{ matrix.wordpress }}
-            WP_SITE_URL: http://localhost:8888
+            WP_SITE_URL: http://localhost:8100
             WP_DB_NAME: wordpress
             WP_DB_USER: root
             WP_DB_PASS: root
@@ -100,7 +100,7 @@ jobs:
 
             - name: Start PHP server
               run: |
-                  php -S localhost:8888 -t wordpress > /dev/null 2>&1 &
+                  php -S localhost:8100 -t wordpress > /dev/null 2>&1 &
                   sleep 5
 
             - name: Install pnpm
