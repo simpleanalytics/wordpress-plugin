@@ -10,3 +10,4 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 tests-browser-state.json
+tests/**/Screenshots
