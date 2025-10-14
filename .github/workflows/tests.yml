@@ -123,7 +123,7 @@ jobs:
                   pnpm run tests:install
 
             - name: Run Playwright tests
-              run: pnpm run tests
+              run: ./vendor/bin/pest
 
             - name: Upload test results
               if: always()
