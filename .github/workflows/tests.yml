@@ -73,9 +73,9 @@ jobs:
             - name: Configure WordPress
               run: |
                   cp wordpress/wp-config-sample.php wordpress/wp-config.php
-                  sed -i "s/database_name_here/${WP_DB_NAME}/" wordpress/wp-config.php
-                  sed -i "s/username_here/${WP_DB_USER}/" wordpress/wp-config.php
-                  sed -i "s/password_here/${WP_DB_PASS}/" wordpress/wp-config.php
+                  sed -i "s/wordpress/${WP_DB_NAME}/" wordpress/wp-config.php
+                  sed -i "s/root/${WP_DB_USER}/" wordpress/wp-config.php
+                  sed -i "s/root/${WP_DB_PASS}/" wordpress/wp-config.php
                   sed -i "s/localhost/${WP_DB_HOST}/" wordpress/wp-config.php
                   # Add WP_DEBUG settings
                   sed -i "/define( 'DB_COLLATE', '' );/a define( 'WP_DEBUG', true );\ndefine( 'WP_DEBUG_LOG', true );" wordpress/wp-config.php

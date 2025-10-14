@@ -1,5 +1,17 @@
 {
     "require-dev": {
-        "rector/rector": "^1.2"
+        "rector/rector": "^1.2",
+        "pestphp/pest": "^4.1",
+        "pestphp/pest-plugin-browser": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }
