@@ -81,11 +81,7 @@ jobs:
                         --dbpass="$WP_DB_PASS" \
                         --dbhost="$WP_DB_HOST" \
                         --path=wordpress \
-                        --skip-check \
-                        --extra-php <<PHP
-                        define( 'WP_DEBUG', true );
-                        define( 'WP_DEBUG_LOG', true );
-                        PHP
+                        --skip-check
                     wp core install \
                       --url="${WP_SITE_URL}" \
                       --title="Test Site" \
