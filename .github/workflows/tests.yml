@@ -76,10 +76,10 @@ jobs:
             -   name: Install WordPress
                 run: |
                     cp wordpress/wp-config-sample.php wordpress/wp-config.php
-                    wp config set DB_NAME "wordpress" --path=wordpress --allow-root
-                    wp config set DB_USER "root" --path=wordpress --allow-root
-                    wp config set DB_PASSWORD "root" --path=wordpress --allow-root
-                    wp config set DB_HOST "localhost" --path=wordpress --allow-root
+                    wp config set DB_NAME "$WP_DB_NAME" --path=wordpress --allow-root
+                    wp config set DB_USER "$WP_DB_USER" --path=wordpress --allow-root
+                    wp config set DB_PASSWORD "$WP_DB_PASS" --path=wordpress --allow-root
+                    wp config set DB_HOST "$WP_DB_HOST" --path=wordpress --allow-root
                     wp config set WP_DEBUG true --raw --path=wordpress --allow-root
                     wp config set WP_DEBUG_LOG true --raw --path=wordpress --allow-root
                     wp core install \
