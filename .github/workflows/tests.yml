@@ -75,6 +75,7 @@ jobs:
 
             -   name: Install WordPress
                 run: |
+                    cp wordpress/wp-config-sample.php wordpress/wp-config.php
                     wp config set DB_NAME "wordpress" --path=wordpress --allow-root
                     wp config set DB_USER "root" --path=wordpress --allow-root
                     wp config set DB_PASSWORD "root" --path=wordpress --allow-root
