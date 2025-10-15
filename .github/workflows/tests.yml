@@ -1,0 +1,144 @@
+name: E2E Tests
+
+on:
+    push:
+    pull_request:
+
+jobs:
+    e2e:
+        name: PHP ${{ matrix.php }} - WP ${{ matrix.wordpress }}
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                #  temporary disabled for testing
+                #                php: [ '7.4', '8.0', '8.1', '8.2' ]
+                #                wordpress: [ '5.9', '6.0', '6.3', '6.5.3' ]
+                php: [ '8.4' ]
+                wordpress: [ '6.5' ]
+                exclude:
+                    # Exclude older PHP versions with newer WordPress
+                    -   php: '7.4'
+                        wordpress: '6.5.3'
+
+        services:
+            mysql:
+                image: mysql:8.0
+                env:
+                    MYSQL_DATABASE: wordpress
+                    MYSQL_ROOT_PASSWORD: root
+                ports: [ 3306:3306 ]
+                options: >-
+                    --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=5
+
+        env:
+            WP_VERSION: ${{ matrix.wordpress }}
+            WP_SITE_URL: http://localhost:8100
+            WP_DB_NAME: wordpress
+            WP_DB_USER: root
+            WP_DB_PASS: root
+            WP_DB_HOST: 127.0.0.1
+
+        steps:
+            -   name: Checkout plugin
+                uses: actions/checkout@v4
+
+            -   name: Set up PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php }}
+                    extensions: mysqli, zip, gd
+                    coverage: none
+                    tools: wp-cli
+
+            -   name: Install dependencies
+                run: |
+                    sudo apt-get update
+                    sudo apt-get install -y unzip curl jq
+
+            -   name: Cache WordPress archive
+                id: cache-wordpress
+                uses: actions/cache@v3
+                with:
+                    path: wordpress
+                    key: wp-${{ matrix.wordpress }}-php-${{ matrix.php }}
+
+            -   name: Download WordPress
+                if: steps.cache-wordpress.outputs.cache-hit != 'true'
+                run: |
+                    curl -O https://wordpress.org/wordpress-${WP_VERSION}.tar.gz
+                    tar -xzf wordpress-${WP_VERSION}.tar.gz
+                    rm wordpress-${WP_VERSION}.tar.gz
+
+            -   name: Install WordPress
+                run: |
+                    rm wordpress/wp-config.php
+                    wp config create \
+                        --dbname="$WP_DB_NAME" \
+                        --dbuser="$WP_DB_USER" \
+                        --dbpass="$WP_DB_PASS" \
+                        --dbhost="$WP_DB_HOST" \
+                        --path=wordpress \
+                        --skip-check
+                    wp core install \
+                      --url="${WP_SITE_URL}" \
+                      --title="Test Site" \
+                      --admin_user=admin \
+                      --admin_password=admin \
+                      --admin_email=test@example.com \
+                      --path=wordpress \
+                      --skip-email \
+                      --allow-root
+
+            -   name: Show current config values
+                run: wp config list --path=wordpress --allow-root
+
+            -   name: Install plugin
+                run: |
+                    PLUGIN_SLUG=$(basename "$GITHUB_WORKSPACE")
+                    ln -s "$GITHUB_WORKSPACE" "wordpress/wp-content/plugins/simpleanalytics"
+                    wp plugin activate simpleanalytics --path=wordpress --allow-root
+
+            -   name: Start PHP server
+                run: |
+                    php -S 127.0.0.1:8100 -t wordpress > /dev/null 2>&1 & until curl -sSf http://127.0.0.1:8100 > /dev/null; do sleep 0.2; done
+
+            -   name: Install pnpm
+                uses: pnpm/action-setup@v4
+                with:
+                    version: 10
+
+            -   name: Setup Node
+                uses: actions/setup-node@v4
+                with:
+                    node-version: lts/*
+                    cache: "pnpm"
+
+            -   name: Install Playwright and dependencies
+                run: |
+                    pnpm install
+                    pnpm run tests:install
+
+            -   name: Cache composer dependencies
+                uses: actions/cache@v3
+                with:
+                    path: vendor
+                    key: composer-${{ hashFiles('composer.lock') }}
+
+            -   name: Run composer install
+                run: composer install --no-progress --prefer-dist --no-interaction
+
+            -   name: Run Pest tests
+                run: ./vendor/bin/pest
+
+            -   name: Upload test results
+                if: always()
+                uses: actions/upload-artifact@v4
+                with:
+                    name: test-results-php${{ matrix.php }}-wp${{ matrix.wordpress }}
+                    path: |
+                        tests/Browser/Screenshots
+                    retention-days: 30
