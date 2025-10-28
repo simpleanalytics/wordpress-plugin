@@ -75,7 +75,7 @@ jobs:
 
             -   name: Install WordPress
                 run: |
-                    rm wordpress/wp-config.php
+                    rm -f wordpress/wp-config.php
                     wp config create \
                         --dbname="$WP_DB_NAME" \
                         --dbuser="$WP_DB_USER" \
