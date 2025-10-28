@@ -2,16 +2,16 @@
 
 namespace Tests\Browser;
 
+use function Tests\asAdmin;
+
 const DEFAULT_SA_NOTICE = '<!-- Simple Analytics: Not logging requests from admins -->';
 
-test('Sign in', function () {
-    $page = visit('http://127.0.0.1:8100/wp-admin');
+test('Sign in as admin and activate the plugin', function () {
+    $page = asAdmin();
 
-    $page->fill('user_login', 'admin');
-    $page->fill('user_pass', 'admin');
-    $page->press('wp-submit');
-    $page->assertSee('Welcome to WordPress!');
+    $page->navigate('http://localhost:8100/wp-admin/plugins.php')->screenshot();
+    $page->assertSee('Simple Analytics Official');
 
-    $page2 = visit('http://127.0.0.1:8100')->screenshot();
+    $page2 = visit('http://127.0.0.1:8100');//->screenshot();
     expect($page2->content())->not->toContain(DEFAULT_SA_NOTICE);
 });
