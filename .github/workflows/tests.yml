@@ -36,7 +36,7 @@ jobs:
 
         env:
             WP_VERSION: ${{ matrix.wordpress }}
-            WP_SITE_URL: http://localhost:8100
+            WP_SITE_URL: http://127.0.0.1:8100
             WP_DB_NAME: wordpress
             WP_DB_USER: root
             WP_DB_PASS: root
