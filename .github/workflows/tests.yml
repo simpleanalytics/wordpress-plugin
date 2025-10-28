@@ -64,7 +64,7 @@ jobs:
                 uses: actions/cache@v3
                 with:
                     path: wordpress
-                    key: wp-${{ matrix.wordpress }}-php-${{ matrix.php }}
+                    key: wp-${{ matrix.wordpress }}
 
             -   name: Download WordPress
                 if: steps.cache-wordpress.outputs.cache-hit != 'true'
