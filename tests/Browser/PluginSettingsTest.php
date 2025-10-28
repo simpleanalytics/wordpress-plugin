@@ -1,5 +1,9 @@
 <?php
 
+namespace Tests\Browser;
+
+const DEFAULT_SA_NOTICE = '<!-- Simple Analytics: Not logging requests from admins -->';
+
 test('Sign in', function () {
     $page = visit('http://127.0.0.1:8100/wp-admin');
 
@@ -9,5 +13,5 @@ test('Sign in', function () {
     $page->assertSee('Welcome to WordPress!');
 
     $page2 = visit('http://127.0.0.1:8100')->screenshot();
-    expect($page2->content())->toContain('<!-- Simple Analytics: Not logging requests from admins -->');
+    expect($page2->content())->not->toContain(DEFAULT_SA_NOTICE);
 });
