@@ -12,6 +12,7 @@ const WP_ACTIVATE_PLUGIN_SELECTOR = '#activate-simpleanalytics';
 it('can be activated', function () {
     asAdmin()
         ->navigate('http://localhost:8100/wp-admin/plugins.php')
+        ->screenshot()
         ->assertPresent(WP_PLUGIN_ROW_SELECTOR)
         ->click(WP_ACTIVATE_PLUGIN_SELECTOR);
 });
