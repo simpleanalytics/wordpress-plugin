@@ -100,7 +100,6 @@ jobs:
                 run: |
                     PLUGIN_SLUG=$(basename "$GITHUB_WORKSPACE")
                     ln -s "$GITHUB_WORKSPACE" "wordpress/wp-content/plugins/simpleanalytics"
-                    wp plugin activate simpleanalytics --path=wordpress --allow-root
 
             -   name: Start PHP server
                 run: |
