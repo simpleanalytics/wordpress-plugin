@@ -43,12 +43,9 @@ expect()->extend('toBeOne', function () {
 
 function asAdmin()
 {
-    $page = visit('http://127.0.0.1:8100/wp-admin');
-
-    $page->fill('user_login', 'admin');
-    $page->fill('user_pass', 'admin');
-    $page->press('wp-submit');
-    $page->assertUrlIs('http://127.0.0.1:8100/wp-admin');
-
-    return $page;
+    return visit('http://localhost:8100/wp-admin')
+        ->fill('user_login', 'admin')
+        ->fill('user_pass', 'admin')
+        ->press('wp-submit')
+        ->assertUrlIs('http://localhost:8100/wp-admin');
 }
