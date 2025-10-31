@@ -112,7 +112,7 @@ it('adds a script with onload callback', function () {
         ->click('Save Changes')
         ->assertValue('simpleanalytics_onload_callback', 'sa_event("My event")');
 
-    visit('http://localhost:8100')->assertSourceHas('data-onload="sa_event(\"My event\")"');
+    visit('http://localhost:8100')->dd()->assertSourceHas('data-onload="sa_event(\"My event\")"');
 });
 
 it('adds a script with global variable name', function () {
