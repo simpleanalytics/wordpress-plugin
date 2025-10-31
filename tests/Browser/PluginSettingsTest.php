@@ -19,11 +19,11 @@ it('can be activated', function () {
 
 it('adds a script by default', function () {
     $homePage = visit('http://localhost:8100');
-    expect($homePage->content())->toContain(SA_DEFAULT_SCRIPT)->dump();
+    expect($homePage->content())->dump()->toContain(SA_DEFAULT_SCRIPT);
 });
 
 it('adds a comment when an authenticated user visits', function () {
     $homePage = asAdmin()->navigate('http://localhost:8100');
-    expect($homePage->content())->toContain(SA_ADMIN_NOTICE)->dump();
+    expect($homePage->content())->dump()->toContain(SA_ADMIN_NOTICE);
     $homePage->assertNoConsoleLogs();
 });
