@@ -60,16 +60,6 @@ it('adds inactive script for selected user roles', function () {
         ->assertSourceHas(INACTIVE_ADMIN_COMMENT);
 });
 
-it('adds a script with a custom domain name', function () {
-    asAdmin()
-        ->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=general')
-        ->fill('simpleanalytics_custom_domain', 'mydomain.com')
-        ->click('Save Changes')
-        ->assertValue('simpleanalytics_custom_domain', 'mydomain.com');
-
-    visit('http://localhost:8100')->assertPresent('script[src="https://mydomain.com/latest.js"]');
-});
-
 it('adds a script with collect do not track enabled', function () {
     asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
         ->check('simpleanalytics_collect_dnt')
@@ -112,7 +102,16 @@ it('adds a script with onload callback', function () {
         ->click('Save Changes')
         ->assertValue('simpleanalytics_onload_callback', 'sa_event("My event")');
 
-    visit('http://localhost:8100')->dd()->assertSourceHas('data-onload="sa_event(\"My event\")"');
+    visit('http://localhost:8100')->assertSourceHas('data-onload="sa_event(\"My event\")"');
+});
+
+it('adds a script with overwrite domain name', function () {
+    asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
+        ->fill('simpleanalytics_hostname', 'example.com')
+        ->click('Save Changes')
+        ->assertValue('simpleanalytics_hostname', 'example.com');
+
+    visit('http://localhost:8100')->assertSourceHas('data-hostname="example.com"');
 });
 
 it('adds a script with global variable name', function () {
@@ -188,11 +187,12 @@ it('adds automated events script with override global', function () {
     visit('http://localhost:8100')->assertSourceHas('data-sa-global="ba_event"');
 });
 
-it('adds a script with overwrite domain name', function () {
-    asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
-        ->fill('simpleanalytics_hostname', 'example.com')
+it('adds a script with a custom domain name', function () {
+    asAdmin()
+        ->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=general')
+        ->fill('simpleanalytics_custom_domain', 'mydomain.com')
         ->click('Save Changes')
-        ->assertValue('simpleanalytics_hostname', 'example.com');
+        ->assertValue('simpleanalytics_custom_domain', 'mydomain.com');
 
-    visit('http://localhost:8100')->assertSourceHas('data-hostname="example.com"');
+    visit('http://localhost:8100')->assertPresent('script[src="https://mydomain.com/latest.js"]');
 });
