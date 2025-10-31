@@ -14,6 +14,9 @@ class TrackingRules
     public function hasExcludedIp(): bool
     {
         $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'];
+
+        if (empty($ip)) return false;
+
         $list = $this->settings->array(SettingName::EXCLUDED_IP_ADDRESSES);
 
         return in_array($ip, $list);
