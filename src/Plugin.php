@@ -34,13 +34,17 @@ final class Plugin
 
     public function onInit(): void
     {
-        $shouldCollect = (new TrackingPolicy)->shouldCollectAnalytics();
-        $this->addScripts($shouldCollect);
-        if (! $shouldCollect) {
-            AddInactiveComment::register();
-        }
-        if ($shouldCollect && Setting::boolean(SettingName::NOSCRIPT)) {
+        $rules = new TrackingRules();
+        $tracking = $rules->excludedIp();
+
+        $this->addScripts($tracking);
+
+        if ($tracking && Setting::boolean(SettingName::NOSCRIPT)) {
             AddNoScriptTag::register();
+        }
+
+        if (! $rules->excludedUserRole()) {
+            AddInactiveComment::register();
         }
     }
 
