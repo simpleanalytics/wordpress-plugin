@@ -46,7 +46,7 @@ final class Plugin
 
     public function onInit(): void
     {
-        $tracking = $this->trackingRules->hasExcludedIp();
+        $tracking = ! $this->trackingRules->hasExcludedIp();
 
         if ($tracking && $this->settings->get(SettingName::NOSCRIPT)) {
             AddNoScriptTag::register();
