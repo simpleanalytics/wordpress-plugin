@@ -48,18 +48,15 @@ final class Plugin
     {
         $tracking = ! $this->trackingRules->hasExcludedIp() && ! $this->trackingRules->hasExcludedUserRole();
 
-        if ($tracking && $this->settings->get(SettingName::NOSCRIPT)) {
-            AddNoScriptTag::register();
-        }
-
-        if (! $tracking) {
-            AddInactiveComment::register();
-        }
-
         if ($tracking) {
             $this->scripts->push(new AnalyticsScript);
         } else {
             $this->scripts->push(new InactiveScript);
+            AddInactiveComment::register();
+        }
+
+        if ($tracking && $this->settings->get(SettingName::NOSCRIPT)) {
+            AddNoScriptTag::register();
         }
 
         if ($this->settings->boolean(SettingName::AUTOMATED_EVENTS)) {

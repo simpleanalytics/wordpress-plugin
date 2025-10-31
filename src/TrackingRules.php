@@ -24,9 +24,16 @@ class TrackingRules
 
     public function hasExcludedUserRole(): bool
     {
-        if (! is_user_logged_in()) return false;
+        if (! is_user_logged_in()) {
+            return false;
+        }
 
         $needle = $this->settings->array(SettingName::EXCLUDED_ROLES);
+
+        if ($needle === []) {
+            return true;
+        }
+
         $current = wp_get_current_user()->roles;
 
         return array_intersect($needle, $current) !== [];
