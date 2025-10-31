@@ -13,6 +13,8 @@ namespace Tests;
 |
 */
 
+use Pest\Browser\Api\Webpage;
+
 pest()->extend(TestCase::class)->in('Feature');
 
 /*
@@ -41,11 +43,26 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function asAdmin()
+function asUser(string $login, string $password): Webpage
 {
     return visit('http://localhost:8100/wp-admin')
-        ->fill('user_login', 'admin')
-        ->fill('user_pass', 'admin')
+        ->fill('user_login', $login)
+        ->fill('user_pass', $password)
         ->press('wp-submit')
         ->assertUrlIs('http://localhost:8100/wp-admin');
+}
+
+function asAdmin()
+{
+    return asUser('admin', 'admin');
+}
+
+function asAuthor()
+{
+    return asUser('author', 'author');
+}
+
+function asEditor()
+{
+    return asUser('editor', 'editor');
 }
