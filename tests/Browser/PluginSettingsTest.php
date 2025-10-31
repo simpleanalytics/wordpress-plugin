@@ -25,6 +25,7 @@ it('adds a script by default', function () {
 it('adds inactive script for authenticated users by default', function () {
     asAdmin()
         ->navigate('http://localhost:8100')
+        ->dd()
         ->assertPresent('script[url="http://localhost:8100/wp-content/plugins/simpleanalytics/resources/js/inactive.js"]')
         ->assertSourceHas(SA_INACTIVE_ADMIN_COMMENT);
 });
