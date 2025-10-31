@@ -43,7 +43,7 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function asUser(string $login, string $password): Webpage
+function asUser(string $login, string $password)
 {
     return visit('http://localhost:8100/wp-admin')
         ->fill('user_login', $login)
