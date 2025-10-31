@@ -4,9 +4,9 @@ namespace Tests\Browser;
 
 use function Tests\{asAdmin, asAuthor, asEditor};
 
-const SA_DEFAULT_SCRIPT = 'src="https://scripts.simpleanalyticscdn.com/latest.js"></script>';
-const SA_INACTIVE_ADMIN_NOTICE = '<!-- Simple Analytics: Not logging requests from admins -->';
-const SA_INACTIVE_ADMIN_SCRIPT = 'src="http://localhost:8100/wp-content/plugins/simpleanalytics/resources/js/inactive.js"';
+const SA_DEFAULT_SCRIPT_SELECTOR = 'script[src="https://scripts.simpleanalyticscdn.com/latest.js"]';
+const SA_INACTIVE_ADMIN_SCRIPT_SELECTOR = 'script[src="http://localhost:8100/wp-content/plugins/simpleanalytics/resources/js/inactive.js"]';
+const SA_INACTIVE_ADMIN_COMMENT = '<!-- Simple Analytics: Not logging requests from admins -->';
 
 it('can be activated', function () {
     asAdmin()
@@ -19,16 +19,14 @@ it('can be activated', function () {
 });
 
 it('adds a script by default', function () {
-    $homePage = visit('http://localhost:8100');
-    expect($homePage->content())->toContain(SA_DEFAULT_SCRIPT);
+    visit('http://localhost:8100')->assertPresent(SA_DEFAULT_SCRIPT_SELECTOR);
 });
 
 it('adds inactive script for authenticated users by default', function () {
-    $homePage = asAdmin()->navigate('http://localhost:8100');
-
-    expect($homePage->content())
-        ->toContain(SA_INACTIVE_ADMIN_NOTICE)
-        ->toContain(SA_INACTIVE_ADMIN_SCRIPT);
+    asAdmin()
+        ->navigate('http://localhost:8100')
+        ->assertPresent('script[url="http://localhost:8100/wp-content/plugins/simpleanalytics/resources/js/inactive.js"]')
+        ->assertSourceHas(SA_INACTIVE_ADMIN_COMMENT);
 });
 
 it('adds a script with ignored pages', function () {
@@ -38,29 +36,27 @@ it('adds a script with ignored pages', function () {
         ->click('Save Changes')
         ->assertValue('simpleanalytics_ignore_pages', '/vouchers');
 
-    expect(visit('http://localhost:8100')->content())->toContain('data-ignore-pages="/vouchers"');
+    visit('http://localhost:8100')->assertSourceHas('data-ignore-pages="/vouchers"');
 });
 
 it('adds inactive script for selected user roles', function () {
-    $admin = asAdmin();
-
-    $admin->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
+    $admin = asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
         ->check('simpleanalytics_exclude_user_roles-editor')
         ->check('simpleanalytics_exclude_user_roles-author')
         ->click('Save Changes')
         ->assertChecked('simpleanalytics_exclude_user_roles-editor')
         ->assertChecked('simpleanalytics_exclude_user_roles-author');
 
-    expect($admin->navigate('http://localhost:8100')->content())
-        ->toContain(SA_DEFAULT_SCRIPT);
+    $admin->navigate('http://localhost:8100')
+        ->assertPresent(SA_DEFAULT_SCRIPT_SELECTOR);
 
-    expect(asEditor()->navigate('http://localhost:8100')->content())
-        ->toContain(SA_INACTIVE_ADMIN_NOTICE)
-        ->toContain(SA_INACTIVE_ADMIN_SCRIPT);
+    asAuthor()->navigate('http://localhost:8100')
+        ->assertPresent(SA_INACTIVE_ADMIN_SCRIPT_SELECTOR)
+        ->assertSourceHas(SA_INACTIVE_ADMIN_COMMENT);
 
-    expect(asAuthor()->navigate('http://localhost:8100')->content())
-        ->toContain(SA_INACTIVE_ADMIN_NOTICE)
-        ->toContain(SA_INACTIVE_ADMIN_SCRIPT);
+    asEditor()->navigate('http://localhost:8100')
+        ->assertPresent(SA_INACTIVE_ADMIN_SCRIPT_SELECTOR)
+        ->assertSourceHas(SA_INACTIVE_ADMIN_COMMENT);
 });
 
 it('adds a script with a custom domain name', function () {
@@ -70,7 +66,5 @@ it('adds a script with a custom domain name', function () {
         ->click('Save Changes')
         ->assertValue('simpleanalytics_custom_domain', 'mydomain.com');
 
-    $script = str_replace('scripts.simpleanalyticscdn.com', 'mydomain.com', SA_DEFAULT_SCRIPT);
-
-    expect(visit('http://localhost:8100')->content())->toContain($script);
+    visit('http://localhost:8100')->assertPresent('script[src="https://mydomain.com/latest.js"]');
 });
