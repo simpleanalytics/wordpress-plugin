@@ -46,18 +46,17 @@ final class Plugin
 
     public function onInit(): void
     {
-        $tracking = ! $this->trackingRules->hasExcludedIp();
-        $excludedRole = $this->trackingRules->hasExcludedUserRole();
+        $tracking = $this->trackingRules->hasExcludedIp() && $this->trackingRules->hasExcludedUserRole();
 
         if ($tracking && $this->settings->get(SettingName::NOSCRIPT)) {
             AddNoScriptTag::register();
         }
 
-        if (! $excludedRole) {
+        if (! $tracking) {
             AddInactiveComment::register();
         }
 
-        if ($tracking && ! $excludedRole) {
+        if ($tracking) {
             $this->scripts->push(new AnalyticsScript);
         } else {
             $this->scripts->push(new InactiveScript);
