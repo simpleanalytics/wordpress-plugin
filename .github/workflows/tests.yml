@@ -87,9 +87,9 @@ jobs:
                       --path=wordpress \
                       --skip-email \
                       --allow-root
-                    wp user create author author@localhost --role=author --user_pass=author --path=wordpress
-                    wp user create editor editor@localhost --role=editor --user_pass=editor --path=wordpress
-                    wp user create subscriber subscriber@localhost --role=subscriber --user_pass=subscriber --path=wordpress
+                    wp user create author author@local.test --role=author --user_pass=author --path=wordpress
+                    wp user create editor editor@local.test --role=editor --user_pass=editor --path=wordpress
+                    wp user create subscriber subscriber@local.test --role=subscriber --user_pass=subscriber --path=wordpress
 
             -   name: Show current config values
                 run: wp config list --path=wordpress --allow-root
