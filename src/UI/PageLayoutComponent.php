@@ -2,7 +2,7 @@
 
 namespace SimpleAnalytics\UI;
 
-use SimpleAnalytics\Settings\{Page, Tab};
+use SimpleAnalytics\Settings\{AdminPage, Tab};
 use function SimpleAnalytics\get_icon;
 use const SimpleAnalytics\PLUGIN_URL;
 
@@ -10,10 +10,10 @@ class PageLayoutComponent
 {
     /**
      * @readonly
-     * @var \SimpleAnalytics\Settings\Page
+     * @var \SimpleAnalytics\Settings\AdminPage
      */
     private $page;
-    public function __construct(Page $page)
+    public function __construct(AdminPage $page)
     {
         $this->page = $page;
     }
