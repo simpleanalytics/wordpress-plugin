@@ -5,7 +5,7 @@ namespace Tests\Browser;
 use function Tests\asAdmin;
 
 const SA_ADMIN_NOTICE = '<!-- Simple Analytics: Not logging requests from admins -->';
-const SA_DEFAULT_SCRIPT = '<script type="text/javascript" src="https://scripts.simpleanalyticscdn.com/latest.js"></script>';
+const SA_DEFAULT_SCRIPT = 'src="https://scripts.simpleanalyticscdn.com/latest.js"></script>';
 const WP_PLUGIN_ROW_SELECTOR = 'tr[data-slug="simpleanalytics"]';
 const WP_ACTIVATE_PLUGIN_SELECTOR = '#activate-simpleanalytics';
 const WP_DEACTIVATE_PLUGIN_SELECTOR = '#deactivate-simpleanalytics';
