@@ -120,16 +120,6 @@ it('adds a script with onload callback', function () {
     visit('http://localhost:8100')->assertSourceHas('data-onload="sa_event(\"My event\")"');
 });
 
-it('adds a script with overwrite domain name', function () {
-    asAdmin()
-        ->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
-        ->fill('simpleanalytics_hostname', 'example.com')
-        ->click('Save Changes')
-        ->assertValue('simpleanalytics_hostname', 'example.com');
-
-    visit('http://localhost:8100')->assertSourceHas('data-hostname="example.com"');
-});
-
 it('adds a script with global variable name', function () {
     asAdmin()
         ->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
@@ -208,4 +198,14 @@ it('adds automated events script with override global', function () {
         ->assertValue('simpleanalytics_event_sa_global', 'ba_event');
 
     visit('http://localhost:8100')->assertSourceHas('data-sa-global="ba_event"');
+});
+
+it('adds a script with overwrite domain name', function () {
+    asAdmin()
+        ->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
+        ->fill('simpleanalytics_hostname', 'example.com')
+        ->click('Save Changes')
+        ->assertValue('simpleanalytics_hostname', 'example.com');
+
+    visit('http://localhost:8100')->assertSourceHas('data-hostname="example.com"');
 });
