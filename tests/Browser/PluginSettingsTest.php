@@ -35,3 +35,14 @@ it('adds a comment when an authenticated user visits', function () {
         ->toContain(SA_ADMIN_NOTICE)
         ->toContain(SA_INACTIVE_ADMIN_SCRIPT);
 });
+
+it('adds a script with a custom domain name', function () {
+    asAdmin()
+        ->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=general'¬)
+        ->fill('simpleanalytics_custom_domain', 'mydomain.com')
+        ->click('Save Changes')
+        ->assertValue('simpleanalytics_custom_domain', 'mydomain.com');
+
+    expect(visit('http://localhost:8100')->content())
+        ->toContain(str_replace('scripts.simpleanalyticscdn.com', 'mydomain.com', SA_DEFAULT_SCRIPT));
+});
