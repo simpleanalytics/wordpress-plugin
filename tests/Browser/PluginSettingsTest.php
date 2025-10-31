@@ -38,6 +38,17 @@ it('adds a script with a custom domain name', function () {
         ->click('Save Changes')
         ->assertValue('simpleanalytics_custom_domain', 'mydomain.com');
 
-    expect(visit('http://localhost:8100')->content())
-        ->toContain(str_replace('scripts.simpleanalyticscdn.com', 'mydomain.com', SA_DEFAULT_SCRIPT));
+    $script = str_replace('scripts.simpleanalyticscdn.com', 'mydomain.com', SA_DEFAULT_SCRIPT);
+
+    expect(visit('http://localhost:8100')->content())->toContain($script);
+});
+
+it('adds a script with ignored pages', function () {
+    asAdmin()
+        ->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
+        ->fill('simpleanalytics_ignore_pages', '/vouchers')
+        ->click('Save Changes')
+        ->assertValue('simpleanalytics_ignore_pages', '/vouchers');
+
+    expect(visit('http://localhost:8100')->content())->toContain('data-ignore-pages="/vouchers"');
 });
