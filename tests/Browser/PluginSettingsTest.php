@@ -8,19 +8,14 @@ const SA_ADMIN_NOTICE = '<!-- Simple Analytics: Not logging requests from admins
 const SA_DEFAULT_SCRIPT = 'src="https://scripts.simpleanalyticscdn.com/latest.js"></script>';
 const SA_INACTIVE_ADMIN_SCRIPT = 'src="http://localhost:8100/wp-content/plugins/simpleanalytics/resources/js/inactive.js"';
 
-const WP_PLUGIN_ROW_SELECTOR = 'tr[data-slug="simpleanalytics"]';
-const WP_ACTIVATE_PLUGIN_SELECTOR = '#activate-simpleanalytics';
-const WP_DEACTIVATE_PLUGIN_SELECTOR = '#deactivate-simpleanalytics';
-const WP_PLUGIN_MENU_ITEM = 'a[href="options-general.php?page=simpleanalytics"]';
-
 it('can be activated', function () {
     asAdmin()
         ->navigate('http://localhost:8100/wp-admin/plugins.php')
         ->screenshot()
-        ->assertPresent(WP_PLUGIN_ROW_SELECTOR)
-        ->click(WP_ACTIVATE_PLUGIN_SELECTOR)
-        ->assertPresent(WP_PLUGIN_MENU_ITEM)
-        ->assertPresent(WP_DEACTIVATE_PLUGIN_SELECTOR);
+        ->assertPresent('tr[data-slug="simpleanalytics"]')
+        ->click('#activate-simpleanalytics')
+        ->assertPresent('a[href="options-general.php?page=simpleanalytics"]')
+        ->assertPresent('#deactivate-simpleanalytics');
 });
 
 it('adds a script by default', function () {
