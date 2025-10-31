@@ -6,7 +6,7 @@ use function Tests\asAdmin;
 
 const SA_ADMIN_NOTICE = '<!-- Simple Analytics: Not logging requests from admins -->';
 const SA_DEFAULT_SCRIPT = 'src="https://scripts.simpleanalyticscdn.com/latest.js"></script>';
-const SA_INACTIVE_ADMIN_SCRIPT = 'src="http://127.0.0.1:8100/wp-content/plugins/simpleanalytics/resources/js/inactive.js"';
+const SA_INACTIVE_ADMIN_SCRIPT = 'src="http://localhost:8100/wp-content/plugins/simpleanalytics/resources/js/inactive.js"';
 
 const WP_PLUGIN_ROW_SELECTOR = 'tr[data-slug="simpleanalytics"]';
 const WP_ACTIVATE_PLUGIN_SELECTOR = '#activate-simpleanalytics';
