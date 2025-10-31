@@ -11,7 +11,7 @@ const NOSCRIPT_SELECTOR = 'noscript img[src="https://queue.simpleanalyticscdn.co
 
 it('can be activated', function () {
     asAdmin()
-        ->navigate('http://localhost:8100/wp-admin/plugins.php')
+        ->click('Plugins')
         ->screenshot()
         ->assertPresent('tr[data-slug="simpleanalytics"]')
         ->click('#activate-simpleanalytics')
