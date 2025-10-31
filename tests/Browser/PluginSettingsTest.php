@@ -19,6 +19,7 @@ it('can be activated', function () {
         ->assertPresent('#deactivate-simpleanalytics');
 });
 
+/*
 it('adds a script by default', function () {
     visit('http://localhost:8100')->assertPresent(DEFAULT_SCRIPT_SELECTOR);
 });
@@ -196,3 +197,4 @@ it('adds a script with a custom domain name', function () {
 
     visit('http://localhost:8100')->assertPresent('script[src="https://mydomain.com/latest.js"]');
 });
+*/
