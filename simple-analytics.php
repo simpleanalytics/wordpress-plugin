@@ -91,7 +91,8 @@ $adminPage = SimpleAnalytics\Settings\AdminPage::title('Simple Analytics')
 
         $tab->callout('IP and role exclusion only works when there is no page caching.');
 
-        $tab->multiCheckbox(SettingName::EXCLUDED_ROLES, 'Exclude User Roles')
+        $tab->multiCheckbox(SettingName::EXCLUDED_ROLES, 'Specific User Roles to Exclude')
+            ->description('When none selected, all authenticated users will be excluded from tracking.')
             ->options(function () {
                 return wp_roles()->get_names();
             });
