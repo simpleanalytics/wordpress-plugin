@@ -6,6 +6,8 @@ use function Tests\asAdmin;
 
 const SA_ADMIN_NOTICE = '<!-- Simple Analytics: Not logging requests from admins -->';
 const SA_DEFAULT_SCRIPT = 'src="https://scripts.simpleanalyticscdn.com/latest.js"></script>';
+const SA_INACTIVE_ADMIN_SCRIPT = 'resources/js/inactive.js"></script>';
+
 const WP_PLUGIN_ROW_SELECTOR = 'tr[data-slug="simpleanalytics"]';
 const WP_ACTIVATE_PLUGIN_SELECTOR = '#activate-simpleanalytics';
 const WP_DEACTIVATE_PLUGIN_SELECTOR = '#deactivate-simpleanalytics';
@@ -28,6 +30,8 @@ it('adds a script by default', function () {
 
 it('adds a comment when an authenticated user visits', function () {
     $homePage = asAdmin()->navigate('http://localhost:8100');
-    expect($homePage->content())->dump()->toContain(SA_ADMIN_NOTICE);
-    $homePage->assertNoConsoleLogs();
+
+    expect($homePage->content())->dump()
+        ->toContain(SA_ADMIN_NOTICE)
+        ->toContain(SA_INACTIVE_ADMIN_SCRIPT);
 });
