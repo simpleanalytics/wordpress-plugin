@@ -13,7 +13,7 @@ jobs:
             matrix:
 #                php: [ '7.4', '8.0', '8.1', '8.2' ]
                 php: [ '8.2', '8.3', '8.4' ]
-                wordpress: [ '5.9', '6.0', '6.3', '6.5.3' ]
+                wordpress: [ '5.9', '6.0', '6.3', '6.7', '6.8' ]
                 exclude:
                     # Exclude older PHP versions with newer WordPress
                     -   php: '7.4'
