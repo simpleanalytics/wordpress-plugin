@@ -122,11 +122,6 @@ jobs:
             -   name: Show current config values
                 run: wp config list --path=/tmp/wp --allow-root
 
-            -   name: Install plugin
-                run: |
-                    PLUGIN_SLUG=$(basename "$GITHUB_WORKSPACE")
-                    ln -s "$GITHUB_WORKSPACE" "wordpress/wp-content/plugins/simpleanalytics"
-
             -   name: Install pnpm
                 uses: pnpm/action-setup@v4
                 with:
