@@ -68,6 +68,9 @@ jobs:
                     tar -xzf wordpress-${WP_VERSION}.tar.gz
                     rm wordpress-${WP_VERSION}.tar.gz
 
+            -   name: Set up Docker Buildx
+                uses: docker/setup-buildx-action@v3
+
             -   name: Build FrankenPHP image (with cache)
                 id: build
                 uses: docker/build-push-action@v6
