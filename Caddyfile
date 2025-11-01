@@ -7,7 +7,7 @@
     order request_header before rewrite
 }
 
-0.0.0.0:8100 {
+:8100 {
     @static {
         file
         path *.ico *.css *.js *.gif *.jpg *.jpeg *.png *.svg *.woff
