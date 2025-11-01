@@ -35,18 +35,10 @@ jobs:
                     --health-retries=5
             web:
                 image: dunglas/frankenphp:1.9-php${{ matrix.php }}
-                ports: [ 8100:80 ]
+                ports: [ 8100:8100 ]
                 env:
                     FRANKENPHP_CONFIG: |
-                        {
-                            local_certs
-                            auto_https off
-                            frankenphp
-                            order php_server before file_server
-                            order php before file_server
-                            order request_header before rewrite
-                        }
-                        :80 {
+                        localhost:8100 {
                             root * /var/www/html/
                             encode br zstd gzip
                             php_server
