@@ -47,10 +47,6 @@ jobs:
                             order request_header before rewrite
                         }
                         :80 {
-                            @static {
-                               file
-                               path *.ico *.css *.js *.gif *.jpg *.jpeg *.png *.svg *.woff
-                            }
                             root * /var/www/html/
                             encode br zstd gzip
                             php_server
