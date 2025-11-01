@@ -64,8 +64,9 @@ jobs:
             -   name: Download WordPress
                 if: steps.cache-wordpress.outputs.cache-hit != 'true'
                 run: |
+                    mkdir -p /tmp/wp
                     curl -O https://wordpress.org/wordpress-${WP_VERSION}.tar.gz
-                    tar -xzf wordpress-${WP_VERSION}.tar.gz
+                    tar -xzf wordpress-${WP_VERSION}.tar.gz --strip-components=1 -C /tmp/wp
                     rm wordpress-${WP_VERSION}.tar.gz
 
             -   name: Set up Docker Buildx
@@ -90,7 +91,8 @@ jobs:
                       --name frankenphp \
                       --network host \
                       -p 8100:8100 \
-                      -v $GITHUB_WORKSPACE/wordpress:/var/www/html \
+                      -v /tmp/wp:/var/www/html \
+                      -v $GITHUB_WORKSPACE:/var/www/html/wp-content/plugins/simpleanalytics \
                       -v $GITHUB_WORKSPACE/Caddyfile:/etc/frankenphp/Caddyfile \
                       frankenphp-${{ matrix.php }}
 
@@ -102,7 +104,7 @@ jobs:
                         --dbuser="$WP_DB_USER" \
                         --dbpass="$WP_DB_PASS" \
                         --dbhost="$WP_DB_HOST" \
-                        --path=wordpress \
+                        --path=/tmp/wp \
                         --skip-check
                     wp core install \
                       --url="${WP_SITE_URL}" \
@@ -110,15 +112,15 @@ jobs:
                       --admin_user=admin \
                       --admin_password=admin \
                       --admin_email=test@example.com \
-                      --path=wordpress \
+                      --path=/tmp/wp \
                       --skip-email \
                       --allow-root
-                    wp user create author author@local.test --role=author --user_pass=author --path=wordpress
-                    wp user create editor editor@local.test --role=editor --user_pass=editor --path=wordpress
-                    wp user create subscriber subscriber@local.test --role=subscriber --user_pass=subscriber --path=wordpress
+                    wp user create author author@local.test --role=author --user_pass=author --path=/tmp/wp
+                    wp user create editor editor@local.test --role=editor --user_pass=editor --path=/tmp/wp
+                    wp user create subscriber subscriber@local.test --role=subscriber --user_pass=subscriber --path=/tmp/wp
 
             -   name: Show current config values
-                run: wp config list --path=wordpress --allow-root
+                run: wp config list --path=/tmp/wp --allow-root
 
             -   name: Install plugin
                 run: |
