@@ -68,6 +68,19 @@ jobs:
                     tar -xzf wordpress-${WP_VERSION}.tar.gz
                     rm wordpress-${WP_VERSION}.tar.gz
 
+            -   name: Build FrankenPHP image (with cache)
+                id: build
+                uses: docker/build-push-action@v6
+                with:
+                    context: .
+                    file: .github/docker/Dockerfile
+                    tags: frankenphp-${{ matrix.php }}
+                    load: true
+                    build-args: |
+                        PHP_VERSION=${{ matrix.php }}
+                    cache-from: type=gha
+                    cache-to: type=gha,mode=max
+
             -   name: Start FrankenPHP server
                 run: |
                     docker run -d \
@@ -75,7 +88,7 @@ jobs:
                       -p 8100:8100 \
                       -v $GITHUB_WORKSPACE/wordpress:/var/www/html \
                       -v $GITHUB_WORKSPACE/Caddyfile:/etc/frankenphp/Caddyfile \
-                      dunglas/frankenphp:1.9-php${{ matrix.php }}
+                      frankenphp-${{ matrix.php }}
 
             -   name: Install WordPress
                 run: |
