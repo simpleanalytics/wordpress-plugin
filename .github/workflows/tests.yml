@@ -88,6 +88,7 @@ jobs:
                 run: |
                     docker run -d \
                       --name frankenphp \
+                      --network host \
                       -p 8100:8100 \
                       -v $GITHUB_WORKSPACE/wordpress:/var/www/html \
                       -v $GITHUB_WORKSPACE/Caddyfile:/etc/frankenphp/Caddyfile \
