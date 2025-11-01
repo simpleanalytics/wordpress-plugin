@@ -33,6 +33,10 @@ jobs:
                     --health-interval=10s
                     --health-timeout=5s
                     --health-retries=5
+            web:
+                image: dunglas/frankenphp:1.9-php-${{ matrix.php }}
+                ports:
+                    - "8100:80"
 
         env:
             WP_VERSION: ${{ matrix.wordpress }}
