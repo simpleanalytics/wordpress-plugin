@@ -38,11 +38,11 @@ jobs:
                 ports: [ 8100:8100 ]
                 env:
                     FRANKENPHP_CONFIG: |
-                        localhost:8100 {
-                            root * /var/www/html/
-                            encode br zstd gzip
-                            php_server
-                        }
+                        localhost:8100
+
+                        root * /var/www/html/
+                        encode br zstd gzip
+                        php_server
                 volumes:
                     - ${{ github.workspace }}/wordpress:/var/www/html
 
