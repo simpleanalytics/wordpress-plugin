@@ -35,8 +35,10 @@ jobs:
                     --health-retries=5
             web:
                 image: dunglas/frankenphp:1.9-php${{ matrix.php }}
-                ports:
-                    - "8100:80"
+                ports: [ 8100:80 ]
+                volumes:
+                    - ./wordpress:/var/www/html
+                    - ./Caddyfile:/etc/frankenphp/Caddyfile
 
         env:
             WP_VERSION: ${{ matrix.wordpress }}

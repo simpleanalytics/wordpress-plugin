@@ -1,0 +1,24 @@
+{
+	local_certs
+	auto_https disable_redirects
+
+	frankenphp {
+		#worker /path/to/your/worker.php
+	}
+
+	order php_server before file_server
+	order php before file_server
+	order request_header before rewrite
+}
+
+:80 {
+	@static {
+		file
+		path *.ico *.css *.js *.gif *.jpg *.jpeg *.png *.svg *.woff
+	}
+
+	root * /var/www/html/
+	encode br zstd gzip
+
+	php_server
+}
