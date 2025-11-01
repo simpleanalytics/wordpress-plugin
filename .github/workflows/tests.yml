@@ -37,12 +37,7 @@ jobs:
                 image: dunglas/frankenphp:1.9-php${{ matrix.php }}
                 ports: [ 8100:8100 ]
                 env:
-                    FRANKENPHP_CONFIG: |
-                        localhost:8100
-
-                        root * /var/www/html/
-                        encode br zstd gzip
-                        php_server
+                    SERVER_ROOT: /var/www/html
                 volumes:
                     - ${{ github.workspace }}/wordpress:/var/www/html
 
