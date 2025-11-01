@@ -11,7 +11,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-#                php: [ '7.4', '8.0', '8.1', '8.2' ]
+                #                php: [ '7.4', '8.0', '8.1', '8.2' ]
                 php: [ '8.2', '8.3', '8.4' ]
                 wordpress: [ '5.9', '6.0', '6.3', '6.7', '6.8' ]
                 exclude:
@@ -41,6 +41,14 @@ jobs:
             WP_DB_HOST: 127.0.0.1
 
         steps:
+            -   name: Check MySQL tables
+                run: |
+                    echo "Listing databases:"
+                    mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES;"
+
+                    echo "Checking if 'wordpress' database has any tables:"
+                    mysql -h 127.0.0.1 -uroot -proot -D wordpress -e "SHOW TABLES;" || echo "No tables found (yet)."
+
             -   name: Checkout plugin
                 uses: actions/checkout@v4
 
