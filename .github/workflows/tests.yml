@@ -107,19 +107,6 @@ jobs:
                     PLUGIN_SLUG=$(basename "$GITHUB_WORKSPACE")
                     ln -s "$GITHUB_WORKSPACE" "wordpress/wp-content/plugins/simpleanalytics"
 
-            -   name: Start WordPress server
-                run: |
-                    wp server --host=localhost --port=8100 --allow-root --path=wordpress > /tmp/wp-server.log 2>&1 &
-                    # Health check
-                    for i in {1..30}; do
-                        if curl -sf http://localhost:8100/wp-login.php > /dev/null 2>&1; then
-                            echo "WordPress server ready"
-                            break
-                        fi
-                        [ $i -eq 30 ] && echo "Server failed to start" && cat /tmp/wp-server.log && exit 1
-                        sleep 1
-                    done
-
             -   name: Install pnpm
                 uses: pnpm/action-setup@v4
                 with:
