@@ -8,6 +8,9 @@ use SimpleAnalytics\UI\PageLayoutComponent;
 
 trait WordPressPageIntegration
 {
+    /** @return Tab[] */
+    abstract function getTabs(): array;
+
     public function register(): void
     {
         add_action('admin_menu', [$this, 'wpAddMenu']);
