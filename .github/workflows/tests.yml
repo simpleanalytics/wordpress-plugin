@@ -49,7 +49,9 @@ jobs:
             -   name: Set up PHP
                 uses: shivammathur/setup-php@v2
                 with:
-                    php-version: ${{ matrix.php }}
+                    # Note: Specified version is only for running tests,
+                    # as the WordPress PHP version is set inside the FrankenPHP Dockerfile.
+                    php-version: 8.4
                     extensions: mysqli, zip, gd
                     coverage: none
                     tools: wp-cli
