@@ -12,11 +12,11 @@ const NOSCRIPT_SELECTOR = 'noscript img[src="https://queue.simpleanalyticscdn.co
 it('can be activated', function () {
     asAdmin()
         ->navigate('http://localhost:8100/wp-admin/plugins.php')
-        ->screenshot()
         ->assertPresent('tr[data-slug="simpleanalytics"]')
         ->click('#activate-simpleanalytics')
         ->assertPresent('a[href="options-general.php?page=simpleanalytics"]')
-        ->assertPresent('#deactivate-simpleanalytics');
+        ->assertPresent('#deactivate-simpleanalytics')
+        ->screenshot();
 });
 
 it('adds a script by default', function () {
@@ -38,7 +38,7 @@ it('adds a script with ignored pages', function () {
         ->assertValue('simpleanalytics_ignore_pages', '/vouchers')
         ->screenshot();
 
-    visit('http://localhost:8100')->dd()->assertSourceHas('data-ignore-pages="/vouchers"');
+    visit('http://localhost:8100')->refresh()->assertSourceHas('data-ignore-pages="/vouchers"');
 });
 
 it('adds inactive script for selected user roles', function () {
