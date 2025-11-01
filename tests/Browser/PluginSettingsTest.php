@@ -35,6 +35,7 @@ it('adds a script with ignored pages', function () {
         ->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
         ->fill('simpleanalytics_ignore_pages', '/vouchers')
         ->click('Save Changes')
+        ->refresh()
         ->assertValue('simpleanalytics_ignore_pages', '/vouchers')
         ->screenshot();
 
