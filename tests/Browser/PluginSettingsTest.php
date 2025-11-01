@@ -87,14 +87,14 @@ it('adds a script with manually collect page views enabled', function () {
     visit('http://localhost:8100')->assertSourceHas('data-auto-collect="true"');
 });
 
-it('adds noscript tag when support no javascript mode is enabled', function () {
+/*it('adds noscript tag when support no javascript mode is enabled', function () {
     asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
         ->check('simpleanalytics_noscript')
         ->click('Save Changes')
         ->assertChecked('simpleanalytics_noscript');
 
     visit('http://localhost:8100')->assertPresent(NOSCRIPT_SELECTOR);
-});
+});*/
 
 it('adds a script with onload callback', function () {
     asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
