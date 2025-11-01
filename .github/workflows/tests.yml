@@ -38,7 +38,7 @@ jobs:
                 ports: [ 8100:80 ]
                 volumes:
                     - ${{ github.workspace }}/wordpress:/var/www/html
-                    - ${{ github.workspace }}/Caddyfile:/etc/frankenphp/Caddyfile
+                    - ${{ github.workspace }}/tests:/etc/frankenphp/
 
         env:
             WP_VERSION: ${{ matrix.wordpress }}
