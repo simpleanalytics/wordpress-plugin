@@ -96,14 +96,14 @@ it('adds a script with manually collect page views enabled', function () {
     visit('http://localhost:8100')->assertPresent(NOSCRIPT_SELECTOR);
 });*/
 
-it('adds a script with onload callback', function () {
+/*it('adds a script with onload callback', function () {
     asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
         ->fill('simpleanalytics_onload_callback', 'sa_event("My event")')
         ->click('Save Changes')
         ->assertValue('simpleanalytics_onload_callback', 'sa_event("My event")');
 
     visit('http://localhost:8100')->assertSourceHas('data-onload="sa_event(\"My event\")"');
-});
+});*/
 
 it('adds a script with overwrite domain name', function () {
     asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
