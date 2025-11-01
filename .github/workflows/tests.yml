@@ -36,9 +36,30 @@ jobs:
             web:
                 image: dunglas/frankenphp:1.9-php${{ matrix.php }}
                 ports: [ 8100:80 ]
+                env:
+                    FRANKENPHP_CONFIG: >-
+                        {
+                        	local_certs
+                        	auto_https off
+                        	frankenphp {
+                        		#worker /path/to/your/worker.php
+                        	}
+                        	order php_server before file_server
+                        	order php before file_server
+                        	order request_header before rewrite
+                        }
+
+                        :80 {
+                        	@static {
+                        		file
+                        		path *.ico *.css *.js *.gif *.jpg *.jpeg *.png *.svg *.woff
+                        	}
+                        	root * /var/www/html/
+                        	encode br zstd gzip
+                        	php_server
+                        }
                 volumes:
                     - ${{ github.workspace }}/wordpress:/var/www/html
-                    - ${{ github.workspace }}/tests:/etc/frankenphp/
 
         env:
             WP_VERSION: ${{ matrix.wordpress }}
