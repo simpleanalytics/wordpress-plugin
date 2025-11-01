@@ -11,11 +11,8 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                #  temporary disabled for testing
-                #                php: [ '7.4', '8.0', '8.1', '8.2' ]
-                #                wordpress: [ '5.9', '6.0', '6.3', '6.5.3' ]
-                php: [ '8.4' ]
-                wordpress: [ '6.5' ]
+                php: [ '7.4', '8.0', '8.1', '8.2' ]
+                wordpress: [ '5.9', '6.0', '6.3', '6.5.3' ]
                 exclude:
                     # Exclude older PHP versions with newer WordPress
                     -   php: '7.4'
