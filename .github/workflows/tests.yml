@@ -58,7 +58,7 @@ jobs:
                 id: cache-wordpress
                 uses: actions/cache@v3
                 with:
-                    path: wordpress
+                    path: /tmp/wp
                     key: wp-${{ matrix.wordpress }}
 
             -   name: Download WordPress
@@ -98,7 +98,7 @@ jobs:
 
             -   name: Install WordPress
                 run: |
-                    rm -f wordpress/wp-config.php
+                    rm -f /tmp/wp/wp-config.php
                     wp config create \
                         --dbname="$WP_DB_NAME" \
                         --dbuser="$WP_DB_USER" \
