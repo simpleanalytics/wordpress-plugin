@@ -33,14 +33,6 @@ jobs:
                     --health-interval=10s
                     --health-timeout=5s
                     --health-retries=5
-            web:
-                image: dunglas/frankenphp:1.9-php${{ matrix.php }}
-                ports: [ 8100:8100 ]
-                env:
-                    SERVER_ROOT: /var/www/html
-                    SERVER_NAME: http://0.0.0.0:8100
-                volumes:
-                    - ${{ github.workspace }}/wordpress:/var/www/html
 
         env:
             WP_VERSION: ${{ matrix.wordpress }}
@@ -75,6 +67,15 @@ jobs:
                     curl -O https://wordpress.org/wordpress-${WP_VERSION}.tar.gz
                     tar -xzf wordpress-${WP_VERSION}.tar.gz
                     rm wordpress-${WP_VERSION}.tar.gz
+
+            -   name: Start FrankenPHP server
+                run: |
+                    docker run -d \
+                      --name frankenphp \
+                      -p 8100:8100 \
+                      -v $GITHUB_WORKSPACE/wordpress:/var/www/html \
+                      -v $GITHUB_WORKSPACE/Caddyfile:/etc/frankenphp/Caddyfile \
+                      dunglas/frankenphp:1.9-php${{ matrix.php }}
 
             -   name: Install WordPress
                 run: |
