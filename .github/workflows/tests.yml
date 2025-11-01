@@ -41,14 +41,11 @@ jobs:
                         {
                         	local_certs
                         	auto_https off
-                        	frankenphp {
-                        		#worker /path/to/your/worker.php
-                        	}
+                        	frankenphp
                         	order php_server before file_server
                         	order php before file_server
                         	order request_header before rewrite
                         }
-
                         :80 {
                         	@static {
                         		file
