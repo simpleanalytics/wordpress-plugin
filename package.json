@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "tailwindcss -i resources/css/settings.css -o build/css/settings.css --watch",
     "build": "tailwindcss build -i resources/css/settings.css -o build/css/settings.css",
-    "tests:install": "playwright install --with-deps chromium",
+    "tests:install": "playwright install --with-deps firefox",
     "tests": "playwright test"
   },
   "devDependencies": {
