@@ -37,8 +37,8 @@ jobs:
                 image: dunglas/frankenphp:1.9-php${{ matrix.php }}
                 ports: [ 8100:80 ]
                 volumes:
-                    - ./wordpress:/var/www/html
-                    - ./Caddyfile:/etc/frankenphp/Caddyfile
+                    - $GITHUB_WORKSPACE/wordpress:/var/www/html
+                    - $GITHUB_WORKSPACE/Caddyfile:/etc/frankenphp/Caddyfile
 
         env:
             WP_VERSION: ${{ matrix.wordpress }}
