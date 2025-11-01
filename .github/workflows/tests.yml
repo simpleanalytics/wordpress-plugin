@@ -37,7 +37,7 @@ jobs:
                 image: dunglas/frankenphp:1.9-php${{ matrix.php }}
                 ports: [ 8100:80 ]
                 env:
-                    FRANKENPHP_CONFIG: >-
+                    FRANKENPHP_CONFIG: |
                         {
                             local_certs
                             auto_https off
