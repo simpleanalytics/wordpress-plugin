@@ -9,11 +9,6 @@ const INACTIVE_ADMIN_SCRIPT_SELECTOR = 'script[src="http://localhost:8100/wp-con
 const INACTIVE_ADMIN_COMMENT = '<!-- Simple Analytics: Not logging requests from admins -->';
 const NOSCRIPT_SELECTOR = 'noscript img[src="https://queue.simpleanalyticscdn.com/noscript.gif"][alt=""][referrerpolicy="no-referrer-when-downgrade"]';
 
-it('smthg',function (){
-    visit('http://localhost:8100')->withLocale('en-GB');
-});
-
-/*
 it('can be activated', function () {
     asAdmin()
         ->navigate('http://localhost:8100/wp-admin/plugins.php')
@@ -200,4 +195,4 @@ it('adds a script with a custom domain name', function () {
         ->assertValue('simpleanalytics_custom_domain', 'mydomain.com');
 
     visit('http://localhost:8100')->assertPresent('script[src="https://mydomain.com/latest.js"]');
-});*/
+});
