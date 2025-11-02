@@ -15,4 +15,6 @@
     root * /var/www/html/
     encode br zstd gzip
     php_server
+    output stdout
+    format json
 }
