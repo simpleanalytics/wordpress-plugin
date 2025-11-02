@@ -170,8 +170,8 @@ jobs:
                         tests/Browser/Screenshots
                     retention-days: 30
 
-            -   name: Debug server status
-                if: failure()
+            -   name: Show FrankenPHP logs
+                if: always()
                 run: |
-                    cat /tmp/wp-server.log || echo "No log file found"
-                    ps aux | grep php || true
+                    echo "=== FrankenPHP logs ==="
+                    docker logs frankenphp || echo "No logs found"
