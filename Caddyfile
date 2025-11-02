@@ -16,6 +16,6 @@
     encode br zstd gzip
     php_server
     log {
-        format structure
+        format console
     }
 }
