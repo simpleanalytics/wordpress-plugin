@@ -16,6 +16,7 @@ namespace Tests;
 use Pest\Browser\Api\Webpage;
 
 pest()->extend(TestCase::class)->in('Feature');
+pest()->browser()->timeout(10000);
 
 /*
 |--------------------------------------------------------------------------
