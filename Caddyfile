@@ -2,16 +2,14 @@
     local_certs
     auto_https off
     frankenphp
-    order php_server before file_server
-    order php before file_server
-    order request_header before rewrite
 }
 
 :8100 {
     @static {
         file
-        path *.ico *.css *.js *.gif *.jpg *.jpeg *.png *.svg *.woff
+        path *.avif *.ico *.css *.js *.gif *.jpg *.jpeg *.png *.svg *.woff *.woff2 *.gpx
     }
+    header @static Cache-Control max-age=5184000
     root * /var/www/html/
     encode br zstd gzip
     php_server
