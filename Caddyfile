@@ -15,5 +15,7 @@
     root * /var/www/html/
     encode br zstd gzip
     php_server
-    log
+    log {
+        format structure
+    }
 }
