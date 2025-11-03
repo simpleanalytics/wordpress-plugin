@@ -1,13 +1,8 @@
 .svn
-node*
-vendor*
 build
-
-# Playwright
+vendor/
 node_modules/
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-tests-browser-state.json
-tests/**/Screenshots
+.phpunit.result.cache
+var
+drivers
+driver

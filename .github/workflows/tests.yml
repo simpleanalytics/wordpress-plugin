@@ -144,10 +144,8 @@ jobs:
                     node-version: lts/*
                     cache: "pnpm"
 
-            -   name: Install Playwright and dependencies
-                run: |
-                    pnpm install
-                    pnpm run tests:install
+            -   name: Install pnpm dependencies
+                run: pnpm install
 
             -   name: Cache composer dependencies
                 uses: actions/cache@v3
@@ -156,10 +154,10 @@ jobs:
                     key: composer-${{ hashFiles('composer.lock') }}
 
             -   name: Run composer install
-                run: composer install --no-progress --prefer-dist --no-interaction
+                run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
             -   name: Run Pest tests
-                run: ./vendor/bin/pest -v --bail --colors=always
+                run: ./vendor/bin/phpunit
 
             -   name: Upload test results
                 if: always()
