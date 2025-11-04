@@ -129,7 +129,6 @@ jobs:
                     wp user create author author@local.test --role=author --user_pass=author --path=/tmp/wp
                     wp user create editor editor@local.test --role=editor --user_pass=editor --path=/tmp/wp
                     wp user create subscriber subscriber@local.test --role=subscriber --user_pass=subscriber --path=/tmp/wp
-                    mkdir public
 
             -   name: Show current config values
                 run: wp config list --path=/tmp/wp --allow-root
