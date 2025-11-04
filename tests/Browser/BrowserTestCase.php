@@ -3,15 +3,21 @@
 namespace Tests\Browser;
 
 use Symfony\Component\Panther\PantherTestCase;
+use Zenstruck\Browser\PantherBrowser;
 use Zenstruck\Browser\Test\HasBrowser;
 
 abstract class BrowserTestCase extends PantherTestCase
 {
     use HasBrowser;
 
+    protected function myBrowser(): PantherBrowser
+    {
+        return $this->pantherBrowser(['external_base_uri' => 'http://localhost:8100']);
+    }
+
     protected function asUser($login, $password)
     {
-        return $this->pantherBrowser()
+        return $this->myBrowser()
             ->visit('http://localhost:8100/wp-admin')
             ->fillField('user_login', $login)
             ->fillField('user_pass', $password)

@@ -13,7 +13,7 @@ class PluginSettingsTest extends BrowserTestCase
             ->assertContains('<!-- Simple Analytics: Not logging requests from admins -->')
             ->assertContains('<script src="http://localhost:8100/wp-content/plugins/simpleanalytics/resources/js/inactive.js"');
 
-        $this->pantherBrowser()
+        $this->myBrowser()
             ->visit('http://localhost:8100')
             ->assertContains('<script src="https://scripts.simpleanalyticscdn.com/latest.js"></script>');
     }
