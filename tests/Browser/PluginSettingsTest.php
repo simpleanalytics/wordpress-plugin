@@ -20,8 +20,7 @@ class PluginSettingsTest extends BrowserTestCase
 
     public function test_adds_script_with_ignored_pages(): void
     {
-        $this->asAdmin()
-            ->pause()
+        $this->myBrowser()
             ->visit('/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
             ->fillField('simpleanalytics_ignore_pages', '/vouchers')
             ->click('Save Changes')
