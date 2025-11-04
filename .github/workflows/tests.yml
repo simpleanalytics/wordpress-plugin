@@ -164,8 +164,7 @@ jobs:
                 uses: actions/upload-artifact@v4
                 with:
                     name: test-results-php${{ matrix.php }}-wp${{ matrix.wordpress }}
-                    path: |
-                        tests/Browser/Screenshots
+                    path: var/browser
                     retention-days: 30
 
             -   name: Show FrankenPHP logs

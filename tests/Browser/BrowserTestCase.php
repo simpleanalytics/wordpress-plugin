@@ -3,12 +3,18 @@
 namespace Tests\Browser;
 
 use Symfony\Component\Panther\PantherTestCase;
+use Tests\TestKernel;
 use Zenstruck\Browser\PantherBrowser;
 use Zenstruck\Browser\Test\HasBrowser;
 
 abstract class BrowserTestCase extends PantherTestCase
 {
     use HasBrowser;
+
+    protected static function getKernelClass(): string
+    {
+        return TestKernel::class;
+    }
 
     protected function myBrowser(): PantherBrowser
     {

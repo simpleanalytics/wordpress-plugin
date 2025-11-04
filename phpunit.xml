@@ -12,8 +12,4 @@
     <extensions>
         <bootstrap class="Zenstruck\Browser\Test\BrowserExtension"/>
     </extensions>
-    <php>
-        <env name="KERNEL_CLASS" value="Tests\TestKernel"/>
-        <env name="PANTHER_CHROME_BINARY" value="chromium"/>
-    </php>
 </phpunit>

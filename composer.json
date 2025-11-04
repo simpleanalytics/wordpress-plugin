@@ -1,7 +1,6 @@
 {
     "require-dev": {
         "rector/rector": "^1.2",
-        "symfony/var-dumper": "^7.3",
         "zenstruck/browser": "^1.9",
         "phpunit/phpunit": "^12",
         "symfony/panther": "^2.2",
