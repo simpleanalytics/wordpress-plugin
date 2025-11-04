@@ -17,4 +17,19 @@ class PluginSettingsTest extends BrowserTestCase
             ->visit('/')
             ->assertContains('<script src="https://scripts.simpleanalyticscdn.com/latest.js"></script>');
     }
+
+    public function test_adds_script_with_ignored_pages(): void
+    {
+        $this->asAdmin()
+            ->pause()
+            ->visit('/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
+            ->fillField('simpleanalytics_ignore_pages', '/vouchers')
+            ->click('Save Changes')
+            ->visit('/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
+            ->assertFieldEquals('simpleanalytics_ignore_pages', '/vouchers');
+
+        $this->myBrowser()
+            ->visit('/')
+            ->assertContains('data-ignore-pages="/vouchers"');
+    }
 }
