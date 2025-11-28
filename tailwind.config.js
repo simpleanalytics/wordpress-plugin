@@ -6,6 +6,7 @@ module.exports = {
     content: [
         './**/*.php',
     ],
+    important: '.sa-settings',
     theme: {
         extend: {
             colors: {
