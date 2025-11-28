@@ -45,4 +45,17 @@ abstract class BrowserTestCase extends PantherTestCase
     {
         return $this->asUser('editor', 'editor');
     }
+
+    protected function activatePluginIfNeeded(PantherBrowser $browser): PantherBrowser
+    {
+        $browser->visit('/wp-admin/plugins.php');
+
+        $activateButton = $browser->crawler()->filter('#activate-simpleanalytics');
+
+        if ($activateButton->count() > 0) {
+            $browser->click('#activate-simpleanalytics');
+        }
+
+        return $browser;
+    }
 }

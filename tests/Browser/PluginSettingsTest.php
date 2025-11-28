@@ -20,10 +20,10 @@ class PluginSettingsTest extends BrowserTestCase
 
     public function test_adds_script_with_ignored_pages(): void
     {
-        $this->asAdmin()
-            ->visit('/wp-admin/plugins.php')
-            ->click('#activate-simpleanalytics')
-            ->visit('/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
+        $browser = $this->asAdmin();
+        $this->activatePluginIfNeeded($browser);
+
+        $browser->visit('/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
             ->fillField('simpleanalytics_ignore_pages', '/vouchers')
             ->click('Save Changes')
             ->visit('/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
