@@ -6,8 +6,10 @@ class PluginSettingsTest extends BrowserTestCase
 {
     public function test_activation_and_presence_of_default_scripts(): void
     {
-        $this->asAdmin()->visit('/wp-admin/plugins.php')
-            ->click('#activate-simpleanalytics')
+        $browser = $this->asAdmin();
+        $this->activatePluginIfNeeded($browser);
+
+        $browser->visit('/wp-admin/plugins.php')
             ->assertSeeElement('#deactivate-simpleanalytics')
             ->visit('/')
             ->assertContains('<!-- Simple Analytics: Not logging requests from admins -->')
