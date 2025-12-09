@@ -1,8 +1,5 @@
 @import url(https://fonts.bunny.net/css?family=space-grotesk:500,600);
 
-.sa-settings {
-    @tailwind base;
-    @tailwind components;
-}
-
+@tailwind base;
+@tailwind components;
 @tailwind utilities;

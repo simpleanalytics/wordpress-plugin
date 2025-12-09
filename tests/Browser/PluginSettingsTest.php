@@ -35,4 +35,25 @@ class PluginSettingsTest extends BrowserTestCase
             ->visit('/')
             ->assertContains('data-ignore-pages="/vouchers"');
     }
+    //it('adds inactive script for selected user roles', function () {
+    //    $admin = asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
+    //        ->check('simpleanalytics_exclude_user_roles-editor')
+    //        ->check('simpleanalytics_exclude_user_roles-author')
+    //        ->click('Save Changes')
+    //        ->assertChecked('simpleanalytics_exclude_user_roles-editor')
+    //        ->assertChecked('simpleanalytics_exclude_user_roles-author');
+    //
+    //    $admin->navigate('http://localhost:8100')
+    //        ->assertPresent(DEFAULT_SCRIPT_SELECTOR);
+    //
+    //    asAuthor()->navigate('http://localhost:8100')
+    //        ->assertPresent(INACTIVE_ADMIN_SCRIPT_SELECTOR)
+    //        ->assertSourceHas(INACTIVE_ADMIN_COMMENT);
+    //
+    //    asEditor()->navigate('http://localhost:8100')
+    //        ->assertPresent(INACTIVE_ADMIN_SCRIPT_SELECTOR)
+    //        ->assertSourceHas(INACTIVE_ADMIN_COMMENT);
+    //});
+
+//    public function
 }

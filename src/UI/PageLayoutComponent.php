@@ -31,9 +31,9 @@ class PageLayoutComponent
                 padding-left: 0;
             }
         </style>
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link rel="stylesheet" href="<?php echo PLUGIN_URL ?>build/css/settings.css">
-        <div class="sa-settings">
+        <template shadowrootmode="open">
+            <link rel="preconnect" href="https://fonts.bunny.net">
+            <link rel="stylesheet" href="<?php echo PLUGIN_URL ?>build/css/settings.css">
             <form method="post" action="options.php">
                 <!-- Hidden fields -->
                 <?php settings_fields($this->page->getOptionGroup($currentTab)); ?>
@@ -106,8 +106,22 @@ class PageLayoutComponent
                         textarea.value += `\n${value}`;
                     }
                 }
-                </script>
-        </div>
+            </script>
+        </template>
+        <script>
+            // Polyfill in case the browser has no support for shadowRootMode
+            // 1. https://developer.chrome.com/docs/css-ui/declarative-shadow-dom#polyfill
+            // 2. https://caniuse.com/mdn-html_elements_template_shadowrootmode
+            (function attachShadowRoots(root) {
+                root.querySelectorAll("template[shadowrootmode]").forEach(template => {
+                    const mode = template.getAttribute("shadowrootmode");
+                    const shadowRoot = template.parentNode.attachShadow({ mode });
+                    shadowRoot.appendChild(template.content);
+                    template.remove();
+                    attachShadowRoots(shadowRoot);
+                });
+            })(document);
+        </script>
         <?php
     }
 
