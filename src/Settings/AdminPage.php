@@ -5,7 +5,7 @@ namespace SimpleAnalytics\Settings;
 use SimpleAnalytics\Settings\Concerns\WordPressPageIntegration;
 use SimpleAnalytics\Support\Str;
 
-class Page
+class AdminPage
 {
     use WordPressPageIntegration;
 
