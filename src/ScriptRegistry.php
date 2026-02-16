@@ -9,16 +9,16 @@ use SimpleAnalytics\Scripts\Contracts\Script;
 /**
  * Register scripts with WordPress.
  */
-final class ScriptManager
+final class ScriptRegistry
 {
+    /** @var Script[] */
     private $scripts = [];
-    public function __construct($scripts = [])
+
+    public function __construct()
     {
-        /** @var Script[] */
-        $this->scripts = $scripts;
     }
 
-    public function add(Script $script): void
+    public function push(Script $script): void
     {
         $this->scripts[] = $script;
     }

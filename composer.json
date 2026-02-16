@@ -1,5 +1,19 @@
 {
     "require-dev": {
-        "rector/rector": "^1.2"
+        "rector/rector": "^1.2",
+        "zenstruck/browser": "^1.9",
+        "phpunit/phpunit": "^12",
+        "symfony/panther": "^2.2",
+        "dbrekelmans/bdi": "^1.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }

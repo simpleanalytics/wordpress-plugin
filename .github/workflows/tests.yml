@@ -1,0 +1,172 @@
+name: E2E Tests
+
+on:
+    push:
+    pull_request:
+
+jobs:
+    e2e:
+        name: PHP ${{ matrix.php }} - WP ${{ matrix.wordpress }}
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: true
+            matrix:
+                php: [ "8.2", "8.3", "8.4" ]
+                wordpress: [ "6.7", "6.8" ]
+                exclude:
+                    # Exclude older PHP versions with newer WordPress
+                    -   php: "7.4"
+                        wordpress: "6.5.3"
+
+        services:
+            mysql:
+                image: mysql:8.0
+                env:
+                    MYSQL_DATABASE: wordpress
+                    MYSQL_ROOT_PASSWORD: root
+                ports: [ 3306:3306 ]
+                options: >-
+                    --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=5
+
+        env:
+            WP_VERSION: ${{ matrix.wordpress }}
+            WP_SITE_URL: http://localhost:8100
+            WP_DB_NAME: wordpress
+            WP_DB_USER: root
+            WP_DB_PASS: root
+            WP_DB_HOST: 127.0.0.1
+
+        steps:
+            -   name: Check MySQL tables
+                run: |
+                    echo "Listing databases:"
+                    mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES;"
+
+                    echo "Checking if 'wordpress' database has any tables:"
+                    mysql -h 127.0.0.1 -uroot -proot -D wordpress -e "SHOW TABLES;" || echo "No tables found (yet)."
+
+            -   name: Checkout plugin
+                uses: actions/checkout@v4
+
+            -   name: Set up PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    # Note: Specified version is only for running tests,
+                    # as the WordPress PHP version is set inside the FrankenPHP Dockerfile.
+                    php-version: 8.4
+                    extensions: mysqli, zip, gd
+                    coverage: none
+                    tools: wp-cli
+
+            -   name: Cache WordPress archive
+                id: cache-wordpress
+                uses: actions/cache@v3
+                with:
+                    path: /tmp/wp
+                    key: wp-${{ matrix.wordpress }}
+
+            -   name: Download WordPress
+                if: steps.cache-wordpress.outputs.cache-hit != 'true'
+                run: |
+                    mkdir -p /tmp/wp
+                    curl -O https://wordpress.org/wordpress-${WP_VERSION}.tar.gz
+                    tar -xzf wordpress-${WP_VERSION}.tar.gz --strip-components=1 -C /tmp/wp
+                    rm wordpress-${WP_VERSION}.tar.gz
+
+            -   name: Set up Docker Buildx
+                uses: docker/setup-buildx-action@v3
+
+            -   name: Build FrankenPHP image (with cache)
+                id: build
+                uses: docker/build-push-action@v6
+                env:
+                    DOCKER_BUILD_SUMMARY: false
+                with:
+                    context: .
+                    file: .github/docker/Dockerfile
+                    tags: frankenphp-${{ matrix.php }}
+                    load: true
+                    build-args: |
+                        PHP_VERSION=${{ matrix.php }}
+                    cache-from: type=gha
+                    cache-to: type=gha,mode=max
+
+            -   name: Start FrankenPHP server
+                run: |
+                    docker run -d \
+                      --name frankenphp \
+                      --network host \
+                      -p 8100:8100 \
+                      -v /tmp/wp:/var/www/html \
+                      -v $GITHUB_WORKSPACE:/var/www/html/wp-content/plugins/simpleanalytics \
+                      -v $GITHUB_WORKSPACE/Caddyfile:/etc/frankenphp/Caddyfile \
+                      frankenphp-${{ matrix.php }}
+
+            -   name: Install WordPress
+                run: |
+                    rm -f /tmp/wp/wp-config.php
+                    wp config create \
+                        --dbname="$WP_DB_NAME" \
+                        --dbuser="$WP_DB_USER" \
+                        --dbpass="$WP_DB_PASS" \
+                        --dbhost="$WP_DB_HOST" \
+                        --path=/tmp/wp \
+                        --skip-check
+                    wp core install \
+                      --url="${WP_SITE_URL}" \
+                      --title="Test Site" \
+                      --admin_user=admin \
+                      --admin_password=admin \
+                      --admin_email=test@example.com \
+                      --path=/tmp/wp \
+                      --skip-email \
+                      --allow-root
+                    wp user create author author@local.test --role=author --user_pass=author --path=/tmp/wp --allow-root
+                    wp user create editor editor@local.test --role=editor --user_pass=editor --path=/tmp/wp --allow-root
+                    wp user create subscriber subscriber@local.test --role=subscriber --user_pass=subscriber --path=/tmp/wp --allow-root
+
+            -   name: Show current config values
+                run: wp config list --path=/tmp/wp --allow-root
+
+            -   name: Install pnpm
+                uses: pnpm/action-setup@v4
+                with:
+                    version: 10
+
+            -   name: Setup Node
+                uses: actions/setup-node@v4
+                with:
+                    node-version: lts/*
+                    cache: "pnpm"
+
+            -   name: Install pnpm dependencies
+                run: pnpm install
+
+            -   name: Cache composer dependencies
+                uses: actions/cache@v3
+                with:
+                    path: vendor
+                    key: composer-${{ hashFiles('composer.lock') }}
+
+            -   name: Run composer install
+                run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+            -   name: Run PHPUnit tests
+                run: ./vendor/bin/phpunit
+
+            -   name: Upload test results
+                if: always()
+                uses: actions/upload-artifact@v4
+                with:
+                    name: test-results-php${{ matrix.php }}-wp${{ matrix.wordpress }}
+                    path: var/browser
+                    retention-days: 30
+
+            -   name: Show FrankenPHP logs
+                if: always()
+                run: |
+                    echo "=== FrankenPHP logs ==="
+                    docker logs frankenphp || echo "No logs found"

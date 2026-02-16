@@ -1,11 +1,15 @@
 {
-    "private": true,
-    "scripts": {
-        "dev": "tailwindcss -i resources/css/settings.css -o build/css/settings.css --watch",
-        "build": "tailwindcss build -i resources/css/settings.css -o build/css/settings.css"
-    },
-    "devDependencies": {
-        "@tailwindcss/forms": "^0.5.8",
-        "tailwindcss": "^3.4.10"
-    }
+  "private": true,
+  "scripts": {
+    "dev": "tailwindcss -i resources/css/settings.css -o build/css/settings.css --watch",
+    "build": "tailwindcss build -i resources/css/settings.css -o build/css/settings.css",
+    "tests:install": "playwright install --with-deps chromium",
+    "tests": "playwright test"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.10",
+    "@types/node": "^22.18.10",
+    "playwright": "^1.56.1",
+    "tailwindcss": "^3.4.18"
+  }
 }

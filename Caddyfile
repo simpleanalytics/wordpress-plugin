@@ -1,0 +1,19 @@
+{
+    local_certs
+    auto_https off
+    frankenphp
+}
+
+:8100 {
+    @static {
+        file
+        path *.avif *.ico *.css *.js *.gif *.jpg *.jpeg *.png *.svg *.woff *.woff2 *.gpx
+    }
+    header @static Cache-Control max-age=5184000
+    root * /var/www/html/
+    encode br zstd gzip
+    php_server
+    log {
+        format console
+    }
+}
