@@ -1,4 +1,8 @@
 .svn
-node*
-vendor*
 build
+vendor/
+node_modules/
+.phpunit.result.cache
+var
+drivers
+driver
