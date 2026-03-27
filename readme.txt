@@ -4,9 +4,9 @@ Contributors: simpleanalytics
 Donate link: https://simpleanalytics.com
 Tags: privacy-first, privacy-friendly, free analytics, website analytics, simple analytics, analytics, statistics, website traffic, traffic monitoring
 Requires at least: 5.2
-Tested up to: 6.8.3
+Tested up to: 6.9.4
 Requires PHP: 7.2.0
-Stable tag: 1.78
+Stable tag: 1.101
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,6 +136,147 @@ You can [leave your feedback here](https://simpleanalytics.com/feedback?ref=word
 No changes needed for upgrades.
 
 == Changelog ==
+
+= 1.101 =
+* 2026-03-23
+* Changes:
+* Release 1.100: Code updates and support for WordPress 6.9.4
+
+
+= 1.100 =
+* 2026-03-16
+* Tested up to WordPress 6.9.4
+* Changes:
+* Release 1.99: Code updates
+
+
+= 1.99 =
+* 2026-03-09
+* Changes:
+* Release 1.98: Code updates
+
+
+= 1.98 =
+* 2026-03-02
+* Changes:
+* Release 1.97: Code updates
+
+
+= 1.97 =
+* 2026-02-23
+* Changes:
+* Release 1.96: Code updates
+
+
+= 1.96 =
+* 2026-02-16
+* Changes:
+* Release 1.95: Code updates and support for WordPress 6.9.1
+
+
+= 1.95 =
+* 2026-02-09
+* Tested up to WordPress 6.9.1
+* Changes:
+* Release 1.94: Code updates
+
+
+= 1.94 =
+* 2026-02-02
+* Changes:
+* Release 1.93: Code updates
+
+
+= 1.93 =
+* 2026-01-26
+* Changes:
+* Release 1.92: Code updates
+
+
+= 1.92 =
+* 2026-01-19
+* Changes:
+* Release 1.91: Code updates
+
+
+= 1.91 =
+* 2026-01-12
+* Changes:
+* Release 1.90: Code updates
+
+
+= 1.90 =
+* 2026-01-05
+* Changes:
+* Release 1.89: Code updates
+
+
+= 1.89 =
+* 2025-12-29
+* Changes:
+* Release 1.88: Code updates
+
+
+= 1.88 =
+* 2025-12-22
+* Changes:
+* Release 1.87: Code updates
+
+
+= 1.87 =
+* 2025-12-15
+* Changes:
+* Release 1.86: Code updates and support for WordPress 6.9
+
+
+= 1.86 =
+* 2025-12-08
+* Tested up to WordPress 6.9
+* Changes:
+* Release 1.85: Code updates
+
+
+= 1.85 =
+* 2025-12-01
+* Changes:
+* Release 1.84: Code updates
+
+
+= 1.84 =
+* 2025-11-24
+* Changes:
+* Release 1.83: Code updates
+
+
+= 1.83 =
+* 2025-11-17
+* Changes:
+* Release 1.82: Code updates
+
+
+= 1.82 =
+* 2025-11-10
+* Changes:
+* Release 1.81: Code updates
+
+
+= 1.81 =
+* 2025-11-03
+* Changes:
+* Release 1.80: Code updates
+
+
+= 1.80 =
+* 2025-10-27
+* Changes:
+* Release 1.79: Code updates
+
+
+= 1.79 =
+* 2025-10-20
+* Changes:
+* Release 1.78: Code updates
+
 
 = 1.78 =
 * 2025-10-13
