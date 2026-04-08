@@ -2,199 +2,233 @@
 
 namespace Tests\Browser;
 
-use function Tests\{asAdmin, asAuthor, asEditor};
+class PluginSettingsTest extends BrowserTestCase
+{
+    public function test_can_be_activated(): void
+    {
+        $this->asAdmin()
+            ->visit('http://localhost:8100/wp-admin/plugins.php')
+            ->assertSeeElement('tr[data-slug="simpleanalytics"]')
+            ->click('#activate-simpleanalytics')
+            ->assertSeeElement('a[href="options-general.php?page=simpleanalytics"]')
+            ->assertSeeElement('#deactivate-simpleanalytics');
+    }
 
-const DEFAULT_SCRIPT_SELECTOR = 'script[src="https://scripts.simpleanalyticscdn.com/latest.js"]';
-const INACTIVE_ADMIN_SCRIPT_SELECTOR = 'script[src="http://localhost:8100/wp-content/plugins/simpleanalytics/resources/js/inactive.js"]';
-const INACTIVE_ADMIN_COMMENT = '<!-- Simple Analytics: Not logging requests from admins -->';
-const NOSCRIPT_SELECTOR = 'noscript img[src="https://queue.simpleanalyticscdn.com/noscript.gif"][alt=""][referrerpolicy="no-referrer-when-downgrade"]';
+    public function test_adds_a_script_by_default(): void
+    {
+        $this->myBrowser()
+            ->visit('http://localhost:8100')
+            ->assertSeeElement('script[src="https://scripts.simpleanalyticscdn.com/latest.js"]');
+    }
 
-it('can be activated', function () {
-    asAdmin()
-        ->navigate('http://localhost:8100/wp-admin/plugins.php')
-        ->assertPresent('tr[data-slug="simpleanalytics"]')
-        ->click('#activate-simpleanalytics')
-        ->assertPresent('a[href="options-general.php?page=simpleanalytics"]')
-        ->assertPresent('#deactivate-simpleanalytics')
-        ->screenshot();
-});
+    public function test_adds_inactive_script_for_authenticated_users_by_default(): void
+    {
+        $this->asAdmin()
+            ->visit('http://localhost:8100')
+            ->assertSeeElement('script[src="http://localhost:8100/wp-content/plugins/simpleanalytics/resources/js/inactive.js"]')
+            ->assertContains('<!-- Simple Analytics: Not logging requests from admins -->');
+    }
 
-it('adds a script by default', function () {
-    visit('http://localhost:8100')->assertPresent(DEFAULT_SCRIPT_SELECTOR);
-});
+    public function test_adds_a_script_with_ignored_pages(): void
+    {
+        $this->asAdmin()
+            ->visit('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
+            ->fillField('simpleanalytics_ignore_pages', '/vouchers')
+            ->click('Save Changes')
+            ->visit('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
+            ->assertFieldEquals('simpleanalytics_ignore_pages', '/vouchers');
 
-it('adds inactive script for authenticated users by default', function () {
-    asAdmin()
-        ->navigate('http://localhost:8100')
-        ->assertPresent('script[src="http://localhost:8100/wp-content/plugins/simpleanalytics/resources/js/inactive.js"]')
-        ->assertSourceHas(INACTIVE_ADMIN_COMMENT);
-});
+        $this->myBrowser()
+            ->visit('http://localhost:8100')
+            ->assertContains('data-ignore-pages="/vouchers"');
+    }
 
-it('adds a script with ignored pages', function () {
-    asAdmin()
-        ->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
-        ->fill('simpleanalytics_ignore_pages', '/vouchers')
-        ->click('Save Changes')
-        ->refresh()
-        ->assertValue('simpleanalytics_ignore_pages', '/vouchers')
-        ->screenshot();
+    public function test_adds_inactive_script_for_selected_user_roles(): void
+    {
+        $this->asAdmin()
+            ->visit('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
+            ->checkField('simpleanalytics_exclude_user_roles-editor')
+            ->checkField('simpleanalytics_exclude_user_roles-author')
+            ->click('Save Changes')
+            ->assertFieldChecked('simpleanalytics_exclude_user_roles-editor')
+            ->assertFieldChecked('simpleanalytics_exclude_user_roles-author')
+            ->visit('http://localhost:8100')
+            ->assertSeeElement('script[src="https://scripts.simpleanalyticscdn.com/latest.js"]');
 
-    visit('http://localhost:8100')->refresh()->assertSourceHas('data-ignore-pages="/vouchers"');
-});
+        $this->asAuthor()
+            ->visit('http://localhost:8100')
+            ->assertSeeElement('script[src="http://localhost:8100/wp-content/plugins/simpleanalytics/resources/js/inactive.js"]')
+            ->assertContains('<!-- Simple Analytics: Not logging requests from admins -->');
 
-it('adds inactive script for selected user roles', function () {
-    $admin = asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
-        ->check('simpleanalytics_exclude_user_roles-editor')
-        ->check('simpleanalytics_exclude_user_roles-author')
-        ->click('Save Changes')
-        ->assertChecked('simpleanalytics_exclude_user_roles-editor')
-        ->assertChecked('simpleanalytics_exclude_user_roles-author');
+        $this->asEditor()
+            ->visit('http://localhost:8100')
+            ->assertSeeElement('script[src="http://localhost:8100/wp-content/plugins/simpleanalytics/resources/js/inactive.js"]')
+            ->assertContains('<!-- Simple Analytics: Not logging requests from admins -->');
+    }
 
-    $admin->navigate('http://localhost:8100')
-        ->assertPresent(DEFAULT_SCRIPT_SELECTOR);
+    public function test_adds_a_script_with_collect_do_not_track_enabled(): void
+    {
+        $this->asAdmin()
+            ->visit('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
+            ->checkField('simpleanalytics_collect_dnt')
+            ->click('Save Changes')
+            ->assertFieldChecked('simpleanalytics_collect_dnt');
 
-    asAuthor()->navigate('http://localhost:8100')
-        ->assertPresent(INACTIVE_ADMIN_SCRIPT_SELECTOR)
-        ->assertSourceHas(INACTIVE_ADMIN_COMMENT);
+        $this->myBrowser()
+            ->visit('http://localhost:8100')
+            ->assertContains('data-collect-dnt="true"');
+    }
 
-    asEditor()->navigate('http://localhost:8100')
-        ->assertPresent(INACTIVE_ADMIN_SCRIPT_SELECTOR)
-        ->assertSourceHas(INACTIVE_ADMIN_COMMENT);
-});
+    public function test_adds_a_script_with_hash_mode_enabled(): void
+    {
+        $this->asAdmin()
+            ->visit('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
+            ->checkField('simpleanalytics_hash_mode')
+            ->click('Save Changes')
+            ->assertFieldChecked('simpleanalytics_hash_mode');
 
-it('adds a script with collect do not track enabled', function () {
-    asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
-        ->check('simpleanalytics_collect_dnt')
-        ->click('Save Changes')
-        ->assertChecked('simpleanalytics_collect_dnt');
+        $this->myBrowser()
+            ->visit('http://localhost:8100')
+            ->assertContains('data-mode="hash"');
+    }
 
-    visit('http://localhost:8100')->assertSourceHas('data-collect-dnt="true"');
-});
+    public function test_adds_a_script_with_manually_collect_page_views_enabled(): void
+    {
+        $this->asAdmin()
+            ->visit('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
+            ->checkField('simpleanalytics_manual_collect')
+            ->click('Save Changes')
+            ->assertFieldChecked('simpleanalytics_manual_collect');
 
-it('adds a script with hash mode enabled', function () {
-    asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
-        ->check('simpleanalytics_hash_mode')
-        ->click('Save Changes')
-        ->assertChecked('simpleanalytics_hash_mode');
+        $this->myBrowser()
+            ->visit('http://localhost:8100')
+            ->assertContains('data-auto-collect="true"');
+    }
 
-    visit('http://localhost:8100')->assertSourceHas('data-mode="hash"');
-});
+    public function test_adds_a_script_with_overwrite_domain_name(): void
+    {
+        $this->asAdmin()
+            ->visit('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
+            ->fillField('simpleanalytics_hostname', 'example.com')
+            ->click('Save Changes')
+            ->assertFieldEquals('simpleanalytics_hostname', 'example.com');
 
-it('adds a script with manually collect page views enabled', function () {
-    asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
-        ->check('simpleanalytics_manual_collect')
-        ->click('Save Changes')
-        ->assertChecked('simpleanalytics_manual_collect');
+        $this->myBrowser()
+            ->visit('http://localhost:8100')
+            ->assertContains('data-hostname="example.com"');
+    }
 
-    visit('http://localhost:8100')->assertSourceHas('data-auto-collect="true"');
-});
+    public function test_adds_a_script_with_global_variable_name(): void
+    {
+        $this->asAdmin()
+            ->visit('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
+            ->fillField('simpleanalytics_sa_global', 'ba_event')
+            ->click('Save Changes')
+            ->assertFieldEquals('simpleanalytics_sa_global', 'ba_event');
 
-/*it('adds noscript tag when support no javascript mode is enabled', function () {
-    asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
-        ->check('simpleanalytics_noscript')
-        ->click('Save Changes')
-        ->assertChecked('simpleanalytics_noscript');
+        $this->myBrowser()
+            ->visit('http://localhost:8100')
+            ->assertContains('data-sa-global="ba_event"');
+    }
 
-    visit('http://localhost:8100')->assertPresent(NOSCRIPT_SELECTOR);
-});*/
+    public function test_adds_automated_events_script_when_enabled(): void
+    {
+        $this->asAdmin()
+            ->visit('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=events')
+            ->checkField('simpleanalytics_automated_events')
+            ->click('Save Changes')
+            ->assertFieldChecked('simpleanalytics_automated_events');
 
-/*it('adds a script with onload callback', function () {
-    asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
-        ->fill('simpleanalytics_onload_callback', 'sa_event("My event")')
-        ->click('Save Changes')
-        ->assertValue('simpleanalytics_onload_callback', 'sa_event("My event")');
+        $this->myBrowser()
+            ->visit('http://localhost:8100')
+            ->assertSeeElement('script[src="https://scripts.simpleanalyticscdn.com/auto-events.js"]');
+    }
 
-    visit('http://localhost:8100')->assertSourceHas('data-onload="sa_event(\"My event\")"');
-});*/
+    public function test_adds_automated_events_script_with_auto_collect_downloads(): void
+    {
+        $this->asAdmin()
+            ->visit('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=events')
+            ->checkField('simpleanalytics_automated_events')
+            ->fillField('simpleanalytics_event_collect_downloads', 'outbound,emails,downloads')
+            ->click('Save Changes')
+            ->assertFieldChecked('simpleanalytics_automated_events')
+            ->assertFieldEquals('simpleanalytics_event_collect_downloads', 'outbound,emails,downloads');
 
-it('adds a script with overwrite domain name', function () {
-    asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
-        ->fill('simpleanalytics_hostname', 'example.com')
-        ->click('Save Changes')
-        ->assertValue('simpleanalytics_hostname', 'example.com');
+        $this->myBrowser()
+            ->visit('http://localhost:8100')
+            ->assertContains('data-collect="outbound,emails,downloads"');
+    }
 
-    visit('http://localhost:8100')->assertSourceHas('data-hostname="example.com"');
-});
+    public function test_adds_automated_events_script_with_download_file_extensions(): void
+    {
+        $this->asAdmin()
+            ->visit('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=events')
+            ->checkField('simpleanalytics_automated_events')
+            ->fillField('simpleanalytics_event_extensions', 'pdf,zip')
+            ->click('Save Changes')
+            ->assertFieldChecked('simpleanalytics_automated_events')
+            ->assertFieldEquals('simpleanalytics_event_extensions', 'pdf,zip');
 
-it('adds a script with global variable name', function () {
-    asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=advanced')
-        ->fill('simpleanalytics_sa_global', 'ba_event')
-        ->click('Save Changes')
-        ->assertValue('simpleanalytics_sa_global', 'ba_event');
+        $this->myBrowser()
+            ->visit('http://localhost:8100')
+            ->assertContains('data-extensions="pdf,zip"');
+    }
 
-    visit('http://localhost:8100')->assertSourceHas('data-sa-global="ba_event"');
-});
+    public function test_adds_automated_events_script_with_use_titles_enabled(): void
+    {
+        $this->asAdmin()
+            ->visit('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=events')
+            ->checkField('simpleanalytics_automated_events')
+            ->checkField('simpleanalytics_event_use_title')
+            ->click('Save Changes')
+            ->assertFieldChecked('simpleanalytics_automated_events')
+            ->assertFieldChecked('simpleanalytics_event_use_title');
 
-it('adds automated events script when collect automated events is enabled', function () {
-    asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=events')
-        ->check('simpleanalytics_automated_events')
-        ->click('Save Changes')
-        ->assertChecked('simpleanalytics_automated_events');
+        $this->myBrowser()
+            ->visit('http://localhost:8100')
+            ->assertContains('data-use-title');
+    }
 
-    visit('http://localhost:8100')->assertPresent('script[src="https://scripts.simpleanalyticscdn.com/auto-events.js"]');
-});
+    public function test_adds_automated_events_script_with_full_urls_enabled(): void
+    {
+        $this->asAdmin()
+            ->visit('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=events')
+            ->checkField('simpleanalytics_automated_events')
+            ->checkField('simpleanalytics_event_full_urls')
+            ->click('Save Changes')
+            ->assertFieldChecked('simpleanalytics_automated_events')
+            ->assertFieldChecked('simpleanalytics_event_full_urls');
 
-it('adds automated events script with auto collect downloads', function () {
-    asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=events')
-        ->check('simpleanalytics_automated_events')
-        ->fill('simpleanalytics_event_collect_downloads', 'outbound,emails,downloads')
-        ->click('Save Changes')
-        ->assertChecked('simpleanalytics_automated_events')
-        ->assertValue('simpleanalytics_event_collect_downloads', 'outbound,emails,downloads');
+        $this->myBrowser()
+            ->visit('http://localhost:8100')
+            ->assertContains('data-full-urls');
+    }
 
-    visit('http://localhost:8100')->assertSourceHas('data-collect="outbound,emails,downloads"');
-});
+    public function test_adds_automated_events_script_with_override_global(): void
+    {
+        $this->asAdmin()
+            ->visit('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=events')
+            ->checkField('simpleanalytics_automated_events')
+            ->fillField('simpleanalytics_event_sa_global', 'ba_event')
+            ->click('Save Changes')
+            ->assertFieldChecked('simpleanalytics_automated_events')
+            ->assertFieldEquals('simpleanalytics_event_sa_global', 'ba_event');
 
-it('adds automated events script with download file extensions', function () {
-    asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=events')
-        ->check('simpleanalytics_automated_events')
-        ->fill('simpleanalytics_event_extensions', 'pdf,zip')
-        ->click('Save Changes')
-        ->assertChecked('simpleanalytics_automated_events')
-        ->assertValue('simpleanalytics_event_extensions', 'pdf,zip');
+        $this->myBrowser()
+            ->visit('http://localhost:8100')
+            ->assertContains('data-sa-global="ba_event"');
+    }
 
-    visit('http://localhost:8100')->assertSourceHas('data-extensions="pdf,zip"');
-});
+    public function test_adds_a_script_with_custom_domain_name(): void
+    {
+        $this->asAdmin()
+            ->visit('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=general')
+            ->fillField('simpleanalytics_custom_domain', 'mydomain.com')
+            ->click('Save Changes')
+            ->assertFieldEquals('simpleanalytics_custom_domain', 'mydomain.com');
 
-it('adds automated events script with use titles of page enabled', function () {
-    asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=events')
-        ->check('simpleanalytics_automated_events')
-        ->check('simpleanalytics_event_use_title')
-        ->click('Save Changes')
-        ->assertChecked('simpleanalytics_automated_events')
-        ->assertChecked('simpleanalytics_event_use_title');
-
-    visit('http://localhost:8100')->assertSourceHas('data-use-title');
-});
-
-it('adds automated events script with use full urls enabled', function () {
-    asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=events')
-        ->check('simpleanalytics_automated_events')
-        ->check('simpleanalytics_event_full_urls')
-        ->click('Save Changes')
-        ->assertChecked('simpleanalytics_automated_events')
-        ->assertChecked('simpleanalytics_event_full_urls');
-
-    visit('http://localhost:8100')->assertSourceHas('data-full-urls');
-});
-
-it('adds automated events script with override global', function () {
-    asAdmin()->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=events')
-        ->check('simpleanalytics_automated_events')
-        ->fill('simpleanalytics_event_sa_global', 'ba_event')
-        ->click('Save Changes')
-        ->assertChecked('simpleanalytics_automated_events')
-        ->assertValue('simpleanalytics_event_sa_global', 'ba_event');
-
-    visit('http://localhost:8100')->assertSourceHas('data-sa-global="ba_event"');
-});
-
-it('adds a script with a custom domain name', function () {
-    asAdmin()
-        ->navigate('http://localhost:8100/wp-admin/options-general.php?page=simpleanalytics&tab=general')
-        ->fill('simpleanalytics_custom_domain', 'mydomain.com')
-        ->click('Save Changes')
-        ->assertValue('simpleanalytics_custom_domain', 'mydomain.com');
-
-    visit('http://localhost:8100')->assertPresent('script[src="https://mydomain.com/latest.js"]');
-});
+        $this->myBrowser()
+            ->visit('http://localhost:8100')
+            ->assertSeeElement('script[src="https://mydomain.com/latest.js"]');
+    }
+}
