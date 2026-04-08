@@ -105,6 +105,15 @@ jobs:
                       -v $GITHUB_WORKSPACE/Caddyfile:/etc/frankenphp/Caddyfile \
                       frankenphp-${{ matrix.php }}
 
+            -   name: Wait for FrankenPHP to be ready
+                run: |
+                    for i in $(seq 1 30); do
+                        curl -s -o /dev/null http://localhost:8100 && echo "Server is up" && exit 0
+                        echo "Waiting... ($i/30)"
+                        sleep 2
+                    done
+                    echo "Server did not start in time" && exit 1
+
             -   name: Install WordPress
                 run: |
                     rm -f /tmp/wp/wp-config.php
