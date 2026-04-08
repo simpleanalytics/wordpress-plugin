@@ -154,15 +154,15 @@ jobs:
             -   name: Run composer install
                 run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-            -   name: Run PHPUnit tests
-                run: ./vendor/bin/phpunit
+            -   name: Run Pest tests
+                run: ./vendor/bin/pest -v --bail --colors=always
 
             -   name: Upload test results
                 if: always()
                 uses: actions/upload-artifact@v4
                 with:
                     name: test-results-php${{ matrix.php }}-wp${{ matrix.wordpress }}
-                    path: var/browser
+                    path: tests/Browser/Screenshots
                     retention-days: 30
 
             -   name: Show FrankenPHP logs
