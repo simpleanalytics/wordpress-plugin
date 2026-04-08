@@ -158,7 +158,7 @@ jobs:
                 run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
             -   name: Run Pest tests
-                run: ./vendor/bin/pest -v --ci --parallel --bail --colors=always
+                run: ./vendor/bin/pest -v --ci --bail --colors=always
 
             -   name: Upload test results
                 if: always()
