@@ -46,11 +46,11 @@ expect()->extend('toBeOne', function () {
 
 function asUser(string $login, string $password)
 {
-    return visit('http://localhost:8100/wp-admin')
+    return visit('http://localhost:8100/wp-login.php')
         ->fill('user_login', $login)
         ->fill('user_pass', $password)
         ->press('wp-submit')
-        ->assertUrlIs('http://localhost:8100/wp-admin*');
+        ->assertPresent('#wpadminbar');
 }
 
 function asAdmin()
