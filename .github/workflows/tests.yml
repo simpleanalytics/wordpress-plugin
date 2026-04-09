@@ -138,7 +138,10 @@ jobs:
                         --dbpass="$WP_DB_PASS" \
                         --dbhost="$WP_DB_HOST" \
                         --path=/tmp/wp \
-                        --skip-check
+                        --skip-check \
+                        --extra-php <<'PHP'
+    define( 'DISABLE_WP_CRON', true );
+    PHP
                     wp core install \
                       --url="${WP_SITE_URL}" \
                       --title="Test Site" \
