@@ -120,6 +120,15 @@ jobs:
                     done
                     echo "Server did not start in time" && exit 1
 
+            -   name: Verify MySQL is accepting connections
+                run: |
+                    for i in $(seq 1 10); do
+                        mysql -h 127.0.0.1 -uroot -proot -e "SELECT 1" && echo "MySQL ready" && exit 0
+                        echo "Waiting for MySQL... ($i/10)"
+                        sleep 2
+                    done
+                    echo "MySQL not ready" && exit 1
+
             -   name: Install WordPress
                 run: |
                     rm -f /tmp/wp/wp-config.php
@@ -145,6 +154,11 @@ jobs:
 
             -   name: Show current config values
                 run: wp config list --path=/tmp/wp --allow-root
+
+            -   name: Warm up WordPress
+                run: |
+                    curl -s -o /dev/null -w "wp-login.php: HTTP %{http_code} in %{time_total}s\n" http://localhost:8100/wp-login.php
+                    curl -s -o /dev/null -w "homepage: HTTP %{http_code} in %{time_total}s\n" http://localhost:8100/
 
             -   name: Install pnpm
                 uses: pnpm/action-setup@v4
