@@ -28,7 +28,7 @@ abstract class BrowserTestCase extends PantherTestCase
             ->fillField('user_login', $login)
             ->fillField('user_pass', $password)
             ->click('wp-submit')
-            ->assertSeeElement('#wpadminbar');
+            ->assertOn('http://localhost:8100/wp-admin/');
     }
 
     protected function asAdmin()

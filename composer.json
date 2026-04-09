@@ -1,11 +1,9 @@
 {
     "require-dev": {
         "rector/rector": "^1.2",
-        "symfony/var-dumper": "^7.3",
-        "phpunit/phpunit": "^12",
-        "symfony/panther": "^2.2",
-        "zenstruck/browser": "^1.9",
-        "dbrekelmans/bdi": "^1.4"
+        "pestphp/pest": "^4.1",
+        "pestphp/pest-plugin-browser": "^4.1",
+        "symfony/var-dumper": "^7.3"
     },
     "autoload": {
         "psr-4": {
@@ -13,6 +11,8 @@
         }
     },
     "config": {
-        "allow-plugins": {}
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }

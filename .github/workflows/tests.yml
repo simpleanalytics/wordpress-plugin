@@ -154,10 +154,8 @@ jobs:
             -   name: Install pnpm dependencies
                 run: pnpm install
 
-            -   name: Install Chromium
-                run: |
-                    sudo apt-get update -qq
-                    sudo apt-get install -y chromium-browser
+            -   name: Install Playwright Browsers
+                run: npx playwright install --with-deps
 
             -   name: Cache composer dependencies
                 uses: actions/cache@v3
@@ -168,11 +166,8 @@ jobs:
             -   name: Run composer install
                 run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-            -   name: Install ChromeDriver
-                run: ./vendor/bin/bdi detect drivers
-
-            -   name: Run PHPUnit tests
-                run: ./vendor/bin/phpunit --colors=always
+            -   name: Run Pest tests
+                run: ./vendor/bin/pest -v --ci --bail --colors=always
 
             -   name: Upload test results
                 if: always()
