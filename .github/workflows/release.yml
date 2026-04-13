@@ -6,8 +6,12 @@ on:
     workflow_dispatch: # Allows manual triggering
 
 jobs:
+    e2e:
+        uses: ./.github/workflows/tests.yml
+
     update:
         name: Update version
+        needs: e2e
         runs-on: ubuntu-latest
         timeout-minutes: 10
         permissions:
