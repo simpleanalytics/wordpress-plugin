@@ -46,7 +46,7 @@ expect()->extend('toBeOne', function () {
 
 function asUser(string $login, string $password)
 {
-    return visit('http://localhost:8100/wp-login.php')
+    return visit('http://localhost:8888/wp-login.php')
         ->assertPresent('#loginform')
         ->fill('user_login', $login)
         ->fill('user_pass', $password)
@@ -56,7 +56,7 @@ function asUser(string $login, string $password)
 
 function asAdmin()
 {
-    return asUser('admin', 'admin');
+    return asUser('admin', 'password');
 }
 
 function asAuthor()

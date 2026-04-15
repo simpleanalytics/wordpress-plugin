@@ -1,0 +1,9 @@
+{
+    "plugins": ["."],
+    "config": {
+        "DISABLE_WP_CRON": true
+    },
+    "lifecycleScripts": {
+        "afterStart": "bash bin/wp-env-setup.sh"
+    }
+}
