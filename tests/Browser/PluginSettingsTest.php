@@ -15,6 +15,10 @@ it('adds a script by default', function () {
 
 it('adds inactive script for authenticated users by default', function () {
     asAdmin()
+        ->navigate('http://localhost:8888/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules')
+        ->uncheck('simpleanalytics_exclude_user_roles-editor')
+        ->uncheck('simpleanalytics_exclude_user_roles-author')
+        ->click('Save Changes')
         ->navigate('http://localhost:8888')
         ->assertUrlIs('http://localhost:8888')
         ->assertPresent('script[src="http://localhost:8888/wp-content/plugins/simpleanalytics/resources/js/inactive.js"]')
