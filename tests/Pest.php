@@ -51,6 +51,7 @@ function asUser(string $login, string $password)
         ->fill('user_login', $login)
         ->fill('user_pass', $password)
         ->press('wp-submit')
+        ->assertUrlIs('http://localhost:8888/wp-admin/*')
         ->assertPresent('#wpadminbar');
 }
 
