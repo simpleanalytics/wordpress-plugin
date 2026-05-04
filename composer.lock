@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f021bcb880511a080c31806eb76e1619",
+    "content-hash": "c88867e0970205f3f0447b9fec17504c",
     "packages": [],
     "packages-dev": [
         {
@@ -2498,16 +2498,16 @@
         },
         {
             "name": "pestphp/pest-plugin-browser",
-            "version": "v4.3.0",
+            "version": "dev-fix/early-exit-on-stale-load-event",
             "source": {
                 "type": "git",
-                "url": "https://github.com/pestphp/pest-plugin-browser.git",
-                "reference": "48bc408033281974952a6b296592cef3b920a2db"
+                "url": "https://github.com/osbre/pest-plugin-browser.git",
+                "reference": "a603d8584246c9b37bc56693a8706cfabaf11558"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pestphp/pest-plugin-browser/zipball/48bc408033281974952a6b296592cef3b920a2db",
-                "reference": "48bc408033281974952a6b296592cef3b920a2db",
+                "url": "https://api.github.com/repos/osbre/pest-plugin-browser/zipball/a603d8584246c9b37bc56693a8706cfabaf11558",
+                "reference": "a603d8584246c9b37bc56693a8706cfabaf11558",
                 "shasum": ""
             },
             "require": {
@@ -2515,20 +2515,20 @@
                 "amphp/http-server": "^3.4.4",
                 "amphp/websocket-client": "^2.0.2",
                 "ext-sockets": "*",
-                "pestphp/pest": "^4.3.2",
+                "pestphp/pest": "^4.4.5",
                 "pestphp/pest-plugin": "^4.0.0",
                 "php": "^8.3",
-                "symfony/process": "^7.4.5|^8.0.5"
+                "symfony/process": "^7.4.8|^8.0.5"
             },
             "require-dev": {
                 "ext-pcntl": "*",
                 "ext-posix": "*",
-                "livewire/livewire": "^3.7.10",
-                "nunomaduro/collision": "^8.9.0",
-                "orchestra/testbench": "^10.9.0",
+                "livewire/livewire": "^3.7.15",
+                "nunomaduro/collision": "^8.9.3",
+                "orchestra/testbench": "^10.11.0",
                 "pestphp/pest-dev-tools": "^4.1.0",
-                "pestphp/pest-plugin-laravel": "^4.0",
-                "pestphp/pest-plugin-type-coverage": "^4.0.3"
+                "pestphp/pest-plugin-laravel": "^4.1",
+                "pestphp/pest-plugin-type-coverage": "^4.0.4"
             },
             "type": "library",
             "extra": {
@@ -2539,14 +2539,71 @@
                 }
             },
             "autoload": {
-                "files": [
-                    "src/Autoload.php"
-                ],
                 "psr-4": {
                     "Pest\\Browser\\": "src/"
+                },
+                "files": [
+                    "src/Autoload.php"
+                ]
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Tests\\": "tests/",
+                    "Workbench\\App\\": "workbench/app/",
+                    "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+                    "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "scripts": {
+                "bump:minor": [
+                    "composer update && composer bump"
+                ],
+                "lint": [
+                    "rector",
+                    "pint --parallel"
+                ],
+                "test:profanity": [
+                    "pest --profanity --compact --language=en"
+                ],
+                "test:type-coverage": [
+                    "pest --type-coverage --compact --exactly=100"
+                ],
+                "test:lint": [
+                    "rector --dry-run",
+                    "pint --parallel --test"
+                ],
+                "test:unit": [
+                    "pest --parallel"
+                ],
+                "test:types": [
+                    "phpstan"
+                ],
+                "test": [
+                    "@test:lint",
+                    "@test:profanity",
+                    "@test:type-coverage",
+                    "@test:types",
+                    "@test:unit"
+                ],
+                "post-autoload-dump": [
+                    "@clear",
+                    "@prepare"
+                ],
+                "clear": [
+                    "@php vendor/bin/testbench package:purge-skeleton --ansi"
+                ],
+                "prepare": [
+                    "@php vendor/bin/testbench package:discover --ansi"
+                ],
+                "build": [
+                    "@php vendor/bin/testbench workbench:build --ansi"
+                ],
+                "serve": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "@build",
+                    "@php vendor/bin/testbench serve --ansi"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -2561,23 +2618,23 @@
                 "unit"
             ],
             "support": {
-                "source": "https://github.com/pestphp/pest-plugin-browser/tree/v4.3.0"
+                "source": "https://github.com/osbre/pest-plugin-browser/tree/fix/early-exit-on-stale-load-event"
             },
             "funding": [
                 {
-                    "url": "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=66BYDWAT92N6L",
-                    "type": "custom"
+                    "type": "github",
+                    "url": "https://github.com/nunomaduro"
                 },
                 {
-                    "url": "https://github.com/nunomaduro",
-                    "type": "github"
+                    "type": "patreon",
+                    "url": "https://www.patreon.com/nunomaduro"
                 },
                 {
-                    "url": "https://www.patreon.com/nunomaduro",
-                    "type": "patreon"
+                    "type": "custom",
+                    "url": "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=66BYDWAT92N6L"
                 }
             ],
-            "time": "2026-02-17T14:54:40+00:00"
+            "time": "2026-05-04T09:30:39+00:00"
         },
         {
             "name": "pestphp/pest-plugin-mutate",
@@ -5946,7 +6003,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "pestphp/pest-plugin-browser": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {},

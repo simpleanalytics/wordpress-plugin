@@ -2,9 +2,15 @@
     "require-dev": {
         "rector/rector": "^1.2",
         "pestphp/pest": "^4.1",
-        "pestphp/pest-plugin-browser": "^4.1",
+        "pestphp/pest-plugin-browser": "dev-fix/early-exit-on-stale-load-event",
         "symfony/var-dumper": "^7.3"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/osbre/pest-plugin-browser"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Tests\\": "tests/"

@@ -18,22 +18,22 @@ abstract class BrowserTestCase extends PantherTestCase
 
     protected function myBrowser(): PantherBrowser
     {
-        return $this->pantherBrowser(['external_base_uri' => 'http://localhost:8100']);
+        return $this->pantherBrowser(['external_base_uri' => 'http://localhost:8888']);
     }
 
     protected function asUser($login, $password)
     {
         return $this->myBrowser()
-            ->visit('http://localhost:8100/wp-admin')
+            ->visit('http://localhost:8888/wp-admin')
             ->fillField('user_login', $login)
             ->fillField('user_pass', $password)
             ->click('wp-submit')
-            ->assertOn('http://localhost:8100/wp-admin/');
+            ->assertOn('http://localhost:8888/wp-admin/');
     }
 
     protected function asAdmin()
     {
-        return $this->asUser('admin', 'admin');
+        return $this->asUser('admin', 'password');
     }
 
     protected function asAuthor()
