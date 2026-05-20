@@ -66,6 +66,8 @@ function asUser(string $login, string $password)
         ->fill('user_login', $login)
         ->fill('user_pass', $password)
         ->press('wp-submit')
+        // Explicitly navigate to wp-admin to avoid flaky redirect handling in CI.
+        ->navigate(testUrl('/wp-admin/'))
         ->assertPresent('#wpadminbar');
 }
 
