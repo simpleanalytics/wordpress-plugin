@@ -38,7 +38,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 20
         strategy:
-            fail-fast: ${{ github.event_name == 'pull_request' }}
+            fail-fast: false
             matrix: ${{ fromJSON(needs.prepare-matrix.outputs.matrix) }}
 
         steps:
