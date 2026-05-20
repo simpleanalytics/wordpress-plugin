@@ -2,6 +2,14 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+sed_inplace() {
+    if [[ "$(uname -s)" == Darwin ]]; then
+        sed -i '' "$@"
+    else
+        sed -i "$@"
+    fi
+}
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 METADATA=$(python3 "$SCRIPT_DIR/scripts/get-wordpress-matrix.py" --metadata)
 
@@ -59,17 +67,17 @@ echo "- Tested up to: $TESTED_UP_TO (was $CONFIG_TESTED_UP_TO)" >> "$GITHUB_STEP
 echo "- Requires at least: $REQUIRES_AT_LEAST (was $CONFIG_REQUIRES_AT_LEAST)" >> "$GITHUB_STEP_SUMMARY"
 echo "- Requires PHP: $REQUIRES_PHP (was $CONFIG_REQUIRES_PHP)" >> "$GITHUB_STEP_SUMMARY"
 
-# Use sed to replace the version lines in some files
-sed -i -e "s/^Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
+sed_inplace -e "s/^Tested up to: [0-9.]*$/Tested up to: $TESTED_UP_TO/" \
        -e "s/^Requires at least: [0-9.]*$/Requires at least: $REQUIRES_AT_LEAST/" \
        -e "s/^Requires PHP: [0-9.]*$/Requires PHP: $REQUIRES_PHP/" \
        -e "s/^Stable tag: [0-9.]*$/Stable tag: $STABLE_TAG/" ./readme.txt
 
 if ! grep -q 'Requires PHP:' ./simple-analytics.php; then
-    sed -i "/\* Requires at least:/a\\ * Requires PHP: $REQUIRES_PHP" ./simple-analytics.php
+    sed_inplace "/\* Requires at least:/a\\
+ * Requires PHP: $REQUIRES_PHP" ./simple-analytics.php
 fi
 
-sed -i -e "s/^ \* Tested up to: [0-9.]*/ * Tested up to: $TESTED_UP_TO/" \
+sed_inplace -e "s/^ \* Tested up to: [0-9.]*/ * Tested up to: $TESTED_UP_TO/" \
        -e "s/^ \* Requires at least: [0-9.]*/ * Requires at least: $REQUIRES_AT_LEAST/" \
        -e "s/^ \* Requires PHP: [0-9.]*/ * Requires PHP: $REQUIRES_PHP/" \
        -e "s/^ \* Version: [0-9.]*/ * Version: $STABLE_TAG/" ./simple-analytics.php
@@ -93,7 +101,6 @@ if [[ "$CODE_CHANGED" == true ]]; then
     CHANGELOG_ENTRY=$(printf "%s\n%s" "$CHANGELOG_ENTRY" "$COMMITS_SINCE_TAG")
 fi
 
-# Insert the new changelog entry below the line "== Changelog =="
 awk -v changelog="$CHANGELOG_ENTRY" '
     /== Changelog ==/ {
         print $0 "\n"
@@ -102,7 +109,6 @@ awk -v changelog="$CHANGELOG_ENTRY" '
     }
     { print }' readme.txt > readme.txt.tmp && mv readme.txt.tmp readme.txt
 
-# Update the config.json file
 echo "{
   \"TESTED_UP_TO\": \"$TESTED_UP_TO\",
   \"REQUIRES_AT_LEAST\": \"$REQUIRES_AT_LEAST\",
@@ -112,9 +118,9 @@ echo "{
 
 # Prepare release name and body
 if [[ "$COMPAT_CHANGED" == true && "$CODE_CHANGED" == true ]]; then
-    RELEASE_NAME="Release $STABLE_TAG: Code updates and tested on WordPress $REQUIRES_AT_LEAST–$TESTED_UP_TO"
+    RELEASE_NAME="Release $STABLE_TAG: Code updates and tested on WordPress ${REQUIRES_AT_LEAST}-${TESTED_UP_TO}"
 elif [[ "$COMPAT_CHANGED" == true ]]; then
-    RELEASE_NAME="Release $STABLE_TAG: Tested on WordPress $REQUIRES_AT_LEAST–$TESTED_UP_TO"
+    RELEASE_NAME="Release $STABLE_TAG: Tested on WordPress ${REQUIRES_AT_LEAST}-${TESTED_UP_TO}"
 elif [[ "$CODE_CHANGED" == true ]]; then
     RELEASE_NAME="Release $STABLE_TAG: Code updates"
 else
