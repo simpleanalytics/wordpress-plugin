@@ -25,6 +25,9 @@ jobs:
 
             - name: Build dynamic WordPress + PHP matrix
               id: build-matrix
+              env:
+                  # PHP 5.x images use EOL Debian Stretch; wp-env cannot apt-install in CI.
+                  WP_ENV_MIN_PHP: "7.2"
               shell: bash
               run: |
                   set -euo pipefail

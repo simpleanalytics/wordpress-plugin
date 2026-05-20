@@ -11,6 +11,9 @@ import urllib.request
 
 VERSIONS_API_URL = "https://api.wordpress.org/core/version-check/1.7/"
 DEFAULT_WP_LATEST_COUNT = 2
+# wp-env uses official wordpress:phpX images; PHP < 7.2 is on Debian Stretch
+# whose archive repos now have expired signing keys (apt exit 100 in CI).
+DEFAULT_WP_ENV_MIN_PHP = "7.2"
 
 
 def branch_sort_key(branch: str):
@@ -21,6 +24,18 @@ def branch_sort_key(branch: str):
 def major_minor(v: str) -> str:
     parts = v.split(".")
     return f"{parts[0]}.{parts[1]}"
+
+
+def version_tuple(v: str) -> tuple[int, ...]:
+    return tuple(int(part) for part in v.split(".") if part.isdigit())
+
+
+def php_for_wp_env(recommended: str, min_php: str) -> str:
+    """Use WordPress-recommended PHP unless below wp-env's practical minimum."""
+    php = major_minor(recommended) if recommended else min_php
+    if version_tuple(php) < version_tuple(min_php):
+        return min_php
+    return php
 
 
 def fetch_offers():
@@ -64,10 +79,12 @@ def build_matrix(wp_latest_count: int):
         selected.add(group[0])                            # first of major
         selected.add(group[-1])                           # last of major
 
+    min_php = os.getenv("WP_ENV_MIN_PHP", DEFAULT_WP_ENV_MIN_PHP)
     include = []
     for branch in sorted(selected, key=branch_sort_key, reverse=True):
-        wp, php = branch_info[branch]
-        include.append({"wp": wp, "php": major_minor(php)})
+        wp, recommended_php = branch_info[branch]
+        php = php_for_wp_env(recommended_php, min_php)
+        include.append({"wp": wp, "php": php})
     return {"include": include}
 
 
