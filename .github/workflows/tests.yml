@@ -83,4 +83,5 @@ jobs:
               with:
                   name: test-results-php${{ matrix.php }}-wp${{ matrix.wp }}
                   path: test-results
+                  if-no-files-found: ignore
                   retention-days: 30
