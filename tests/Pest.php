@@ -18,6 +18,21 @@ use Pest\Browser\Api\Webpage;
 pest()->extend(TestCase::class)->in('Feature');
 pest()->browser()->timeout(30000);
 
+function testBaseUrl(): string
+{
+    return rtrim(getenv('TEST_BASE_URL') ?: 'http://localhost:8100', '/');
+}
+
+function testUrl(string $path = ''): string
+{
+    return testBaseUrl() . '/' . ltrim($path, '/');
+}
+
+beforeEach(function () {
+    $headers = @get_headers(testUrl('/wp-login.php'));
+    if (!$headers) throw new \RuntimeException('WordPress test site is unavailable. Set TEST_BASE_URL or run local site on localhost:8100.');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Expectations
@@ -46,7 +61,7 @@ expect()->extend('toBeOne', function () {
 
 function asUser(string $login, string $password)
 {
-    return visit('http://localhost:8100/wp-login.php')
+    return visit(testUrl('/wp-login.php'))
         ->assertPresent('#loginform')
         ->fill('user_login', $login)
         ->fill('user_pass', $password)

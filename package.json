@@ -3,8 +3,9 @@
   "scripts": {
     "dev": "tailwindcss -i resources/css/settings.css -o build/css/settings.css --watch",
     "build": "tailwindcss build -i resources/css/settings.css -o build/css/settings.css",
-    "tests:install": "playwright install --with-deps chromium",
-    "tests": "playwright test"
+    "tests:install": "playwright install --with-deps chromium && cypress install",
+    "tests": "vendor/bin/pest",
+    "tests:cypress": "cypress run --headless"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.11",
