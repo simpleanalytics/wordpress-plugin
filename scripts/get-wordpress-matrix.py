@@ -254,5 +254,38 @@ def build_matrix() -> dict:
     return {"include": include}
 
 
+def format_requires_php(php: str) -> str:
+    """readme.txt uses a three-part PHP version (e.g. 7.2.0)."""
+    if php.count(".") == 1:
+        return f"{php}.0"
+    return php
+
+
+def tested_versions_metadata() -> dict:
+    """Bounds of the CI matrix for release/readme metadata."""
+    matrix = build_matrix()
+    wp_versions = sorted(
+        {entry["wp"] for entry in matrix["include"]},
+        key=version_tuple,
+    )
+    php_versions = sorted(
+        {entry["php"] for entry in matrix["include"]},
+        key=version_tuple,
+    )
+    min_php = php_versions[0]
+    return {
+        "tested_up_to": wp_versions[-1],
+        "requires_at_least": wp_versions[0],
+        "requires_php": format_requires_php(min_php),
+        "wp_versions": wp_versions,
+        "php_versions": php_versions,
+    }
+
+
 if __name__ == "__main__":
-    print(json.dumps(build_matrix()))
+    import sys
+
+    if "--metadata" in sys.argv:
+        print(json.dumps(tested_versions_metadata()))
+    else:
+        print(json.dumps(build_matrix()))
