@@ -8,18 +8,35 @@ on:
             - main
 
 jobs:
+    prepare-matrix:
+        name: Prepare test matrix
+        runs-on: ubuntu-24.04
+        outputs:
+            wordpress: ${{ steps.wordpress-matrix.outputs.wordpress }}
+        steps:
+            - name: Checkout plugin
+              uses: actions/checkout@v6
+              with:
+                  persist-credentials: false
+
+            - name: Build dynamic WordPress matrix
+              id: wordpress-matrix
+              shell: bash
+              run: |
+                  set -euo pipefail
+                  wordpress_versions="$(python3 scripts/get-wordpress-matrix.py)"
+                  echo "Using WordPress versions: ${wordpress_versions}"
+                  echo "wordpress=${wordpress_versions}" >> "$GITHUB_OUTPUT"
+
     e2e:
+        needs: prepare-matrix
         name: PHP ${{ matrix.php }} - WP ${{ matrix.wordpress }}
         runs-on: ubuntu-24.04
         strategy:
             fail-fast: false
             matrix:
                 php: ["8.2", "8.3", "8.4"]
-                wordpress: ["6.7", "6.8"]
-                exclude:
-                    # Exclude older PHP versions with newer WordPress
-                    - php: "7.4"
-                      wordpress: "6.5.3"
+                wordpress: ${{ fromJSON(needs.prepare-matrix.outputs.wordpress) }}
 
         services:
             mysql:
