@@ -1,22 +1,26 @@
 #!/usr/bin/env python3
 """Generate a WordPress + PHP test matrix for GitHub Actions.
 
-WordPress versions (from wordpress.org API):
+WordPress versions (from wordpress.org API + release zip probing):
   - Latest release branch: min, middle, and max patch versions
   - Second-latest release branch: last two patch versions
 
-PHP versions (from scripts/wp-php-compatibility.json, based on the WordPress
-PHP compatibility handbook):
+PHP versions (parsed from the WordPress PHP compatibility handbook table):
   - For each WordPress version, run lowest and highest supported PHP
 """
 import json
-import os
-import pathlib
+import re
+import urllib.error
 import urllib.request
 
 VERSIONS_API_URL = "https://api.wordpress.org/core/version-check/1.7/"
 RELEASE_URL = "https://wordpress.org/wordpress-{version}.tar.gz"
-COMPAT_FILE = pathlib.Path(__file__).with_name("wp-php-compatibility.json")
+HANDBOOK_URL = (
+    "https://make.wordpress.org/core/handbook/references/"
+    "php-compatibility-and-wordpress-versions/"
+)
+CHART_ID = "supported-version-chart"
+OLDER_SECTION_ID = "older-wordpress-versions"
 
 
 def branch_sort_key(branch: str):
@@ -100,22 +104,115 @@ def select_last_two(versions: list[str]) -> list[str]:
     return versions
 
 
-def load_php_compatibility() -> dict[str, dict[str, str]]:
-    with COMPAT_FILE.open() as handle:
-        data = json.load(handle)
-    return {key: value for key, value in data.items() if not key.startswith("_")}
+def strip_html(cell_html: str) -> str:
+    text = re.sub(r"<[^>]+>", "", cell_html)
+    return re.sub(r"\s+", " ", text).strip()
 
 
-def php_bounds_for_wp(wp_version: str, compat: dict[str, dict[str, str]]) -> tuple[str, str]:
+def parse_php_column(header_html: str) -> str | None:
+    text = strip_html(header_html)
+    if not text or "WP / PHP" in text:
+        return None
+    match = re.match(r"^(\d+\.\d+)", text)
+    return match.group(1) if match else None
+
+
+def parse_wp_row_label(cell_html: str) -> str | None:
+    text = strip_html(cell_html)
+    match = re.match(r"^(\d+\.\d+)", text)
+    return match.group(1) if match else None
+
+
+def is_supported(cell_html: str) -> bool:
+    """Only full support (Y). Beta (Y*) is excluded."""
+    text = strip_html(cell_html).upper()
+    return text == "Y"
+
+
+def extract_primary_compatibility_table(html: str) -> str:
+    """Match: #supported-version-chart -> next table in the page."""
+    anchor = f'id="{CHART_ID}"'
+    start = html.find(anchor)
+    if start == -1:
+        raise ValueError(f'Could not find #{CHART_ID} on {HANDBOOK_URL}')
+
+    end = html.find(f'id="{OLDER_SECTION_ID}"', start)
+    section = html[start:end] if end != -1 else html[start:]
+
+    table_start = section.find("<table")
+    if table_start == -1:
+        raise ValueError("Could not find compatibility table after #supported-version-chart")
+
+    table_end = section.find("</table>", table_start)
+    if table_end == -1:
+        raise ValueError("Compatibility table is missing a closing tag")
+
+    return section[table_start : table_end + len("</table>")]
+
+
+def parse_compatibility_table(table_html: str) -> dict[str, list[tuple[str, str]]]:
+    """
+    Parse the handbook matrix into {wp_branch: [(php_version, cell_text), ...]}.
+    Column order is highest PHP -> lowest PHP (left to right).
+    """
+    rows = re.findall(r"<tr[^>]*>(.*?)</tr>", table_html, flags=re.S | re.I)
+    if not rows:
+        raise ValueError("Compatibility table has no rows")
+
+    header_cells = re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", rows[0], flags=re.S | re.I)
+    php_columns = [parse_php_column(cell) for cell in header_cells[1:]]
+    php_columns = [php for php in php_columns if php]
+
+    matrix: dict[str, list[tuple[str, str]]] = {}
+    for row_html in rows[1:]:
+        cells = re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", row_html, flags=re.S | re.I)
+        if len(cells) < 2:
+            continue
+
+        wp_branch = parse_wp_row_label(cells[0])
+        if not wp_branch:
+            continue
+
+        entries = []
+        for php, cell in zip(php_columns, cells[1:]):
+            entries.append((php, strip_html(cell)))
+        matrix[wp_branch] = entries
+
+    if not matrix:
+        raise ValueError("No WordPress rows found in compatibility table")
+
+    return matrix
+
+
+def fetch_compatibility_matrix() -> dict[str, list[tuple[str, str]]]:
+    request = urllib.request.Request(
+        HANDBOOK_URL,
+        headers={"User-Agent": "simpleanalytics-wordpress-plugin-ci"},
+    )
+    with urllib.request.urlopen(request, timeout=30) as response:
+        html = response.read().decode("utf-8", errors="replace")
+
+    table_html = extract_primary_compatibility_table(html)
+    return parse_compatibility_table(table_html)
+
+
+def php_bounds_for_wp(
+    wp_version: str, matrix: dict[str, list[tuple[str, str]]]
+) -> tuple[str, str]:
     branch = major_minor(wp_version)
-    bounds = compat.get(branch)
-    if not bounds:
+    row = matrix.get(branch)
+    if not row:
         raise ValueError(
-            f"No PHP compatibility for WordPress {wp_version} (branch {branch}). "
-            f"Update {COMPAT_FILE.name} from "
-            "https://make.wordpress.org/core/handbook/references/php-compatibility-and-wordpress-versions/"
+            f"No PHP compatibility row for WordPress {wp_version} (branch {branch}) "
+            f"in {HANDBOOK_URL}"
         )
-    return bounds["min"], bounds["max"]
+
+    supported = [php for php, status in row if is_supported(status)]
+    if not supported:
+        raise ValueError(f"No supported PHP versions for WordPress branch {branch}")
+
+    supported.sort(key=version_tuple)
+    return supported[0], supported[-1]
 
 
 def build_matrix() -> dict:
@@ -141,12 +238,12 @@ def build_matrix() -> dict:
             if version not in wp_versions:
                 wp_versions.append(version)
 
-    compat = load_php_compatibility()
+    compat_matrix = fetch_compatibility_matrix()
     include = []
     seen: set[tuple[str, str]] = set()
 
     for wp in sorted(set(wp_versions), key=version_tuple, reverse=True):
-        min_php, max_php = php_bounds_for_wp(wp, compat)
+        min_php, max_php = php_bounds_for_wp(wp, compat_matrix)
         for php in (min_php, max_php):
             key = (wp, php)
             if key in seen:
