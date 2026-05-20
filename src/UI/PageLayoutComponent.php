@@ -30,6 +30,10 @@ class PageLayoutComponent
             #wpcontent {
                 padding-left: 0;
             }
+            .simm_loo svg. .simm_loo img{
+                max-width: 200px !important;
+                height: auto !important;
+            }
         </style>
         <template shadowrootmode="open">
             <link rel="preconnect" href="https://fonts.bunny.net">
@@ -39,7 +43,7 @@ class PageLayoutComponent
                 <?php settings_fields($this->page->getOptionGroup($currentTab)); ?>
 
                 <!-- Header / Nav -->
-                <header class="pt-5 bg-primaryBg">
+                <header class="pt-5 bg-primaryBg simm_loo">
                     <div class="mx-auto max-w-3xl flex-col justify-between gap-5 sm:flex sm:items-baseline">
                         <div class="flex items-center">
                             <!-- Logo -->

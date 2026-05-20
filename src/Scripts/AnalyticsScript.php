@@ -23,6 +23,7 @@ class AnalyticsScript implements Script, HasAttributes, HideScriptId
     public function attributes(): array
     {
         return array_filter([
+            'data-platform'     => 'wordpress',
             'data-mode'         => Setting::boolean(SettingName::HASH_MODE) ? 'hash' : null,
             'data-collect-dnt'  => Setting::boolean(SettingName::COLLECT_DNT) ? 'true' : null,
             'data-ignore-pages' => Setting::get(SettingName::IGNORE_PAGES),

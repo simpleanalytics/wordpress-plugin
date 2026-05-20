@@ -135,14 +135,16 @@ You can [leave your feedback here](https://simpleanalytics.com/feedback?ref=word
 
 No changes needed for upgrades.
 
-== Changelog ==
-
 = 1.105 =
-* 2026-04-27
+* 2026-04-23
 * Changes:
-* Update GitHub actions to latest major versions (#22) [no ci]
-* Release 1.104: Code updates
+* Added modern Cypress-based testing framework (#13, #16)
+* Added data-platform="wordpress" attribute to tracking script (#6)
+* Added identifying comment to injected script (#11)
+* Resolved PHP undefined warnings for stability (#19)
+* Improved General tab UI layout (#8)
 
+== Changelog ==
 
 = 1.104 =
 * 2026-04-13

@@ -72,8 +72,8 @@ final class ScriptRegistry
     {
         foreach ($this->scripts as $script) {
             if ($script instanceof HideScriptId && $script->handle() === $handle) {
-                // Remove the id attribute from the script tag
-                return preg_replace('/ id=([\'"])[^\'"]*\\1/', '', $tag);
+                $tag = preg_replace('/ id=([\'"])[^\'"]*\\1/', '', $tag);
+                return "\n" . $tag;
             }
         }
 

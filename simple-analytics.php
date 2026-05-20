@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: Simple Analytics Official
- * Version: 1.27
+ * Version: 1.105
  * Plugin URI: https://docs.simpleanalytics.com/install-simple-analytics-on-wordpress
  * Description: Embed Simple Analytics script in your WordPress website
  * Author: Simple Analytics
@@ -75,12 +75,18 @@ $scripts = new SimpleAnalytics\ScriptRegistry(/*TODO TAKE $hooks WordPressHooks 
 
 $adminPage = SimpleAnalytics\Settings\AdminPage::title('Simple Analytics')
     ->slug('simpleanalytics')
-    ->tab('General', function (Tab $tab) {
-        $tab->input(SettingName::CUSTOM_DOMAIN, 'Custom Domain')
-            ->placeholder('Enter your custom domain or leave it empty.')
-            ->description('E.g. api.example.com. Leave empty to use the default domain (most users).')
-            ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
-    })
+->tab('General', function (Tab $tab) {
+    echo '<style>.pt-5 bg-primaryBg svg { max-width: 200px !important; height: auto !important; }</style>';
+            $tab->title('General Settings')
+                ->description('Simple Analytics is **GDPR-compliant** and **privacy-first**. Get clean insights without invading user privacy or requiring annoying cookie banners.');
+
+            $tab->input(SettingName::CUSTOM_DOMAIN, 'Custom Domain')
+                ->placeholder('e.g. scripts.example.com')
+                ->description('To **bypass ad-blockers** and ensure more accurate data, enter your custom domain here. Otherwise, leave empty to use our default domain.')
+                ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
+            
+            $tab->callout('Pro Tip: Using a custom domain is the most effective way to ensure your tracking script isn’t blocked by privacy-focused browser extensions.');
+        })
     ->tab('Ignore Rules', function (Tab $tab) {
         $tab->icon(get_icon('eye-slash'));
 
