@@ -2,6 +2,7 @@
 build
 vendor/
 node_modules/
+test-results/
 .phpunit.result.cache
 var
 drivers
