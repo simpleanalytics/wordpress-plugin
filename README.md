@@ -6,9 +6,9 @@
 
 [Read our docs](https://docs.simpleanalytics.com/install-simple-analytics-on-wordpress) on the official Simple Analytics WordPress plugin.
 
-You will need a paid subscription to Simple Analytics. [Create one here](https://simpleanalytics.com/welcome).
+You need a Simple Analytics account. Start with the [free plan](https://www.simpleanalytics.com/signup) (no credit card required) or upgrade later if you need more.
 
 ## Resources
 
-- [WordPress plugin page](https://wordpress.org/plugins/simpleanalytics/)
-- [Create a Simple Analytics account](https://simpleanalytics.com/welcome)
+-   [WordPress plugin page](https://wordpress.org/plugins/simpleanalytics/)
+-   [Create a Simple Analytics account](https://www.simpleanalytics.com/signup)
