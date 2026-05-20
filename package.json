@@ -3,13 +3,18 @@
   "scripts": {
     "dev": "tailwindcss -i resources/css/settings.css -o build/css/settings.css --watch",
     "build": "tailwindcss build -i resources/css/settings.css -o build/css/settings.css",
+    "wp-env": "wp-env",
     "tests:install": "playwright install --with-deps chromium",
-    "tests": "playwright test"
+    "tests": "wp-env start && wp-env clean && wp-env start && playwright test",
+    "tests:headed": "HEADED=1 playwright test",
+    "tests:watch": "playwright test --watch"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/forms": "^0.5.11",
     "@types/node": "^22.19.17",
-    "playwright": "^1.59.1",
+    "@wordpress/env": "^10.19.0",
+    "playwright": "^1.60.0",
     "tailwindcss": "^3.4.19"
   }
 }
