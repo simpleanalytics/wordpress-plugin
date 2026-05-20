@@ -17,7 +17,8 @@ it('can be activated', function () {
     asAdmin()
         ->navigate(testUrl('/wp-admin/plugins.php'))
         ->assertPresent('tr[data-slug="simpleanalytics"]')
-        ->click('#activate-simpleanalytics')
+        // Use href selector as id can vary across WordPress versions.
+        ->click('a[href*="action=activate"][href*="plugin=simpleanalytics%2Fsimple-analytics.php"]')
         ->assertPresent('a[href="options-general.php?page=simpleanalytics"]')
         ->assertPresent('#deactivate-simpleanalytics')
         ->screenshot();
