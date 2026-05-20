@@ -1,13 +1,14 @@
 <?php
 /*
  * Plugin Name: Simple Analytics Official
- * Version: 1.27
+ * Version: 1.106
  * Plugin URI: https://docs.simpleanalytics.com/install-simple-analytics-on-wordpress
  * Description: Embed Simple Analytics script in your WordPress website
  * Author: Simple Analytics
  * Author URI: https://simpleanalytics.com/
- * Requires at least: 5.2.0
- * Tested up to: 6.7
+ * Requires at least: 6.9.3
+ * Requires PHP: 7.2.0
+ * Tested up to: 7.0
  *
  * Text Domain: simple-analytics
  * Domain Path: /lang/
