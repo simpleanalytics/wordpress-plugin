@@ -79,12 +79,19 @@ class PageLayoutComponent
                     </div>
 
                     <div class="mt-6 flex items-center justify-start gap-x-6">
-                        <button
-                            type="submit"
-                            class="rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm bg-primary hover:bg-red-500 focus-visible:outline-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                        >
-                            Save Changes
-                        </button>
+                        <?php if ($currentTab->hasFields()): ?>
+                            <button
+                                type="submit"
+                                class="rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm bg-primary hover:bg-red-500 focus-visible:outline-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                            >
+                                Save Changes
+                            </button>
+                        <?php elseif ($currentTab->getCtaLabel() && $currentTab->getCtaUrl()): ?>
+                            <a href="<?php echo esc_url($currentTab->getCtaUrl()); ?>" target="_blank" rel="noopener"
+                               class="rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm bg-primary hover:bg-red-500 focus-visible:outline-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 inline-flex items-center">
+                                <?php echo esc_html($currentTab->getCtaLabel()); ?>
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </form>

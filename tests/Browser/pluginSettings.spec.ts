@@ -36,7 +36,7 @@ async function visitAsGuest(browser: Browser, path = '/'): Promise<Page> {
 
 test('adds a script by default', async ({ page, browser }) => {
   await asAdmin(page);
-  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=general');
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=advanced');
   await page.fill('[name="simpleanalytics_custom_domain"]', '');
   await saveSettings(page);
 
@@ -244,7 +244,7 @@ test('adds automated events script with override global', async ({ page, browser
 
 test('adds a script with a custom domain name', async ({ page, browser }) => {
   await asAdmin(page);
-  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=general');
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=advanced');
   await page.fill('[name="simpleanalytics_custom_domain"]', 'mydomain.com');
   await saveSettings(page);
   await expect(page.locator('[name="simpleanalytics_custom_domain"]')).toHaveValue('mydomain.com');
@@ -253,7 +253,7 @@ test('adds a script with a custom domain name', async ({ page, browser }) => {
   await expect(guest.locator('script[src="https://mydomain.com/latest.js"]')).toBeAttached();
   await guest.context().close();
 
-  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=general');
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=advanced');
   await page.fill('[name="simpleanalytics_custom_domain"]', '');
   await saveSettings(page);
 });

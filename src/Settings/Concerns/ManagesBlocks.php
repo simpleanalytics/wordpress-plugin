@@ -4,6 +4,7 @@ namespace SimpleAnalytics\Settings\Concerns;
 
 use SimpleAnalytics\Settings\Block;
 use SimpleAnalytics\Settings\Blocks\CalloutBlock;
+use SimpleAnalytics\Settings\Blocks\IntroBlock;
 use SimpleAnalytics\Settings\Blocks\Fields\Checkbox;
 use SimpleAnalytics\Settings\Blocks\Fields\Checkboxes;
 use SimpleAnalytics\Settings\Blocks\Fields\Input;
@@ -12,6 +13,14 @@ use SimpleAnalytics\Settings\Blocks\Fields\IpList;
 trait ManagesBlocks
 {
     abstract protected function addBlock(Block $block): self;
+
+    /** @param string[] $paragraphs */
+    public function intro(array $paragraphs): IntroBlock
+    {
+        $block = new IntroBlock($paragraphs);
+        $this->addBlock($block);
+        return $block;
+    }
 
     public function callout(string $text): CalloutBlock
     {
