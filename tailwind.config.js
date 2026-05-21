@@ -4,7 +4,6 @@ import forms from "@tailwindcss/forms";
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     content: ["./**/*.php"],
-    important: ".sa-settings",
     theme: {
         extend: {
             colors: {
