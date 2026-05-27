@@ -60,6 +60,7 @@ require __DIR__ . '/src/Settings/Blocks/Fields/Input.php';
 require __DIR__ . '/src/Settings/Blocks/Fields/Checkboxes.php';
 require __DIR__ . '/src/Settings/Blocks/Fields/Checkbox.php';
 require __DIR__ . '/src/Settings/Blocks/Fields/IpList.php';
+require __DIR__ . '/src/Settings/Blocks/IntroBlock.php';
 require __DIR__ . '/src/Settings/Tab.php';
 require __DIR__ . '/src/UI/LabelComponent.php';
 require __DIR__ . '/src/UI/TabListComponent.php';
@@ -77,10 +78,17 @@ $scripts = new SimpleAnalytics\ScriptRegistry(/*TODO TAKE $hooks WordPressHooks 
 $adminPage = SimpleAnalytics\Settings\AdminPage::title('Simple Analytics')
     ->slug('simpleanalytics')
     ->tab('General', function (Tab $tab) {
-        $tab->input(SettingName::CUSTOM_DOMAIN, 'Custom Domain')
-            ->placeholder('Enter your custom domain or leave it empty.')
-            ->description('E.g. api.example.com. Leave empty to use the default domain (most users).')
-            ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
+        $tab->title('Thanks for choosing Simple Analytics.');
+        $tab->intro([
+            'This plugin adds Simple Analytics to your WordPress site and collects pageviews in a privacy-first way. Your stats appear in your dashboard within minutes.',
+            'To exclude your own visits, open the "Ignore Rules" tab and enable the option for logged-in admins. You can also add your own IP there.',
+            'Want automated events, like downloads, outbound link clicks, and email clicks, collected for you? Check "Collect automated events" in the "Events" tab.',
+            'No account yet? <a href="https://www.simpleanalytics.com/?utm_source=wordpress&utm_medium=plugin&utm_content=signup_link" target="_blank" rel="noopener">Sign up at simpleanalytics.com</a>. The trial includes almost all features, then you can choose a free or paid plan.',
+        ]);
+        $tab->cta(
+            'Visit your analytics dashboard',
+            'https://dashboard.simpleanalytics.com?utm_source=wordpress&utm_medium=plugin&utm_content=go_to_dashboard_button'
+        );
     })
     ->tab('Ignore Rules', function (Tab $tab) {
         $tab->icon(get_icon('eye-slash'));
@@ -104,6 +112,11 @@ $adminPage = SimpleAnalytics\Settings\AdminPage::title('Simple Analytics')
     })
     ->tab('Advanced', function (Tab $tab) {
         $tab->icon(get_icon('cog'));
+
+        $tab->input(SettingName::CUSTOM_DOMAIN, 'Custom Domain')
+            ->placeholder('Enter your custom domain or leave it empty.')
+            ->description('E.g. api.example.com. Leave empty to use the default domain (most users).')
+            ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
 
         $tab->checkbox(SettingName::COLLECT_DNT, 'Collect Do Not Track')
             ->description('If you want to collect visitors with Do Not Track enabled, turn this on.')

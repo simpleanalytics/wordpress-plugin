@@ -2,6 +2,7 @@
 
 namespace SimpleAnalytics\Settings;
 
+use SimpleAnalytics\Settings\Blocks\Fields\Field;
 use SimpleAnalytics\Support\SvgIcon;
 
 class Tab
@@ -30,6 +31,16 @@ class Tab
      * @var string|null
      */
     protected $title;
+
+    /**
+     * @var string|null
+     */
+    protected $ctaLabel;
+
+    /**
+     * @var string|null
+     */
+    protected $ctaUrl;
 
     /** @var Block[] */
     protected $blocks = [];
@@ -69,6 +80,24 @@ class Tab
         return $this;
     }
 
+    public function cta(string $label, string $url): self
+    {
+        $this->ctaLabel = $label;
+        $this->ctaUrl = $url;
+
+        return $this;
+    }
+
+    public function getCtaLabel(): ?string
+    {
+        return $this->ctaLabel;
+    }
+
+    public function getCtaUrl(): ?string
+    {
+        return $this->ctaUrl;
+    }
+
     protected function addBlock(Block $block): self
     {
         $this->blocks[] = $block;
@@ -80,6 +109,16 @@ class Tab
         return $this->blocks;
     }
 
+    public function hasFields(): bool
+    {
+        foreach ($this->blocks as $block) {
+            if ($block instanceof Field) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function render(): void
     {
         ?>
@@ -87,7 +126,7 @@ class Tab
             <?php if (isset($this->title) || isset($this->description)): ?>
                 <div class="sm:col-span-4">
                     <?php if (isset($this->title)): ?>
-                        <h1 class="text-sm font-medium leading-6 text-gray-900">
+                        <h1 class="text-lg font-semibold text-gray-900">
                             <?php echo esc_html($this->title); ?>
                             <?php if (isset($this->docs)): ?>
                                 <a href="<?php echo esc_url($this->docs); ?>" target="_blank"
