@@ -83,7 +83,7 @@ $adminPage = SimpleAnalytics\Settings\AdminPage::title('Simple Analytics')
             'This plugin adds Simple Analytics to your WordPress site and collects pageviews in a privacy-first way. Your stats appear in your dashboard within minutes.',
             'To exclude your own visits, open the "Ignore Rules" tab and enable the option for logged-in admins. You can also add your own IP there.',
             'Want automated events, like downloads, outbound link clicks, and email clicks, collected for you? Check "Collect automated events" in the "Events" tab.',
-            'No account yet? <a href="https://simpleanalytics.com" target="_blank" rel="noopener">Sign up at simpleanalytics.com</a>. The trial includes almost all features, then you can choose a free or paid plan.',
+            'No account yet? <a href="https://www.simpleanalytics.com/?utm_source=wordpress&utm_medium=plugin&utm_content=signup_link" target="_blank" rel="noopener">Sign up at simpleanalytics.com</a>. The trial includes almost all features, then you can choose a free or paid plan.',
         ]);
         $tab->cta(
             'Visit your analytics dashboard',
