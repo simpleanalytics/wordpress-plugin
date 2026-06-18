@@ -13,7 +13,7 @@ class TrackingRules
 
     public function hasExcludedIp(): bool
     {
-        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'];
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? ($_SERVER['REMOTE_ADDR'] ?? null);
 
         if (empty($ip)) return false;
 

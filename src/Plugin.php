@@ -46,13 +46,16 @@ final class Plugin
 
     public function onInit(): void
     {
-        $tracking = ! $this->trackingRules->hasExcludedIp() && ! $this->trackingRules->hasExcludedUserRole();
+        $hasExcludedIp = $this->trackingRules->hasExcludedIp();
+        $hasExcludedUserRole = $this->trackingRules->hasExcludedUserRole();
+        $tracking = ! $hasExcludedIp && ! $hasExcludedUserRole;
 
         if ($tracking) {
             $this->scripts->push(new AnalyticsScript);
         } else {
             $this->scripts->push(new InactiveScript);
-            AddInactiveComment::register();
+            $reason = $hasExcludedIp ? 'Exclude IP Address' : 'Exclude User Role';
+            AddInactiveComment::register($reason);
         }
 
         if ($tracking && $this->settings->get(SettingName::NOSCRIPT)) {
