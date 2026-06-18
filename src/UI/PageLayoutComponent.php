@@ -154,30 +154,31 @@ class PageLayoutComponent
         ?>
         <div class="mb-7" style="max-width: 64ch;">
             <p class="text-sm text-gray-700">
-                Thanks for choosing Simple Analytics.
+                Simple Analytics is now added to your WordPress site.
             </p>
             <p class="mt-4 text-sm text-gray-700">
-                This plugin adds Simple Analytics to your WordPress site and collects pageviews in a privacy-first way.
-                Your stats appear in
+                The plugin collects pageviews in a privacy-first way, without cookies or personal data.
+            </p>
+            <p class="mt-4 text-sm text-gray-700">
+                Your stats will appear in
                 <a class="text-primary hover:underline" target="_blank" href="<?php echo esc_url(self::DASHBOARD_URL); ?>">
-                    your dashboard
+                    the Simple Analytics dashboard
                 </a>
-                within minutes.
+                within a few minutes.
             </p>
             <p class="mt-4 text-sm text-gray-700">
-                To exclude your own visits, open the "Ignore Rules" tab and enable the option for logged-in admins.
-                You can also add your own IP there.
+                To avoid tracking your own visits, go to the "Ignore Rules" tab and ignore visits from logged-in admins.
+                You can also add your own IP address there.
             </p>
             <p class="mt-4 text-sm text-gray-700">
-                Want automated events, like downloads, outbound link clicks, and email clicks, collected for you,
-                check "Collect automated events" in the "Events" tab.
+                To automatically track downloads, outbound links, and email clicks, go to the "Events" tab and enable "Collect automated events".
             </p>
             <p class="mt-4 text-sm text-gray-700">
-                No account yet? Sign up at
+                No account yet? Create one at
                 <a class="text-primary hover:underline" target="_blank" href="<?php echo esc_url(self::SIGNUP_URL); ?>">
-                    simpleanalytics.com
-                </a>.
-                The trial includes almost all features, then you can choose a free or paid plan.
+                    simpleanalytics.com.
+                </a>
+                You can start with a free trial and choose a free or paid plan later.
             </p>
             <p class="mt-6">
                 <a
@@ -185,7 +186,7 @@ class PageLayoutComponent
                     target="_blank"
                     class="inline-flex items-center rounded bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500"
                 >
-                    Visit your analytics dashboard
+                    Open dashboard
                 </a>
             </p>
         </div>

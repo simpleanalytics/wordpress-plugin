@@ -57,11 +57,12 @@ test('shows guidance on general tab and keeps custom domain in advanced tab', as
   await asAdmin(page);
   await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=general');
 
-  await expect(page.getByText('Thanks for choosing Simple Analytics.')).toBeVisible();
-  await expect(page.getByRole('link', { name: 'your dashboard' })).toHaveAttribute('href', DASHBOARD_URL);
-  await expect(page.getByRole('link', { name: 'simpleanalytics.com' })).toHaveAttribute('href', SIGNUP_URL);
-  await expect(page.getByRole('link', { name: 'Visit your analytics dashboard' })).toHaveAttribute('href', DASHBOARD_URL);
-  await expect(page.getByRole('link', { name: 'Open Dashboard' })).toHaveAttribute('href', DASHBOARD_URL);
+  await expect(page.getByText('Simple Analytics is now added to your WordPress site.')).toBeVisible();
+  await expect(page.getByText('without cookies or personal data')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'the Simple Analytics dashboard' })).toHaveAttribute('href', DASHBOARD_URL);
+  await expect(page.getByRole('link', { name: 'simpleanalytics.com.' })).toHaveAttribute('href', SIGNUP_URL);
+  await expect(page.getByRole('link', { name: 'Open dashboard', exact: true })).toHaveAttribute('href', DASHBOARD_URL);
+  await expect(page.getByRole('link', { name: 'Open Dashboard', exact: true })).toHaveAttribute('href', DASHBOARD_URL);
   await expect(page.getByRole('button', { name: 'Save Changes' })).toHaveCount(0);
   await expect(page.locator('[name="simpleanalytics_custom_domain"]')).toHaveCount(0);
 
