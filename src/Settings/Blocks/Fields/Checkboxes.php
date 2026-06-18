@@ -32,11 +32,20 @@ class Checkboxes extends Field
     public function getValueSanitizer(): callable
     {
         return function ($value) {
-            if (! is_array($value)) $value = [$value];
+            if (! is_array($value)) {
+                $value = [$value];
+            }
 
-            return array_filter($value, function ($item) {
-                return array_key_exists($item, $this->options);
-            });
+            return array_filter(
+                $value,
+                function ($item) {
+                    if (! is_scalar($item)) {
+                        return false;
+                    }
+
+                    return array_key_exists((string) $item, $this->options);
+                }
+            );
         };
     }
 
