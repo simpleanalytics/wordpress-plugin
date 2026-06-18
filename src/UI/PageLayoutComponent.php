@@ -8,6 +8,9 @@ use const SimpleAnalytics\PLUGIN_URL;
 
 class PageLayoutComponent
 {
+    private const DASHBOARD_URL = 'https://dashboard.simpleanalytics.com/?utm_source=wordpress&utm_medium=plugin&utm_content=go_to_dashboard_button';
+    private const SIGNUP_URL = 'https://www.simpleanalytics.com/signup?utm_source=wordpress&utm_medium=plugin&utm_content=signup_link';
+
     /**
      * @readonly
      * @var \SimpleAnalytics\Settings\AdminPage
@@ -44,7 +47,7 @@ class PageLayoutComponent
                         <div class="flex items-center">
                             <!-- Logo -->
                             <a
-                                href="https://dashboard.simpleanalytics.com/websites"
+                                href="<?php echo esc_url(self::DASHBOARD_URL); ?>"
                                 target="_blank"
                                 class="text-base font-semibold leading-6 text-gray-900"
                             >
@@ -56,7 +59,7 @@ class PageLayoutComponent
                             </a>
                             <!-- "Open Dashboard" link -->
                             <a
-                                href="https://dashboard.simpleanalytics.com/websites"
+                                href="<?php echo esc_url(self::DASHBOARD_URL); ?>"
                                 target="_blank"
                                 class="inline-flex items-center rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                             >
@@ -75,17 +78,22 @@ class PageLayoutComponent
                 <!-- Fields / Layout -->
                 <div class="mx-auto max-w-3xl bg-white px-4 py-6 sm:px-4 lg:px-0">
                     <div class="border-b border-gray-900/10 pb-7">
+                        <?php if ($currentTab->getSlug() === 'general'): ?>
+                            <?php $this->renderGeneralTabIntro(); ?>
+                        <?php endif; ?>
                         <?php $currentTab->render(); ?>
                     </div>
 
-                    <div class="mt-6 flex items-center justify-start gap-x-6">
-                        <button
-                            type="submit"
-                            class="rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm bg-primary hover:bg-red-500 focus-visible:outline-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                        >
-                            Save Changes
-                        </button>
-                    </div>
+                    <?php if ($currentTab->getSlug() !== 'general'): ?>
+                        <div class="mt-6 flex items-center justify-start gap-x-6">
+                            <button
+                                type="submit"
+                                class="rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm bg-primary hover:bg-red-500 focus-visible:outline-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                            >
+                                Save Changes
+                            </button>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </form>
             <script>
@@ -139,5 +147,49 @@ class PageLayoutComponent
         }
 
         return null;
+    }
+
+    protected function renderGeneralTabIntro(): void
+    {
+        ?>
+        <div class="mb-7" style="max-width: 64ch;">
+            <p class="text-sm text-gray-700">
+                Simple Analytics is now added to your WordPress site.
+            </p>
+            <p class="mt-4 text-sm text-gray-700">
+                The plugin collects pageviews in a privacy-first way, without cookies or personal data.
+            </p>
+            <p class="mt-4 text-sm text-gray-700">
+                Your stats will appear in
+                <a class="text-primary hover:underline" target="_blank" href="<?php echo esc_url(self::DASHBOARD_URL); ?>">
+                    the Simple Analytics dashboard
+                </a>
+                within a few minutes.
+            </p>
+            <p class="mt-4 text-sm text-gray-700">
+                To avoid tracking your own visits, go to the "Ignore Rules" tab and ignore visits from logged-in admins.
+                You can also add your own IP address there.
+            </p>
+            <p class="mt-4 text-sm text-gray-700">
+                To automatically track downloads, outbound links, and email clicks, go to the "Events" tab and enable "Collect automated events".
+            </p>
+            <p class="mt-4 text-sm text-gray-700">
+                No account yet? Create one at
+                <a class="text-primary hover:underline" target="_blank" href="<?php echo esc_url(self::SIGNUP_URL); ?>">
+                    simpleanalytics.com.
+                </a>
+                You can start with a free trial and choose a free or paid plan later.
+            </p>
+            <p class="mt-6">
+                <a
+                    href="<?php echo esc_url(self::DASHBOARD_URL); ?>"
+                    target="_blank"
+                    class="inline-flex items-center rounded bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500"
+                >
+                    Open dashboard
+                </a>
+            </p>
+        </div>
+        <?php
     }
 }

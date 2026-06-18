@@ -2,6 +2,10 @@ import { test, expect, type Page, type Browser } from '@playwright/test';
 
 const DEFAULT_SCRIPT_SELECTOR = 'script[src="https://scripts.simpleanalyticscdn.com/latest.js"]';
 const INACTIVE_ADMIN_SCRIPT_SELECTOR = 'script[src*="resources/js/inactive.js"]';
+const DASHBOARD_URL =
+  'https://dashboard.simpleanalytics.com/?utm_source=wordpress&utm_medium=plugin&utm_content=go_to_dashboard_button';
+const SIGNUP_URL =
+  'https://www.simpleanalytics.com/signup?utm_source=wordpress&utm_medium=plugin&utm_content=signup_link';
 const SCRIPT_PREFIX_COMMENT = '<!-- Simple Analytics - 100% privacy-first analytics (official WordPress plugin) -->';
 const INACTIVE_COMMENT_PREFIX = '<!-- Simple Analytics: Script not included because this visitor is excluded by tracking rule:';
 const INACTIVE_USER_ROLE_COMMENT = '<!-- Simple Analytics: Script not included because this visitor is excluded by tracking rule: Exclude User Role -->';
@@ -39,7 +43,7 @@ async function visitAsGuest(browser: Browser, path = '/'): Promise<Page> {
 
 test('adds a script by default', async ({ page, browser }) => {
   await asAdmin(page);
-  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=general');
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=advanced');
   await page.fill('[name="simpleanalytics_custom_domain"]', '');
   await saveSettings(page);
 
@@ -48,6 +52,23 @@ test('adds a script by default', async ({ page, browser }) => {
   expect(await guest.content()).toContain('data-platform="wordpress"');
   expect(await guest.content()).toContain(SCRIPT_PREFIX_COMMENT);
   await guest.context().close();
+});
+
+test('shows guidance on general tab and keeps custom domain in advanced tab', async ({ page }) => {
+  await asAdmin(page);
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=general');
+
+  await expect(page.getByText('Simple Analytics is now added to your WordPress site.')).toBeVisible();
+  await expect(page.getByText('without cookies or personal data')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'the Simple Analytics dashboard' })).toHaveAttribute('href', DASHBOARD_URL);
+  await expect(page.getByRole('link', { name: 'simpleanalytics.com.' })).toHaveAttribute('href', SIGNUP_URL);
+  await expect(page.getByRole('link', { name: 'Open dashboard', exact: true })).toHaveAttribute('href', DASHBOARD_URL);
+  await expect(page.getByRole('link', { name: 'Open Dashboard', exact: true })).toHaveAttribute('href', DASHBOARD_URL);
+  await expect(page.getByRole('button', { name: 'Save Changes' })).toHaveCount(0);
+  await expect(page.locator('[name="simpleanalytics_custom_domain"]')).toHaveCount(0);
+
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=advanced');
+  await expect(page.locator('[name="simpleanalytics_custom_domain"]')).toBeVisible();
 });
 
 test('adds inactive script for authenticated users by default', async ({ page }) => {
@@ -271,7 +292,7 @@ test('adds automated events script with override global', async ({ page, browser
 
 test('adds a script with a custom domain name', async ({ page, browser }) => {
   await asAdmin(page);
-  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=general');
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=advanced');
   await page.fill('[name="simpleanalytics_custom_domain"]', 'mydomain.com');
   await saveSettings(page);
   await expect(page.locator('[name="simpleanalytics_custom_domain"]')).toHaveValue('mydomain.com');
@@ -280,7 +301,7 @@ test('adds a script with a custom domain name', async ({ page, browser }) => {
   await expect(guest.locator('script[src="https://mydomain.com/latest.js"]')).toBeAttached();
   await guest.context().close();
 
-  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=general');
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=advanced');
   await page.fill('[name="simpleanalytics_custom_domain"]', '');
   await saveSettings(page);
 });
