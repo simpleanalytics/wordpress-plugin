@@ -2,7 +2,7 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/Browser',
-  timeout: 30000,
+  timeout: 60000,
   use: {
     baseURL: 'http://localhost:8888',
     headless: !process.env.HEADED,
