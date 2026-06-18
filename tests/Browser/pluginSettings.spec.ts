@@ -45,6 +45,7 @@ test('adds a script by default', async ({ page, browser }) => {
 
   const guest = await visitAsGuest(browser);
   await expect(guest.locator(DEFAULT_SCRIPT_SELECTOR)).toBeAttached();
+  expect(await guest.content()).toContain('data-platform="wordpress"');
   expect(await guest.content()).toContain(SCRIPT_PREFIX_COMMENT);
   await guest.context().close();
 });
