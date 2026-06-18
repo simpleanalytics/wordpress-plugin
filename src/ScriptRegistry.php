@@ -71,9 +71,19 @@ final class ScriptRegistry
     protected function removeIdsFilter($tag, $handle): string
     {
         foreach ($this->scripts as $script) {
-            if ($script instanceof HideScriptId && $script->handle() === $handle) {
-                // Remove the id attribute from the script tag
-                return preg_replace('/ id=([\'"])[^\'"]*\\1/', '', $tag);
+            if ($script->handle() === $handle) {
+                $updatedTag = $tag;
+
+                if ($script instanceof HideScriptId) {
+                    // Remove the id attribute from the script tag
+                    $updatedTag = preg_replace('/ id=([\'"])[^\'"]*\\1/', '', $updatedTag);
+                }
+
+                if ($handle === 'simpleanalytics') {
+                    return "<!-- Simple Analytics - 100% privacy-first analytics (official WordPress plugin) -->\n" . $updatedTag;
+                }
+
+                return $updatedTag;
             }
         }
 

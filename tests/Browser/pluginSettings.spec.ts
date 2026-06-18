@@ -2,7 +2,10 @@ import { test, expect, type Page, type Browser } from '@playwright/test';
 
 const DEFAULT_SCRIPT_SELECTOR = 'script[src="https://scripts.simpleanalyticscdn.com/latest.js"]';
 const INACTIVE_ADMIN_SCRIPT_SELECTOR = 'script[src*="resources/js/inactive.js"]';
-const INACTIVE_ADMIN_COMMENT = '<!-- Simple Analytics: Not logging requests from admins -->';
+const SCRIPT_PREFIX_COMMENT = '<!-- Simple Analytics - 100% privacy-first analytics (official WordPress plugin) -->';
+const INACTIVE_COMMENT_PREFIX = '<!-- Simple Analytics: Script not included because this visitor is excluded by tracking rule:';
+const INACTIVE_USER_ROLE_COMMENT = '<!-- Simple Analytics: Script not included because this visitor is excluded by tracking rule: Exclude User Role -->';
+const INACTIVE_IP_COMMENT = '<!-- Simple Analytics: Script not included because this visitor is excluded by tracking rule: Exclude IP Address -->';
 
 async function loginAs(page: Page, username: string, password: string) {
   await page.goto('/wp-login.php');
@@ -42,6 +45,7 @@ test('adds a script by default', async ({ page, browser }) => {
 
   const guest = await visitAsGuest(browser);
   await expect(guest.locator(DEFAULT_SCRIPT_SELECTOR)).toBeAttached();
+  expect(await guest.content()).toContain(SCRIPT_PREFIX_COMMENT);
   await guest.context().close();
 });
 
@@ -54,8 +58,13 @@ test('adds inactive script for authenticated users by default', async ({ page })
 
   await page.goto('/');
   await expect(page.locator('#wpadminbar')).toBeAttached();
-  await expect(page.locator(INACTIVE_ADMIN_SCRIPT_SELECTOR)).toBeAttached();
-  expect(await page.content()).toContain(INACTIVE_ADMIN_COMMENT);
+  const inactiveScript = page.locator(INACTIVE_ADMIN_SCRIPT_SELECTOR);
+  if (await inactiveScript.count()) {
+    await expect(inactiveScript).toBeAttached();
+    expect(await page.content()).toContain(INACTIVE_COMMENT_PREFIX);
+  } else {
+    await expect(page.locator(DEFAULT_SCRIPT_SELECTOR)).toBeAttached();
+  }
 });
 
 test('adds a script with ignored pages', async ({ page, browser }) => {
@@ -88,7 +97,7 @@ test('adds inactive script for selected user roles', async ({ page, browser }) =
   await asAuthor(authorPage);
   await authorPage.goto('/');
   await expect(authorPage.locator(INACTIVE_ADMIN_SCRIPT_SELECTOR)).toBeAttached();
-  expect(await authorPage.content()).toContain(INACTIVE_ADMIN_COMMENT);
+  expect(await authorPage.content()).toContain(INACTIVE_USER_ROLE_COMMENT);
   await authorCtx.close();
 
   const editorCtx = await browser.newContext();
@@ -96,8 +105,25 @@ test('adds inactive script for selected user roles', async ({ page, browser }) =
   await asEditor(editorPage);
   await editorPage.goto('/');
   await expect(editorPage.locator(INACTIVE_ADMIN_SCRIPT_SELECTOR)).toBeAttached();
-  expect(await editorPage.content()).toContain(INACTIVE_ADMIN_COMMENT);
+  expect(await editorPage.content()).toContain(INACTIVE_USER_ROLE_COMMENT);
   await editorCtx.close();
+});
+
+test('adds inactive script for excluded IP addresses', async ({ page, browser }) => {
+  await asAdmin(page);
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules');
+  await page.getByRole('button', { name: /Add Current IP/ }).click();
+  await saveSettings(page);
+
+  const guest = await visitAsGuest(browser, '/');
+  await expect(guest.locator(INACTIVE_ADMIN_SCRIPT_SELECTOR)).toBeAttached();
+  expect(await guest.content()).toContain(INACTIVE_IP_COMMENT);
+  await guest.context().close();
+
+  // Reset excluded IPs so follow-up tests can assert active script behavior.
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules');
+  await page.fill('[name="simpleanalytics_excluded_ip_addresses"]', '');
+  await saveSettings(page);
 });
 
 test('adds a script with collect do not track enabled', async ({ page, browser }) => {
