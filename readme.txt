@@ -6,7 +6,7 @@ Tags: privacy-first, privacy-friendly, free analytics, website analytics, simple
 Requires at least: 6.9.3
 Tested up to: 7.0
 Requires PHP: 7.2.0
-Stable tag: 1.106
+Stable tag: 1.107
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,6 +136,19 @@ You can [leave your feedback here](https://simpleanalytics.com/feedback?ref=word
 No changes needed for upgrades.
 
 == Changelog ==
+
+= 1.107 =
+* 2026-06-18
+* Changes:
+* Improve General tab guidance and move custom domain to Advanced. (#35)
+* Add wordpress platform marker to script tag (#30)
+* Fix missing REMOTE_ADDR fallback in tracking rules. (#33)
+* Clarify script injection behavior and stabilize browser coverage. (#32)
+* Improve e2e workflow reliability (#31)
+* Fix flaky / failing tests. (#29)
+* hotfix: styles not loading (#27)
+* Update README.md to remove paid sub requirement [no ci]
+
 
 = 1.106 =
 * 2026-05-20
