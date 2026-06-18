@@ -77,10 +77,6 @@ $scripts = new SimpleAnalytics\ScriptRegistry(/*TODO TAKE $hooks WordPressHooks 
 $adminPage = SimpleAnalytics\Settings\AdminPage::title('Simple Analytics')
     ->slug('simpleanalytics')
     ->tab('General', function (Tab $tab) {
-        $tab->input(SettingName::CUSTOM_DOMAIN, 'Custom Domain')
-            ->placeholder('Enter your custom domain or leave it empty.')
-            ->description('E.g. api.example.com. Leave empty to use the default domain (most users).')
-            ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
     })
     ->tab('Ignore Rules', function (Tab $tab) {
         $tab->icon(get_icon('eye-slash'));
@@ -104,6 +100,11 @@ $adminPage = SimpleAnalytics\Settings\AdminPage::title('Simple Analytics')
     })
     ->tab('Advanced', function (Tab $tab) {
         $tab->icon(get_icon('cog'));
+
+        $tab->input(SettingName::CUSTOM_DOMAIN, 'Custom Domain')
+            ->placeholder('Enter your custom domain or leave it empty.')
+            ->description('E.g. api.example.com. Leave empty to use the default domain (most users).')
+            ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
 
         $tab->checkbox(SettingName::COLLECT_DNT, 'Collect Do Not Track')
             ->description('If you want to collect visitors with Do Not Track enabled, turn this on.')
