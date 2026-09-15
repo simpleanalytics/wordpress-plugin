@@ -180,8 +180,14 @@ test('adds a script with manually collect page views enabled', async ({ page, br
   await expect(page.locator('[name="simpleanalytics_manual_collect"]')).toBeChecked();
 
   const guest = await visitAsGuest(browser);
-  expect(await guest.content()).toContain('data-auto-collect="true"');
+  await expect(guest.locator(DEFAULT_SCRIPT_SELECTOR)).toHaveAttribute('data-auto-collect', 'false');
   await guest.context().close();
+
+  await page.locator('[name="simpleanalytics_manual_collect"]').uncheck();
+  await saveSettings(page);
+  const automaticGuest = await visitAsGuest(browser);
+  await expect(automaticGuest.locator(DEFAULT_SCRIPT_SELECTOR)).not.toHaveAttribute('data-auto-collect');
+  await automaticGuest.context().close();
 });
 
 test('adds a script with overwrite domain name', async ({ page, browser }) => {
@@ -258,7 +264,12 @@ test('adds automated events script with use titles of page enabled', async ({ pa
   await expect(page.locator('[name="simpleanalytics_event_use_title"]')).toBeChecked();
 
   const guest = await visitAsGuest(browser);
-  expect(await guest.content()).toContain('data-use-title');
+  const eventsScript = guest.locator('script[src="https://scripts.simpleanalyticscdn.com/auto-events.js"]');
+  await expect(eventsScript).toHaveAttribute('data-use-title', 'true');
+  await page.locator('[name="simpleanalytics_event_use_title"]').uncheck();
+  await saveSettings(page);
+  await guest.reload();
+  await expect(eventsScript).toHaveAttribute('data-use-title', 'false');
   await guest.context().close();
 });
 
@@ -272,7 +283,12 @@ test('adds automated events script with use full urls enabled', async ({ page, b
   await expect(page.locator('[name="simpleanalytics_event_full_urls"]')).toBeChecked();
 
   const guest = await visitAsGuest(browser);
-  expect(await guest.content()).toContain('data-full-urls');
+  const eventsScript = guest.locator('script[src="https://scripts.simpleanalyticscdn.com/auto-events.js"]');
+  await expect(eventsScript).toHaveAttribute('data-full-urls', 'true');
+  await page.locator('[name="simpleanalytics_event_full_urls"]').uncheck();
+  await saveSettings(page);
+  await guest.reload();
+  await expect(eventsScript).toHaveAttribute('data-full-urls', 'false');
   await guest.context().close();
 });
 

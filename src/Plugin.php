@@ -36,7 +36,6 @@ final class Plugin
     {
         $this->hooks->addAction('init', \Closure::fromCallable([$this, 'onInit']));
         $this->hooks->onActivation(\Closure::fromCallable([$this, 'onActivation']));
-        $this->hooks->onDeactivation(\Closure::fromCallable([$this, 'onUninstall']));
 
         if ($this->hooks->isAdmin()) {
             $this->adminPage->register();
@@ -81,8 +80,4 @@ final class Plugin
         $this->settings->update(SettingName::CUSTOM_DOMAIN, $this->settings->get(SettingName::CUSTOM_DOMAIN), true);
     }
 
-    public function onUninstall(): void
-    {
-        foreach (SettingName::cases() as $key) $this->settings->delete($key);
-    }
 }
