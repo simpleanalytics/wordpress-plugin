@@ -77,23 +77,6 @@ jobs:
                     "phpVersion": "${{ matrix.php }}"
                   }' > .wp-env.override.json
 
-            - name: Prepare PHP 7.4 Debian package sources
-              if: matrix.php == '7.4'
-              run: |
-                  # Bullseye's live security index references removed packages.
-                  # Keep PHP 7.4 coverage using the snapshot from its final LTS day.
-                  docker build --pull --tag wordpress:php7.4 - <<'DOCKERFILE'
-                  FROM wordpress:php7.4
-                  RUN . /etc/os-release && test "$VERSION_CODENAME" = bullseye \
-                      && printf '%s\n' \
-                          'deb [check-valid-until=no] https://snapshot.debian.org/archive/debian/20260831T235959Z bullseye main' \
-                          'deb [check-valid-until=no] https://snapshot.debian.org/archive/debian-security/20260831T235959Z bullseye-security main' \
-                          'deb [check-valid-until=no] https://snapshot.debian.org/archive/debian/20260831T235959Z bullseye-updates main' \
-                          > /etc/apt/sources.list \
-                      && apt-get update \
-                      && apt-get -qy install $PHPIZE_DEPS
-                  DOCKERFILE
-
             - name: Start wp-env
               run: pnpm exec wp-env start
 
