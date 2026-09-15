@@ -7,6 +7,7 @@ use SimpleAnalytics\Scripts\Contracts\HideScriptId;
 use SimpleAnalytics\Scripts\Contracts\Script;
 use SimpleAnalytics\Setting;
 use SimpleAnalytics\SettingName;
+use SimpleAnalytics\Support\OnloadCallback;
 
 class AnalyticsScript implements Script, HasAttributes, HideScriptId
 {
@@ -28,7 +29,7 @@ class AnalyticsScript implements Script, HasAttributes, HideScriptId
             'data-collect-dnt'  => Setting::boolean(SettingName::COLLECT_DNT) ? 'true' : null,
             'data-ignore-pages' => Setting::get(SettingName::IGNORE_PAGES),
             'data-auto-collect' => Setting::boolean(SettingName::MANUAL_COLLECT) ? 'false' : null,
-            'data-onload'       => Setting::get(SettingName::ONLOAD_CALLBACK),
+            'onload'            => OnloadCallback::get(),
             'data-sa-global'    => Setting::get(SettingName::SA_GLOBAL),
             'data-hostname'     => Setting::get(SettingName::HOSTNAME),
         ]);

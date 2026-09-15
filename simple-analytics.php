@@ -48,6 +48,7 @@ require __DIR__ . '/src/Actions/AddInactiveComment.php';
 require __DIR__ . '/src/Actions/AddNoScriptTag.php';
 require __DIR__ . '/src/Actions/AddPluginSettingsLink.php';
 require __DIR__ . '/src/Support/Str.php';
+require __DIR__ . '/src/Support/OnloadCallback.php';
 require __DIR__ . '/src/Settings/Block.php';
 require __DIR__ . '/src/Settings/Blocks/CalloutBlock.php';
 require __DIR__ . '/src/Settings/Concerns/HasDocs.php';
@@ -122,7 +123,7 @@ $adminPage = SimpleAnalytics\Settings\AdminPage::title('Simple Analytics')
             ->description('Collect analytics from visitors with disabled or no JavaScript.');
 
         $tab->input(SettingName::ONLOAD_CALLBACK, 'Onload Callback')
-            ->description('JavaScript function to call when the script is loaded.')
+            ->description('JavaScript to run when the script loads. Requires permission to save unfiltered HTML. After upgrading, save an existing callback again to enable it.')
             ->placeholder('Example: sa_event("My event")')
             ->docs('https://docs.simpleanalytics.com/trigger-custom-page-views#use-custom-collection-anyway');
 

@@ -3,6 +3,8 @@
 namespace SimpleAnalytics\Settings\Blocks\Fields;
 
 use SimpleAnalytics\Setting;
+use SimpleAnalytics\SettingName;
+use SimpleAnalytics\Support\OnloadCallback;
 use SimpleAnalytics\Settings\Concerns\HasDocs;
 use SimpleAnalytics\Settings\Concerns\HasPlaceholder;
 use SimpleAnalytics\UI\LabelComponent;
@@ -29,6 +31,9 @@ class Input extends Field
 
     public function getValueSanitizer(): callable
     {
+        if ($this->getKey() === SettingName::ONLOAD_CALLBACK) {
+            return [OnloadCallback::class, 'sanitize'];
+        }
         return 'sanitize_text_field';
     }
 

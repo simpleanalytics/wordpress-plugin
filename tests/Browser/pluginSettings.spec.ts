@@ -190,6 +190,29 @@ test('adds a script with manually collect page views enabled', async ({ page, br
   await automaticGuest.context().close();
 });
 
+test('executes the saved onload callback when the analytics script loads', async ({ page, browser }) => {
+  await asAdmin(page);
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=advanced');
+  const callback = `document.documentElement.setAttribute('data-sa-callback', 'loaded "quoted"');`;
+  await page.locator('[name="simpleanalytics_onload_callback"]').fill(callback);
+  await saveSettings(page);
+
+  const context = await browser.newContext();
+  await context.route('https://scripts.simpleanalyticscdn.com/latest.js', route =>
+    route.fulfill({ contentType: 'application/javascript', body: '/* successful script load */' }));
+  const guest = await context.newPage();
+  try {
+    await guest.goto('/');
+    await expect(guest.locator('html')).toHaveAttribute('data-sa-callback', 'loaded "quoted"');
+    await expect(guest.locator(DEFAULT_SCRIPT_SELECTOR)).toHaveAttribute('onload', callback);
+    await expect(guest.locator(DEFAULT_SCRIPT_SELECTOR)).not.toHaveAttribute('data-onload');
+  } finally {
+    await page.locator('[name="simpleanalytics_onload_callback"]').fill('');
+    await saveSettings(page);
+    await context.close();
+  }
+});
+
 test('adds a script with overwrite domain name', async ({ page, browser }) => {
   await asAdmin(page);
   await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=advanced');
