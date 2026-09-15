@@ -180,8 +180,14 @@ test('adds a script with manually collect page views enabled', async ({ page, br
   await expect(page.locator('[name="simpleanalytics_manual_collect"]')).toBeChecked();
 
   const guest = await visitAsGuest(browser);
-  expect(await guest.content()).toContain('data-auto-collect="true"');
+  await expect(guest.locator(DEFAULT_SCRIPT_SELECTOR)).toHaveAttribute('data-auto-collect', 'false');
   await guest.context().close();
+
+  await page.locator('[name="simpleanalytics_manual_collect"]').uncheck();
+  await saveSettings(page);
+  const automaticGuest = await visitAsGuest(browser);
+  await expect(automaticGuest.locator(DEFAULT_SCRIPT_SELECTOR)).not.toHaveAttribute('data-auto-collect');
+  await automaticGuest.context().close();
 });
 
 test('adds a script with overwrite domain name', async ({ page, browser }) => {
