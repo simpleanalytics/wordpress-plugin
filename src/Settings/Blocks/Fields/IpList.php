@@ -15,12 +15,8 @@ class IpList extends Field
     public function getValueSanitizer(): callable
     {
         return function ($value) {
-            $ips = [];
-
-            if (! is_array($value)) {
-                $ips = explode("\n", $value);
-            }
-
+            $ips = is_array($value) ? $value : (is_string($value) ? explode("\n", $value) : []);
+            $ips = array_filter($ips, 'is_string');
             $ips = array_map('trim', $ips);
             $ips = array_filter($ips, function ($ip) {
                 return filter_var($ip, FILTER_VALIDATE_IP) !== false;
