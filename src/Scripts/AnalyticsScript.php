@@ -28,7 +28,7 @@ class AnalyticsScript implements Script, HasAttributes, HideScriptId
             'data-mode'         => Setting::boolean(SettingName::HASH_MODE) ? 'hash' : null,
             'data-collect-dnt'  => Setting::boolean(SettingName::COLLECT_DNT) ? 'true' : null,
             'data-ignore-pages' => Setting::get(SettingName::IGNORE_PAGES),
-            'data-auto-collect' => Setting::get(SettingName::MANUAL_COLLECT) ? 'true' : null,
+            'data-auto-collect' => Setting::boolean(SettingName::MANUAL_COLLECT) ? 'false' : null,
             'onload'            => OnloadCallback::get(),
             'data-sa-global'    => Setting::get(SettingName::SA_GLOBAL),
             'data-hostname'     => Setting::get(SettingName::HOSTNAME),
