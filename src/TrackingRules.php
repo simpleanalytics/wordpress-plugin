@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics;
 
+use SimpleAnalytics\Support\IpAddress;
+
 class TrackingRules
 {
     protected $settings;
@@ -13,13 +15,13 @@ class TrackingRules
 
     public function hasExcludedIp(): bool
     {
-        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? ($_SERVER['REMOTE_ADDR'] ?? null);
+        $ip = IpAddress::current();
 
         if (empty($ip)) return false;
 
-        $list = $this->settings->array(SettingName::EXCLUDED_IP_ADDRESSES);
+        $list = array_map([IpAddress::class, 'normalize'], $this->settings->array(SettingName::EXCLUDED_IP_ADDRESSES));
 
-        return in_array($ip, $list);
+        return in_array($ip, $list, true);
     }
 
     public function hasExcludedUserRole(): bool
