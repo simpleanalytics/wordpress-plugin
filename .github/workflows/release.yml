@@ -15,12 +15,28 @@ jobs:
         runs-on: ubuntu-latest
         timeout-minutes: 10
         permissions:
-            contents: write
+            contents: read
 
         steps:
+            - name: Create release app token
+              id: release-app
+              uses: actions/create-github-app-token@v3
+              with:
+                  app-id: ${{ vars.RELEASE_APP_ID }}
+                  private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+                  permission-contents: write
+
+            - name: Get release app user ID
+              id: release-app-user
+              env:
+                  GH_TOKEN: ${{ steps.release-app.outputs.token }}
+              run: echo "user-id=$(gh api "/users/${{ steps.release-app.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+
             - name: Check out repository
               uses: actions/checkout@v6
               with:
+                  token: ${{ steps.release-app.outputs.token }}
+                  persist-credentials: true # Required to push the release commit as the app
                   fetch-depth: 0 # Fetch all history so we can access tags and commits
                   fetch-tags: true # Ensure tags are fetched
 
@@ -68,8 +84,8 @@ jobs:
             - name: Commit and push changes
               if: steps.script.outputs.has-changed == 'true'
               run: |
-                  git config user.name "GitHub Actions"
-                  git config user.email "actions@github.com"
+                  git config user.name "${{ steps.release-app.outputs.app-slug }}[bot]"
+                  git config user.email "${{ steps.release-app-user.outputs.user-id }}+${{ steps.release-app.outputs.app-slug }}[bot]@users.noreply.github.com"
                   git add .
                   git commit -m "${{ steps.script.outputs.release-name }}"
                   # Push changes, handling potential conflicts
@@ -105,3 +121,4 @@ jobs:
                   draft: false
                   prerelease: false
                   files: ${{ steps.release_zip.outputs.path }}
+                  token: ${{ steps.release-app.outputs.token }}
