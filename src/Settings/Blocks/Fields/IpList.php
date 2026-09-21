@@ -3,6 +3,7 @@
 namespace SimpleAnalytics\Settings\Blocks\Fields;
 
 use SimpleAnalytics\Setting;
+use SimpleAnalytics\Support\IpAddress;
 use SimpleAnalytics\Settings\Concerns\HasDocs;
 use SimpleAnalytics\Settings\Concerns\HasPlaceholder;
 use SimpleAnalytics\UI\LabelComponent;
@@ -34,7 +35,7 @@ class IpList extends Field
     public function render(): void
     {
         $value = implode("\n", Setting::array($this->getKey()));
-        $currentIp = $_SERVER['REMOTE_ADDR'];
+        $currentIp = IpAddress::current();
         ?>
         <?php 
         (new LabelComponent(
@@ -62,6 +63,7 @@ class IpList extends Field
         echo esc_textarea($value);
         ?></textarea>
         </div>
+        <?php if ($currentIp !== null): ?>
         <div class="mt-2">
             <button
                 type="button"
@@ -77,6 +79,7 @@ class IpList extends Field
         ?>)
             </button>
         </div>
+        <?php endif; ?>
         <p class="mt-2 text-sm text-gray-500">
             Enter IP addresses to exclude from tracking, one per line.
         </p>
