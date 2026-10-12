@@ -29,6 +29,7 @@ define('SimpleAnalytics\\ENTRYPOINT_FILE', __FILE__);
  * @note Manual loading rather than Composer to avoid potential conflict with plugins/themes that ship older autoloader.
  */
 require __DIR__ . '/src/Support/SvgIcon.php';
+require __DIR__ . '/src/Support/IpAddress.php';
 require __DIR__ . '/helpers.php';
 require __DIR__ . '/src/Plugin.php';
 require __DIR__ . '/src/WordPressHooks.php';
