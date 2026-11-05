@@ -88,9 +88,6 @@ https://vimeo.com/1033359881/7e93b527ab
 **Block Your Visits Extension**
 -   Personal Visit Exclusion: Use an extension to block your own visits from being tracked, ensuring that your analytics reflect genuine user activity.
 
-**iOS App**
--   Mobile Access: Access your analytics data on the go with a dedicated iOS app, allowing for real-time insights wherever you are.
-
 == Installation ==
 
 Installing "Simple Analytics" can be done in multiple ways.
