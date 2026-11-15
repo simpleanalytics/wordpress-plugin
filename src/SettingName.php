@@ -14,6 +14,11 @@ class SettingName
      */
     const CUSTOM_DOMAIN = 'simpleanalytics_custom_domain';
     /**
+     * Private approval recorded when an authorized user saves a custom domain.
+     * @var string
+     */
+    const CUSTOM_DOMAIN_HASH = 'simpleanalytics_custom_domain_hash';
+    /**
      * @var string
      */
     const NOSCRIPT = 'simpleanalytics_noscript';

@@ -49,6 +49,7 @@ require __DIR__ . '/src/Actions/AddNoScriptTag.php';
 require __DIR__ . '/src/Actions/AddPluginSettingsLink.php';
 require __DIR__ . '/src/Support/Str.php';
 require __DIR__ . '/src/Support/OnloadCallback.php';
+require __DIR__ . '/src/Support/CustomDomain.php';
 require __DIR__ . '/src/Settings/Block.php';
 require __DIR__ . '/src/Settings/Blocks/CalloutBlock.php';
 require __DIR__ . '/src/Settings/Concerns/HasDocs.php';
@@ -104,7 +105,7 @@ $adminPage = SimpleAnalytics\Settings\AdminPage::title('Simple Analytics')
 
         $tab->input(SettingName::CUSTOM_DOMAIN, 'Custom Domain')
             ->placeholder('Enter your custom domain or leave it empty.')
-            ->description('E.g. api.example.com. Leave empty to use the default domain (most users).')
+            ->description('E.g. api.example.com, without a URL scheme or path. Requires permission to save unfiltered HTML. After upgrading, save an existing custom domain again to enable it. Leave empty to use the default domain.')
             ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
 
         $tab->checkbox(SettingName::COLLECT_DNT, 'Collect Do Not Track')

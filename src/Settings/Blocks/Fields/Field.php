@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Settings\Blocks\Fields;
 
+defined('ABSPATH') || exit;
+
 use SimpleAnalytics\Settings\Block;
 
 abstract class Field implements Block

@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Settings\Concerns;
 
+defined('ABSPATH') || exit;
+
 use SimpleAnalytics\Settings\Blocks\Fields\Field;
 use SimpleAnalytics\Settings\Tab;
 use SimpleAnalytics\UI\PageLayoutComponent;

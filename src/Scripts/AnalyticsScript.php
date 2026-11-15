@@ -2,18 +2,21 @@
 
 namespace SimpleAnalytics\Scripts;
 
+defined('ABSPATH') || exit;
+
 use SimpleAnalytics\Scripts\Contracts\HasAttributes;
 use SimpleAnalytics\Scripts\Contracts\HideScriptId;
 use SimpleAnalytics\Scripts\Contracts\Script;
 use SimpleAnalytics\Setting;
 use SimpleAnalytics\SettingName;
+use SimpleAnalytics\Support\CustomDomain;
 use SimpleAnalytics\Support\OnloadCallback;
 
 class AnalyticsScript implements Script, HasAttributes, HideScriptId
 {
     public function path(): string
     {
-        return sprintf("https://%s/latest.js", Setting::get(SettingName::CUSTOM_DOMAIN, 'scripts.simpleanalyticscdn.com'));
+        return sprintf("https://%s/latest.js", CustomDomain::get('scripts.simpleanalyticscdn.com'));
     }
 
     public function handle(): string

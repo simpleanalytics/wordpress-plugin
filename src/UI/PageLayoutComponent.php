@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\UI;
 
+defined('ABSPATH') || exit;
+
 use SimpleAnalytics\Settings\{AdminPage, Tab};
 use function SimpleAnalytics\get_icon;
 use const SimpleAnalytics\PLUGIN_URL;
@@ -35,7 +37,6 @@ class PageLayoutComponent
             }
         </style>
         <template shadowrootmode="open">
-            <link rel="preconnect" href="https://fonts.bunny.net">
             <link rel="stylesheet" href="<?php echo PLUGIN_URL ?>build/css/settings.css">
             <form method="post" action="options.php">
                 <!-- Hidden fields -->
@@ -135,7 +136,9 @@ class PageLayoutComponent
 
     protected function getCurrentTab(array $tabs): Tab
     {
-        $currentTabSlug = $_GET['tab'] ?? $tabs[0]->getSlug();
+        $currentTabSlug = isset($_GET['tab']) && is_string($_GET['tab'])
+            ? sanitize_key(wp_unslash($_GET['tab']))
+            : $tabs[0]->getSlug();
 
         return $this->findTabBySlug($tabs, $currentTabSlug) ?? $tabs[0];
     }

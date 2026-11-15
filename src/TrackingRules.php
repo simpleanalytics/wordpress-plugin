@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics;
 
+defined('ABSPATH') || exit;
+
 class TrackingRules
 {
     protected $settings;
@@ -26,6 +28,11 @@ class TrackingRules
     {
         if (! is_user_logged_in()) {
             return false;
+        }
+
+        // Network administrators may have no role on the current site.
+        if (is_multisite() && is_super_admin()) {
+            return true;
         }
 
         $needle = $this->settings->array(SettingName::EXCLUDED_ROLES);

@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Settings\Blocks\Fields;
 
+defined('ABSPATH') || exit;
+
 use SimpleAnalytics\Setting;
 use SimpleAnalytics\Settings\Concerns\HasDocs;
 use SimpleAnalytics\Settings\Concerns\HasPlaceholder;

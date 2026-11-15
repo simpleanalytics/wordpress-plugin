@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Settings\Concerns;
 
+defined('ABSPATH') || exit;
+
 trait HasDocs
 {
     /**

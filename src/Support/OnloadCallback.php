@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Support;
 
+defined('ABSPATH') || exit;
+
 use SimpleAnalytics\SettingName;
 
 class OnloadCallback

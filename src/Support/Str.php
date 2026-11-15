@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Support;
 
+defined('ABSPATH') || exit;
+
 class Str
 {
     public static function slug(string $value): string
