@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\UI;
 
+defined('ABSPATH') || exit;
+
 use SimpleAnalytics\Support\Str;
 
 class LabelComponent

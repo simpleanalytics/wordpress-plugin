@@ -2,9 +2,12 @@
 
 namespace SimpleAnalytics\Settings\Blocks\Fields;
 
+defined('ABSPATH') || exit;
+
 use SimpleAnalytics\Setting;
 use SimpleAnalytics\SettingName;
 use SimpleAnalytics\Support\OnloadCallback;
+use SimpleAnalytics\Support\CustomDomain;
 use SimpleAnalytics\Settings\Concerns\HasDocs;
 use SimpleAnalytics\Settings\Concerns\HasPlaceholder;
 use SimpleAnalytics\UI\LabelComponent;
@@ -33,6 +36,9 @@ class Input extends Field
     {
         if ($this->getKey() === SettingName::ONLOAD_CALLBACK) {
             return [OnloadCallback::class, 'sanitize'];
+        }
+        if ($this->getKey() === SettingName::CUSTOM_DOMAIN) {
+            return [CustomDomain::class, 'sanitize'];
         }
         return 'sanitize_text_field';
     }

@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 /** Run only through wp eval-file against the local wp-env installation. */
 function sa_assert($condition, string $message): void
 {

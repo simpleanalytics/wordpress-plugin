@@ -2,8 +2,9 @@
 
 namespace SimpleAnalytics\Actions;
 
-use SimpleAnalytics\Setting;
-use SimpleAnalytics\SettingName;
+defined('ABSPATH') || exit;
+
+use SimpleAnalytics\Support\CustomDomain;
 
 class AddNoScriptTag
 {
@@ -21,6 +22,6 @@ class AddNoScriptTag
 
     public function getCustomDomain(): string
     {
-        return esc_url('https://' . Setting::get(SettingName::CUSTOM_DOMAIN, 'queue.simpleanalyticscdn.com') . '/noscript.gif');
+        return esc_url('https://' . CustomDomain::get('queue.simpleanalyticscdn.com') . '/noscript.gif');
     }
 }

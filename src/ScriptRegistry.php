@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics;
 
+defined('ABSPATH') || exit;
+
 use SimpleAnalytics\Scripts\Contracts\HasAttributes;
 use SimpleAnalytics\Scripts\Contracts\HideScriptId;
 use SimpleAnalytics\Scripts\Contracts\Script;

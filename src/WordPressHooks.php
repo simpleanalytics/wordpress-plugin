@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics;
 
+defined('ABSPATH') || exit;
+
 class WordPressHooks
 {
     public function addAction(string $name, $callback): void

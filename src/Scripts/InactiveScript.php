@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Scripts;
 
+defined('ABSPATH') || exit;
+
 use SimpleAnalytics\Scripts\Contracts\Script;
 use const SimpleAnalytics\PLUGIN_URL;
 

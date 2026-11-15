@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Actions;
 
+defined('ABSPATH') || exit;
+
 use const SimpleAnalytics\PLUGIN_BASENAME;
 
 /**

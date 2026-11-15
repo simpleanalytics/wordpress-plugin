@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Actions;
 
+defined('ABSPATH') || exit;
+
 class AddInactiveComment
 {
     use Action;

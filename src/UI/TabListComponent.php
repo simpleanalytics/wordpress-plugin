@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\UI;
 
+defined('ABSPATH') || exit;
+
 use SimpleAnalytics\Settings\Tab;
 
 class TabListComponent
@@ -34,11 +36,11 @@ class TabListComponent
         <nav class="-mb-px flex gap-5">
             <?php foreach ($this->tabs as $tab): ?>
                 <a
-                    href="<?php echo $this->tabUrl($tab); ?>"
-                    class="<?php echo $this->tabClass($tab); ?>"
+                    href="<?php echo esc_url($this->tabUrl($tab)); ?>"
+                    class="<?php echo esc_attr($this->tabClass($tab)); ?>"
                 >
                     <?php echo $this->tabIcon($tab); ?>
-                    <?php echo $tab->getName(); ?>
+                    <?php echo esc_html($tab->getName()); ?>
                 </a>
             <?php endforeach; ?>
         </nav>

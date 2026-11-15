@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Settings\Blocks;
 
+defined('ABSPATH') || exit;
+
 use SimpleAnalytics\Settings\Block;
 use function SimpleAnalytics\get_icon;
 
