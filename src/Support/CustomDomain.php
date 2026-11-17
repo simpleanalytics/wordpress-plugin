@@ -23,6 +23,10 @@ class CustomDomain
             return $current;
         }
 
+        if ($value !== $current) {
+            ScriptPinning::domainChanged();
+        }
+
         // This option is deliberately not registered as an editable setting.
         update_option(SettingName::CUSTOM_DOMAIN_HASH, self::approvalHash($value));
         return $value;

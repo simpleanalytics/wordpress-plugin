@@ -11,11 +11,15 @@ use SimpleAnalytics\Setting;
 use SimpleAnalytics\SettingName;
 use SimpleAnalytics\Support\CustomDomain;
 use SimpleAnalytics\Support\OnloadCallback;
+use SimpleAnalytics\Support\ScriptPinning;
 
 class AnalyticsScript implements Script, HasAttributes, HideScriptId
 {
     public function path(): string
     {
+        if (ScriptPinning::enabled()) {
+            return sprintf('https://%s/sri/%s.js', CustomDomain::get('scripts.simpleanalyticscdn.com'), ScriptPinning::VERSION);
+        }
         return sprintf("https://%s/latest.js", CustomDomain::get('scripts.simpleanalyticscdn.com'));
     }
 
@@ -26,7 +30,7 @@ class AnalyticsScript implements Script, HasAttributes, HideScriptId
 
     public function attributes(): array
     {
-        return array_filter([
+        return array_merge(array_filter([
             'data-platform'     => 'wordpress',
             'data-mode'         => Setting::boolean(SettingName::HASH_MODE) ? 'hash' : null,
             'data-collect-dnt'  => Setting::boolean(SettingName::COLLECT_DNT) ? 'true' : null,
@@ -35,6 +39,6 @@ class AnalyticsScript implements Script, HasAttributes, HideScriptId
             'onload'            => OnloadCallback::get(),
             'data-sa-global'    => Setting::get(SettingName::SA_GLOBAL),
             'data-hostname'     => Setting::get(SettingName::HOSTNAME),
-        ]);
+        ]), ScriptPinning::attributes());
     }
 }

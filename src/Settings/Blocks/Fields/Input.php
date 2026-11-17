@@ -8,6 +8,7 @@ use SimpleAnalytics\Setting;
 use SimpleAnalytics\SettingName;
 use SimpleAnalytics\Support\OnloadCallback;
 use SimpleAnalytics\Support\CustomDomain;
+use SimpleAnalytics\Support\ScriptPinning;
 use SimpleAnalytics\Settings\Concerns\HasDocs;
 use SimpleAnalytics\Settings\Concerns\HasPlaceholder;
 use SimpleAnalytics\UI\LabelComponent;
@@ -34,6 +35,9 @@ class Input extends Field
 
     public function getValueSanitizer(): callable
     {
+        if ($this->getKey() === SettingName::CUSTOM_SCRIPT_INTEGRITY) {
+            return [ScriptPinning::class, 'sanitizeIntegrity'];
+        }
         if ($this->getKey() === SettingName::ONLOAD_CALLBACK) {
             return [OnloadCallback::class, 'sanitize'];
         }
@@ -81,6 +85,12 @@ class Input extends Field
             <?php echo esc_html($this->description); ?>
         </p>
     <?php endif;
+        // The settings page's shadow root hides WordPress's global errors.
+        if ($this->getKey() === SettingName::CUSTOM_SCRIPT_INTEGRITY) {
+            foreach (get_settings_errors($this->getKey()) as $error) {
+                echo '<p role="alert" style="color:#b32d2e">' . esc_html($error['message']) . '</p>';
+            }
+        }
     }
 
     public function type(string $type): self

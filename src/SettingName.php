@@ -9,6 +9,11 @@ defined('\\ABSPATH') || exit;
  */
 class SettingName
 {
+    const PIN_SCRIPTS = 'simpleanalytics_pin_scripts';
+    const CUSTOM_SCRIPT_INTEGRITY = 'simpleanalytics_custom_script_integrity';
+    // Private approval; never registered as an editable setting.
+    const CUSTOM_SCRIPT_APPROVAL = 'simpleanalytics_custom_script_approval';
+
     /**
      * @var string
      */

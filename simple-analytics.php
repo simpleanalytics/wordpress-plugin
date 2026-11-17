@@ -50,6 +50,7 @@ require __DIR__ . '/src/Actions/AddPluginSettingsLink.php';
 require __DIR__ . '/src/Support/Str.php';
 require __DIR__ . '/src/Support/OnloadCallback.php';
 require __DIR__ . '/src/Support/CustomDomain.php';
+require __DIR__ . '/src/Support/ScriptPinning.php';
 require __DIR__ . '/src/Settings/Block.php';
 require __DIR__ . '/src/Settings/Blocks/CalloutBlock.php';
 require __DIR__ . '/src/Settings/Concerns/HasDocs.php';
@@ -107,6 +108,15 @@ $adminPage = SimpleAnalytics\Settings\AdminPage::title('Simple Analytics')
             ->placeholder('Enter your custom domain or leave it empty.')
             ->description('E.g. api.example.com, without a URL scheme or path. Requires permission to save unfiltered HTML. After upgrading, save an existing custom domain again to enable it. Leave empty to use the default domain.')
             ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
+
+        $tab->checkbox(SettingName::PIN_SCRIPTS, 'Pin analytics scripts')
+            ->description('Only run approved scripts. Updates arrive with plugin releases. Changed or unavailable scripts stop tracking. Automated events use a bundled copy. Clear your page cache after changing this setting.')
+            ->docs('https://docs.simpleanalytics.com/sri');
+
+        $tab->input(SettingName::CUSTOM_SCRIPT_INTEGRITY, 'Custom domain script hash')
+            ->placeholder('sha384-…')
+            ->description('Only needed with pinning and a custom domain. Save the domain first, then review https://YOUR.DOMAIN/sri/' . SimpleAnalytics\Support\ScriptPinning::VERSION . '.js and paste its SHA-384 integrity hash from the Simple Analytics SRI documentation. Saving approves that hash and requires permission to save unfiltered HTML. Tracking stays paused until approval is complete.')
+            ->docs('https://docs.simpleanalytics.com/sri');
 
         $tab->checkbox(SettingName::COLLECT_DNT, 'Collect Do Not Track')
             ->description('If you want to collect visitors with Do Not Track enabled, turn this on.')

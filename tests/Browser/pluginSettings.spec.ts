@@ -1,4 +1,5 @@
 import { test, expect, type Page, type Browser } from '@playwright/test';
+import { createHash } from 'node:crypto';
 
 const DEFAULT_SCRIPT_SELECTOR = 'script[src="https://scripts.simpleanalyticscdn.com/latest.js"]';
 const INACTIVE_ADMIN_SCRIPT_SELECTOR = 'script[src*="resources/js/inactive.js"]';
@@ -391,4 +392,108 @@ test('malformed tabs fall back to General without requesting external fonts', as
   await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab[]=x');
   await expect(page.getByText('Simple Analytics is now added to your WordPress site.')).toBeVisible();
   expect(requests.some(url => url.includes('fonts.bunny.net'))).toBe(false);
+});
+
+test('pins both scripts, requires custom-domain approval, and blocks altered bytes', async ({ page, browser }) => {
+  await asAdmin(page);
+  const advanced = '/wp-admin/options-general.php?page=simpleanalytics&tab=advanced';
+  const events = '/wp-admin/options-general.php?page=simpleanalytics&tab=events';
+  const customUrl = 'https://stats.example.test/sri/v12.js';
+  const approvedScript = 'window.sa_test_events = []; window.sa_event = function(name) { window.sa_test_events.push(name); }; window.sa_event_loaded = true;';
+  const integrity = 'sha384-' + createHash('sha384').update(approvedScript).digest('base64');
+  const context = await browser.newContext();
+  const requests: string[] = [];
+  context.on('request', request => requests.push(request.url()));
+  let corruptMain = false;
+  let corruptEvents = false;
+  await context.route('https://scripts.simpleanalyticscdn.com/**', route => route.fulfill({
+    headers: { 'access-control-allow-origin': '*' }, contentType: 'application/javascript',
+    body: 'window.sa_unapproved = true;',
+  }));
+  await context.route(customUrl, route => route.fulfill({
+    headers: { 'access-control-allow-origin': '*' }, contentType: 'application/javascript',
+    body: corruptMain ? approvedScript + 'window.sa_unapproved = true;' : approvedScript,
+  }));
+  await context.route('**/resources/js/pinned/**/auto-events.js', route => corruptEvents
+    ? route.fulfill({ contentType: 'application/javascript', body: 'window.sa_unapproved_events = true;' })
+    : route.continue());
+  const guest = await context.newPage();
+  try {
+    await page.goto(events);
+    await page.locator('#simpleanalytics_automated_events').check();
+    await page.locator('#simpleanalytics_event_collect_downloads').fill('outbound,emails,downloads');
+    await page.locator('#simpleanalytics_event_extensions').fill('pdf');
+    await page.locator('#simpleanalytics_event_use_title').uncheck();
+    await page.locator('#simpleanalytics_event_full_urls').uncheck();
+    await page.locator('#simpleanalytics_event_sa_global').fill('');
+    await saveSettings(page);
+
+    await page.goto(advanced);
+    await page.locator('#simpleanalytics_custom_domain').fill('');
+    await page.locator('#simpleanalytics_pin_scripts').check();
+    await saveSettings(page);
+    await expect(page.locator('#simpleanalytics_pin_scripts')).toBeChecked();
+    await guest.goto('/');
+    await expect(guest.locator('script[src="https://scripts.simpleanalyticscdn.com/sri/v12.js"]')).toHaveAttribute('integrity', /^sha384-/);
+    expect(await guest.evaluate(() => (window as any).sa_unapproved)).toBeUndefined();
+    expect(requests.some(url => url.endsWith('/latest.js') || url === 'https://scripts.simpleanalyticscdn.com/auto-events.js')).toBe(false);
+
+    await page.locator('#simpleanalytics_custom_domain').fill('stats.example.test');
+    await page.locator('#simpleanalytics_custom_script_integrity').fill(integrity);
+    await saveSettings(page);
+    await expect(page.getByText(/Simple Analytics tracking is paused:/)).toBeVisible();
+    await expect(page.locator('#simpleanalytics_custom_script_integrity')).toHaveValue('');
+    await guest.reload();
+    await expect(guest.locator('script[src*="/sri/"], script[src*="/resources/js/pinned/"]')).toHaveCount(0);
+
+    await page.locator('#simpleanalytics_custom_script_integrity').fill('sha384-invalid');
+    await saveSettings(page);
+    await expect(page.getByText(/Simple Analytics tracking is paused:/)).toBeVisible();
+    await expect(page.locator('[role="alert"]').filter({ hasText: /Save a valid custom domain first/ })).toBeVisible();
+    await page.locator('#simpleanalytics_custom_script_integrity').fill(integrity);
+    await saveSettings(page);
+    await expect(page.getByText(/Simple Analytics tracking is paused:/)).toHaveCount(0);
+    await guest.reload();
+    await expect(guest.locator(`script[src="${customUrl}"]`)).toHaveAttribute('integrity', integrity);
+    await expect(guest.locator(`script[src="${customUrl}"]`)).toHaveAttribute('crossorigin', 'anonymous');
+    await expect(guest.locator('script[src*="/resources/js/pinned/"]')).toHaveAttribute('integrity', /^sha384-/);
+    await guest.evaluate(() => {
+      for (const [id, href] of [['outbound-test', 'https://example.org/'], ['download-test', '/test.pdf'], ['email-test', 'mailto:hello@example.org']]) {
+        const link = document.createElement('a'); link.id = id; link.href = href; link.textContent = id;
+        link.addEventListener('click', event => event.preventDefault()); document.body.appendChild(link);
+      }
+    });
+    for (const id of ['outbound-test', 'download-test', 'email-test']) await guest.locator('#' + id).click();
+    expect(await guest.evaluate(() => (window as any).sa_test_events)).toEqual(['outbound_example_org', 'download_test_pdf', 'email_hello_example_org']);
+
+    corruptEvents = true;
+    await guest.reload();
+    expect(await guest.evaluate(() => (window as any).sa_unapproved_events)).toBeUndefined();
+    corruptMain = true;
+    await guest.reload();
+    expect(await guest.evaluate(() => (window as any).sa_event)).toBeUndefined();
+    expect(await guest.evaluate(() => (window as any).sa_unapproved)).toBeUndefined();
+    expect(requests.some(url => url.endsWith('/latest.js'))).toBe(false);
+
+    await page.locator('#simpleanalytics_custom_domain').fill('other.example.test');
+    await saveSettings(page);
+    await expect(page.getByText(/Simple Analytics tracking is paused:/)).toBeVisible();
+    await expect(page.locator('#simpleanalytics_custom_script_integrity')).toHaveValue('');
+    await guest.reload();
+    await expect(guest.locator('script[src*="/sri/"], script[src*="/resources/js/pinned/"]')).toHaveCount(0);
+
+    await page.locator('#simpleanalytics_custom_domain').fill('');
+    await page.locator('#simpleanalytics_pin_scripts').uncheck();
+    await saveSettings(page);
+    await guest.reload();
+    await expect(guest.locator(DEFAULT_SCRIPT_SELECTOR)).not.toHaveAttribute('integrity');
+    expect(await guest.evaluate(() => (window as any).sa_unapproved)).toBe(true);
+  } finally {
+    await context.close();
+    await page.goto(advanced);
+    await page.locator('#simpleanalytics_custom_domain').fill('');
+    await page.locator('#simpleanalytics_custom_script_integrity').fill('');
+    await page.locator('#simpleanalytics_pin_scripts').uncheck();
+    await saveSettings(page);
+  }
 });
