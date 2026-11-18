@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Support;
 
+defined('ABSPATH') || exit;
+
 class IpAddress
 {
     public static function current(): ?string
@@ -10,7 +12,7 @@ class IpAddress
         // Reverse proxies must overwrite this header with a trustworthy value.
         $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? null;
         if (is_string($ip)) {
-            $ip = explode(',', $ip, 2)[0];
+            $ip = self::fromForwardedFor($ip);
         } elseif ($ip === null) {
             $ip = $_SERVER['REMOTE_ADDR'] ?? null;
         }
@@ -27,5 +29,24 @@ class IpAddress
         if (filter_var($value, FILTER_VALIDATE_IP) === false) return null;
 
         return inet_ntop(inet_pton($value));
+    }
+
+    /**
+     * Proxies append to the list, so the leftmost address is the visitor. A
+     * private or loopback address there is the visitor's local network, as
+     * reported by an office or local proxy, so use the first public address.
+     */
+    private static function fromForwardedFor(string $header): ?string
+    {
+        $first = null;
+        foreach (explode(',', $header) as $candidate) {
+            $ip = self::normalize($candidate);
+            if ($ip === null) continue;
+            if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) return $ip;
+            $first = $first ?? $ip;
+        }
+
+        // Only private addresses, for example on an intranet or a local test site.
+        return $first;
     }
 }
