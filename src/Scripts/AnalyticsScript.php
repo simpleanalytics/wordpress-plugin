@@ -7,6 +7,7 @@ use SimpleAnalytics\Scripts\Contracts\HideScriptId;
 use SimpleAnalytics\Scripts\Contracts\Script;
 use SimpleAnalytics\Setting;
 use SimpleAnalytics\SettingName;
+use SimpleAnalytics\Support\OnloadCallback;
 
 class AnalyticsScript implements Script, HasAttributes, HideScriptId
 {
@@ -23,12 +24,14 @@ class AnalyticsScript implements Script, HasAttributes, HideScriptId
     public function attributes(): array
     {
         return array_filter([
+            // Never remove or rename data-platform="wordpress". Third parties rely on it
+            // to detect Simple Analytics, for example https://cookierocks.com/.
             'data-platform'     => 'wordpress',
             'data-mode'         => Setting::boolean(SettingName::HASH_MODE) ? 'hash' : null,
             'data-collect-dnt'  => Setting::boolean(SettingName::COLLECT_DNT) ? 'true' : null,
             'data-ignore-pages' => Setting::get(SettingName::IGNORE_PAGES),
             'data-auto-collect' => Setting::boolean(SettingName::MANUAL_COLLECT) ? 'false' : null,
-            'data-onload'       => Setting::get(SettingName::ONLOAD_CALLBACK),
+            'onload'            => OnloadCallback::get(),
             'data-sa-global'    => Setting::get(SettingName::SA_GLOBAL),
             'data-hostname'     => Setting::get(SettingName::HOSTNAME),
         ]);

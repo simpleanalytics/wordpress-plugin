@@ -46,6 +46,11 @@ class SettingName
      */
     const ONLOAD_CALLBACK = 'simpleanalytics_onload_callback';
     /**
+     * Hash recorded only when an authorized user saves the callback.
+     * @var string
+     */
+    const ONLOAD_CALLBACK_HASH = 'simpleanalytics_onload_callback_hash';
+    /**
      * @var string
      */
     const HOSTNAME = 'simpleanalytics_hostname';

@@ -51,10 +51,13 @@ final class ScriptRegistry
 
     protected function addAttributesFilter($attributes)
     {
+        // Themes and other plugins can print script tags without an id.
+        $id = $attributes['id'] ?? null;
+
         foreach ($this->scripts as $script) {
             if (
                 $script instanceof HasAttributes &&
-                $script->handle() . '-js' === $attributes['id']
+                $script->handle() . '-js' === $id
             ) {
                 return array_merge(is_array($attributes) ? $attributes : iterator_to_array($attributes), $script->attributes());
             }

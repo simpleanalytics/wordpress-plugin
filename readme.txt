@@ -3,10 +3,10 @@
 Contributors: simpleanalytics
 Donate link: https://simpleanalytics.com
 Tags: privacy-first, privacy-friendly, free analytics, website analytics, simple analytics, analytics, statistics, website traffic, traffic monitoring
-Requires at least: 6.9.4
-Tested up to: 7.0.2
-Requires PHP: 7.2.0
-Stable tag: 1.109
+Requires at least: 7.0.7
+Tested up to: 7.1.4
+Requires PHP: 7.4.0
+Stable tag: 1.115
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,9 +88,6 @@ https://vimeo.com/1033359881/7e93b527ab
 **Block Your Visits Extension**
 -   Personal Visit Exclusion: Use an extension to block your own visits from being tracked, ensuring that your analytics reflect genuine user activity.
 
-**iOS App**
--   Mobile Access: Access your analytics data on the go with a dedicated iOS app, allowing for real-time insights wherever you are.
-
 == Installation ==
 
 Installing "Simple Analytics" can be done in multiple ways.
@@ -136,6 +133,58 @@ You can [leave your feedback here](https://simpleanalytics.com/feedback?ref=word
 No changes needed for upgrades.
 
 == Changelog ==
+
+= 1.115 =
+* 2026-11-09
+* Changes:
+* Remove the iOS app from the plugin readme (#57) [no ci]
+
+
+= 1.114 =
+* 2026-11-02
+* Tested up to WordPress 7.1.4
+* Requires WordPress 7.0.7
+* Requires PHP 7.4.0
+* Changes:
+* Label pull requests by release risk (#55)
+
+
+= 1.113 =
+* 2026-10-12
+* Tested up to WordPress 7.1.3
+* Requires WordPress 7.0.6
+* Requires PHP 7.4.0
+
+
+= 1.112 =
+* 2026-09-28
+* Tested up to WordPress 7.1.2
+* Requires WordPress 7.0.5
+* Requires PHP 7.4.0
+
+
+= 1.111 =
+* 2026-09-21
+* Tested up to WordPress 7.1.1
+* Requires WordPress 7.0.4
+* Requires PHP 7.4.0
+
+
+= 1.110 =
+* 2026-09-16
+* Tested up to WordPress 7.1
+* Requires WordPress 7.0.3
+* Requires PHP 7.4.0
+* Changes:
+* Use release app client ID (#53)
+* Use release app for protected branch updates (#52)
+* Execute the configured analytics load callback safely (#47)
+* Preserve IP exclusions on their first save (#44)
+* Preserve settings until the plugin is uninstalled (#45)
+* Respect both states of automated event settings (#43)
+* Fix manual pageview collection setting (#42)
+* Update wp-env to fix PHP 7.4 CI (#49)
+
 
 = 1.109 =
 * 2026-07-20
