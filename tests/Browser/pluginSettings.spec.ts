@@ -476,16 +476,17 @@ test('pins both scripts, requires custom-domain approval, and blocks altered byt
     await page.locator('#simpleanalytics_custom_script_integrity').fill(integrity);
     await saveSettings(page);
     await expect(page.getByText(/Simple Analytics tracking is paused:/)).toHaveCount(0);
-    await guest.reload();
-    await expect(guest.locator(`script[src="${customUrl}"]`)).toHaveAttribute('integrity', integrity);
-    await expect(guest.locator(`script[src="${customUrl}"]`)).toHaveAttribute('crossorigin', 'anonymous');
-    await expect(guest.locator('script[src*="/resources/js/pinned/"]')).toHaveAttribute('integrity', /^sha384-/);
-    await guest.evaluate(() => {
+    // The v12 automated-events script binds the links present when the page has loaded.
+    await guest.addInitScript(() => document.addEventListener('DOMContentLoaded', () => {
       for (const [id, href] of [['outbound-test', 'https://example.org/'], ['download-test', '/test.pdf'], ['email-test', 'mailto:hello@example.org']]) {
         const link = document.createElement('a'); link.id = id; link.href = href; link.textContent = id;
         link.addEventListener('click', event => event.preventDefault()); document.body.appendChild(link);
       }
-    });
+    }));
+    await guest.reload({ waitUntil: 'load' });
+    await expect(guest.locator(`script[src="${customUrl}"]`)).toHaveAttribute('integrity', integrity);
+    await expect(guest.locator(`script[src="${customUrl}"]`)).toHaveAttribute('crossorigin', 'anonymous');
+    await expect(guest.locator('script[src*="/resources/js/pinned/v12/auto-events.js"]')).toHaveAttribute('integrity', /^sha384-/);
     for (const id of ['outbound-test', 'download-test', 'email-test']) await guest.locator('#' + id).click();
     expect(await guest.evaluate(() => (window as any).sa_test_events)).toEqual(['outbound_example_org', 'download_test_pdf', 'email_hello_example_org']);
 

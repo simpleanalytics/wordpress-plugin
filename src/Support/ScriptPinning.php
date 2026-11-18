@@ -10,10 +10,11 @@ use SimpleAnalytics\SettingName;
 final class ScriptPinning
 {
     const VERSION = 'v12';
-    const EVENTS_PATH = 'resources/js/pinned/8ec926d3c759/auto-events.js';
+    // The bundled automated-events script comes from the same scripts release as VERSION.
+    const EVENTS_PATH = 'resources/js/pinned/' . self::VERSION . '/auto-events.js';
     const INTEGRITY = 'sha384-VVOeJV8okLf6owAyITVK14p3AX78fPOStksa5tYEruAngS4yv5EYM26KP9bvcZ/L';
     // Updated with the reviewed bundled file, never calculated from a remote response.
-    const EVENTS_INTEGRITY = 'sha384-x3dn73yu+LtPCqSonunADTT+mGvqgbYdSlSanzrfYMotJbTWTn90/nGewluz6Hmy';
+    const EVENTS_INTEGRITY = 'sha384-20qK/TgV9cFZ42dQDiHEOO3XQbjygfKLks99D0CT9hZM/6cXxKQZbEyZNPlTpmrP';
 
     private static $domainChanged = false;
 
