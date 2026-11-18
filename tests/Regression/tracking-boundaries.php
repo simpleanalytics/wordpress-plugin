@@ -45,11 +45,17 @@ sa_with_isolated_options(static function () {
     sa_assert(! wp_script_is('simpleanalytics', 'enqueued'), 'Excluded visitors must not enqueue analytics.');
     sa_assert(! wp_script_is('simpleanalytics_auto_events', 'enqueued'), 'Excluded visitors must not enqueue automated events.');
 
-    // On a multisite fixture, model a network administrator with no site role.
+    // Network administrators are excluded only when that choice is selected.
+    update_option(SimpleAnalytics\SettingName::EXCLUDED_ROLES, ['editor', SimpleAnalytics\TrackingRules::SUPER_ADMIN]);
     if (is_multisite()) {
         sa_assert(is_super_admin(), 'The test admin must be a network administrator.');
         wp_get_current_user()->roles = [];
+        sa_assert($rules->hasExcludedUserRole(), 'A role-less network administrator must be excluded when selected.');
         update_option(SimpleAnalytics\SettingName::EXCLUDED_ROLES, ['editor']);
-        sa_assert($rules->hasExcludedUserRole(), 'A role-less network administrator must still be excluded.');
+        sa_assert(! $rules->hasExcludedUserRole(), 'Network administrators must stay tracked when not selected.');
+        update_option(SimpleAnalytics\SettingName::EXCLUDED_ROLES, []);
+        sa_assert($rules->hasExcludedUserRole(), 'With no roles selected, every logged-in user stays excluded.');
+    } else {
+        sa_assert(! $rules->hasExcludedUserRole(), 'The network choice must not exclude administrators on a single site.');
     }
 });

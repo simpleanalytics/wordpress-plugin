@@ -6,6 +6,11 @@ defined('ABSPATH') || exit;
 
 class TrackingRules
 {
+    /**
+     * Pseudo-role in the excluded roles setting for multisite network administrators.
+     */
+    const SUPER_ADMIN = 'super_admin';
+
     protected $settings;
 
     public function __construct(WordPressSettings $settings)
@@ -30,14 +35,14 @@ class TrackingRules
             return false;
         }
 
-        // Network administrators may have no role on the current site.
-        if (is_multisite() && is_super_admin()) {
-            return true;
-        }
-
         $needle = $this->settings->array(SettingName::EXCLUDED_ROLES);
 
         if ($needle === []) {
+            return true;
+        }
+
+        // Network administrators may have no role on the site they visit.
+        if (in_array(self::SUPER_ADMIN, $needle, true) && is_multisite() && is_super_admin()) {
             return true;
         }
 
