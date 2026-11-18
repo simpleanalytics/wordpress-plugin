@@ -18,6 +18,7 @@ sa_with_isolated_options(static function () {
     }
     sa_assert(strpos($tag, 'data-platform') === false, 'Unrelated scripts must not receive our attributes.');
 
+    // Third parties such as https://cookierocks.com/ detect Simple Analytics by data-platform="wordpress".
     $tag = wp_get_script_tag(['src' => 'https://example.test/latest.js', 'id' => 'simpleanalytics-js']);
     sa_assert(strpos($tag, 'data-platform="wordpress"') !== false, 'Our script must still receive its attributes.');
 });
