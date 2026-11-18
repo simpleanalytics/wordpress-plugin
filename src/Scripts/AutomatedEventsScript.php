@@ -11,14 +11,13 @@ use SimpleAnalytics\Setting;
 use SimpleAnalytics\SettingName;
 use SimpleAnalytics\Support\CustomDomain;
 use SimpleAnalytics\Support\ScriptPinning;
-use const SimpleAnalytics\PLUGIN_URL;
 
 class AutomatedEventsScript implements Script, HasAttributes, HideScriptId
 {
     public function path(): string
     {
         if (ScriptPinning::enabled()) {
-            return PLUGIN_URL . ScriptPinning::EVENTS_PATH;
+            return ScriptPinning::eventsScript()['src'];
         }
         return sprintf("https://%s/auto-events.js", CustomDomain::get('scripts.simpleanalyticscdn.com'));
     }
@@ -37,7 +36,7 @@ class AutomatedEventsScript implements Script, HasAttributes, HideScriptId
             'data-full-urls'  => Setting::boolean(SettingName::EVENT_FULL_URLS) ? 'true' : 'false',
             'data-sa-global'  => Setting::get(SettingName::EVENT_SA_GLOBAL),
         ]), ScriptPinning::enabled() ? [
-            'integrity' => ScriptPinning::EVENTS_INTEGRITY,
+            'integrity' => ScriptPinning::eventsScript()['integrity'],
             'crossorigin' => 'anonymous',
         ] : []);
     }

@@ -1,5 +1,4 @@
 import { test, expect, type Page, type Browser } from '@playwright/test';
-import { createHash } from 'node:crypto';
 
 const DEFAULT_SCRIPT_SELECTOR = 'script[src="https://scripts.simpleanalyticscdn.com/latest.js"]';
 const INACTIVE_ADMIN_SCRIPT_SELECTOR = 'script[src*="resources/js/inactive.js"]';
@@ -417,30 +416,33 @@ test('explains rejected custom domains beside the field', async ({ page, browser
   await expect(page.getByRole('alert')).toHaveCount(0);
 });
 
-test('pins both scripts, requires custom-domain approval, and blocks altered bytes', async ({ page, browser }) => {
+test('pins bundled scripts, fills in the custom domain, and blocks altered bytes', async ({ page, browser }) => {
   await asAdmin(page);
   const advanced = '/wp-admin/options-general.php?page=simpleanalytics&tab=advanced';
   const events = '/wp-admin/options-general.php?page=simpleanalytics&tab=events';
-  const customUrl = 'https://stats.example.test/sri/v12.js';
-  const approvedScript = 'window.sa_test_events = []; window.sa_event = function(name) { window.sa_test_events.push(name); }; window.sa_event_loaded = true;';
-  const integrity = 'sha384-' + createHash('sha384').update(approvedScript).digest('base64');
   const context = await browser.newContext();
   const requests: string[] = [];
   context.on('request', request => requests.push(request.url()));
-  let corruptMain = false;
-  let corruptEvents = false;
+  // Record where the scripts send data without sending it anywhere.
+  await context.route(/^https:\/\/(queue\.simpleanalyticscdn\.com|stats\.example\.test)\//, route => route.fulfill({ status: 200, body: '' }));
   await context.route('https://scripts.simpleanalyticscdn.com/**', route => route.fulfill({
-    headers: { 'access-control-allow-origin': '*' }, contentType: 'application/javascript',
-    body: 'window.sa_unapproved = true;',
+    contentType: 'application/javascript', body: 'window.sa_unapproved = true;',
   }));
-  await context.route(customUrl, route => route.fulfill({
-    headers: { 'access-control-allow-origin': '*' }, contentType: 'application/javascript',
-    body: corruptMain ? approvedScript + 'window.sa_unapproved = true;' : approvedScript,
-  }));
-  await context.route('**/resources/js/pinned/**/auto-events.js', route => corruptEvents
-    ? route.fulfill({ contentType: 'application/javascript', body: 'window.sa_unapproved_events = true;' })
-    : route.continue());
+  let corrupt = false;
+  await context.route(/\/(resources\/js\/pinned|uploads\/simpleanalytics)\/.*\.js$/, async route => {
+    if (!corrupt) return route.continue();
+    const response = await route.fetch();
+    await route.fulfill({ response, body: (await response.text()) + '\nwindow.sa_unapproved = true;' });
+  });
+  // The v12 automated-events script binds the links present when the page has loaded.
   const guest = await context.newPage();
+  await guest.addInitScript(() => document.addEventListener('DOMContentLoaded', () => {
+    for (const [id, href] of [['outbound-test', 'https://example.org/'], ['download-test', '/test.pdf'], ['email-test', 'mailto:hello@example.org']]) {
+      const link = document.createElement('a'); link.id = id; link.href = href; link.textContent = id;
+      link.addEventListener('click', event => event.preventDefault()); document.body.appendChild(link);
+    }
+  }));
+  const dataSentTo = (host: string) => requests.some(url => url.startsWith(`https://${host}/`));
   try {
     await page.goto(events);
     await page.locator('#simpleanalytics_automated_events').check();
@@ -456,55 +458,45 @@ test('pins both scripts, requires custom-domain approval, and blocks altered byt
     await page.locator('#simpleanalytics_pin_scripts').check();
     await saveSettings(page);
     await expect(page.locator('#simpleanalytics_pin_scripts')).toBeChecked();
-    await guest.goto('/');
-    await expect(guest.locator('script[src="https://scripts.simpleanalyticscdn.com/sri/v12.js"]')).toHaveAttribute('integrity', /^sha384-/);
-    expect(await guest.evaluate(() => (window as any).sa_unapproved)).toBeUndefined();
-    expect(requests.some(url => url.endsWith('/latest.js') || url === 'https://scripts.simpleanalyticscdn.com/auto-events.js')).toBe(false);
-
-    await page.locator('#simpleanalytics_custom_domain').fill('stats.example.test');
-    await page.locator('#simpleanalytics_custom_script_integrity').fill(integrity);
-    await saveSettings(page);
-    await expect(page.getByText(/Simple Analytics tracking is paused:/)).toBeVisible();
-    await expect(page.locator('#simpleanalytics_custom_script_integrity')).toHaveValue('');
-    await guest.reload();
-    await expect(guest.locator('script[src*="/sri/"], script[src*="/resources/js/pinned/"]')).toHaveCount(0);
-
-    await page.locator('#simpleanalytics_custom_script_integrity').fill('sha384-invalid');
-    await saveSettings(page);
-    await expect(page.getByText(/Simple Analytics tracking is paused:/)).toBeVisible();
-    await expect(page.locator('[role="alert"]').filter({ hasText: /Save a valid custom domain first/ })).toBeVisible();
-    await page.locator('#simpleanalytics_custom_script_integrity').fill(integrity);
-    await saveSettings(page);
-    await expect(page.getByText(/Simple Analytics tracking is paused:/)).toHaveCount(0);
-    // The v12 automated-events script binds the links present when the page has loaded.
-    await guest.addInitScript(() => document.addEventListener('DOMContentLoaded', () => {
-      for (const [id, href] of [['outbound-test', 'https://example.org/'], ['download-test', '/test.pdf'], ['email-test', 'mailto:hello@example.org']]) {
-        const link = document.createElement('a'); link.id = id; link.href = href; link.textContent = id;
-        link.addEventListener('click', event => event.preventDefault()); document.body.appendChild(link);
-      }
-    }));
-    await guest.reload({ waitUntil: 'load' });
-    await expect(guest.locator(`script[src="${customUrl}"]`)).toHaveAttribute('integrity', integrity);
-    await expect(guest.locator(`script[src="${customUrl}"]`)).toHaveAttribute('crossorigin', 'anonymous');
+    await guest.goto('/', { waitUntil: 'load' });
+    const main = guest.locator('script[src*="/resources/js/pinned/v12/app.js"]');
+    await expect(main).toHaveAttribute('integrity', /^sha384-/);
+    await expect(main).toHaveAttribute('crossorigin', 'anonymous');
     await expect(guest.locator('script[src*="/resources/js/pinned/v12/auto-events.js"]')).toHaveAttribute('integrity', /^sha384-/);
+    await expect.poll(() => guest.evaluate(() => (window as any).sa_event_loaded)).toBe(true);
+    await expect.poll(() => dataSentTo('queue.simpleanalyticscdn.com')).toBe(true);
+    expect(requests.some(url => url.startsWith('https://scripts.simpleanalyticscdn.com/'))).toBe(false);
+
+    // The bundled events script reports clicks through the bundled main script.
+    await guest.evaluate(() => {
+      (window as any).sa_test_events = [];
+      const original = (window as any).sa_event;
+      (window as any).sa_event = function (name: string, ...rest: unknown[]) {
+        (window as any).sa_test_events.push(name);
+        return original.call(this, name, ...rest);
+      };
+    });
     for (const id of ['outbound-test', 'download-test', 'email-test']) await guest.locator('#' + id).click();
     expect(await guest.evaluate(() => (window as any).sa_test_events)).toEqual(['outbound_example_org', 'download_test_pdf', 'email_hello_example_org']);
 
-    corruptEvents = true;
-    await guest.reload();
-    expect(await guest.evaluate(() => (window as any).sa_unapproved_events)).toBeUndefined();
-    corruptMain = true;
-    await guest.reload();
-    expect(await guest.evaluate(() => (window as any).sa_event)).toBeUndefined();
-    expect(await guest.evaluate(() => (window as any).sa_unapproved)).toBeUndefined();
-    expect(requests.some(url => url.endsWith('/latest.js'))).toBe(false);
-
-    await page.locator('#simpleanalytics_custom_domain').fill('other.example.test');
+    // A custom domain gets its own copy of the bundled custom-domain script, sending data to that domain.
+    await page.locator('#simpleanalytics_custom_domain').fill('stats.example.test');
     await saveSettings(page);
-    await expect(page.getByText(/Simple Analytics tracking is paused:/)).toBeVisible();
-    await expect(page.locator('#simpleanalytics_custom_script_integrity')).toHaveValue('');
-    await guest.reload();
-    await expect(guest.locator('script[src*="/sri/"], script[src*="/resources/js/pinned/"]')).toHaveCount(0);
+    await expect(page.getByRole('alert')).toHaveCount(0);
+    requests.length = 0;
+    await guest.reload({ waitUntil: 'load' });
+    const custom = guest.locator('script[src*="/uploads/simpleanalytics/v12-stats.example.test.js"]');
+    await expect(custom).toHaveAttribute('integrity', /^sha384-/);
+    await expect.poll(() => dataSentTo('stats.example.test')).toBe(true);
+    expect(dataSentTo('queue.simpleanalyticscdn.com')).toBe(false);
+
+    // Changed bytes are refused by the browser, for both written and bundled scripts.
+    corrupt = true;
+    await guest.reload({ waitUntil: 'load' });
+    await guest.waitForTimeout(300);
+    expect(await guest.evaluate(() => (window as any).sa_unapproved)).toBeUndefined();
+    expect(await guest.evaluate(() => (window as any).sa_event)).toBeUndefined();
+    corrupt = false;
 
     await page.locator('#simpleanalytics_custom_domain').fill('');
     await page.locator('#simpleanalytics_pin_scripts').uncheck();
@@ -516,7 +508,6 @@ test('pins both scripts, requires custom-domain approval, and blocks altered byt
     await context.close();
     await page.goto(advanced);
     await page.locator('#simpleanalytics_custom_domain').fill('');
-    await page.locator('#simpleanalytics_custom_script_integrity').fill('');
     await page.locator('#simpleanalytics_pin_scripts').uncheck();
     await saveSettings(page);
   }

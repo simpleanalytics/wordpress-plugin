@@ -8,7 +8,6 @@ use SimpleAnalytics\Setting;
 use SimpleAnalytics\SettingName;
 use SimpleAnalytics\Support\OnloadCallback;
 use SimpleAnalytics\Support\CustomDomain;
-use SimpleAnalytics\Support\ScriptPinning;
 use SimpleAnalytics\Settings\Concerns\HasDocs;
 use SimpleAnalytics\Settings\Concerns\HasPlaceholder;
 use SimpleAnalytics\UI\LabelComponent;
@@ -35,9 +34,6 @@ class Input extends Field
 
     public function getValueSanitizer(): callable
     {
-        if ($this->getKey() === SettingName::CUSTOM_SCRIPT_INTEGRITY) {
-            return [ScriptPinning::class, 'sanitizeIntegrity'];
-        }
         if ($this->getKey() === SettingName::ONLOAD_CALLBACK) {
             return [OnloadCallback::class, 'sanitize'];
         }

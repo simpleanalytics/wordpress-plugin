@@ -18,7 +18,7 @@ class AnalyticsScript implements Script, HasAttributes, HideScriptId
     public function path(): string
     {
         if (ScriptPinning::enabled()) {
-            return sprintf('https://%s/sri/%s.js', CustomDomain::get('scripts.simpleanalyticscdn.com'), ScriptPinning::VERSION);
+            return ScriptPinning::analyticsScript()['src'];
         }
         return sprintf("https://%s/latest.js", CustomDomain::get('scripts.simpleanalyticscdn.com'));
     }
@@ -41,6 +41,9 @@ class AnalyticsScript implements Script, HasAttributes, HideScriptId
             'onload'            => OnloadCallback::get(),
             'data-sa-global'    => Setting::get(SettingName::SA_GLOBAL),
             'data-hostname'     => Setting::get(SettingName::HOSTNAME),
-        ]), ScriptPinning::attributes());
+        ]), ScriptPinning::enabled() ? [
+            'integrity' => ScriptPinning::analyticsScript()['integrity'],
+            'crossorigin' => 'anonymous',
+        ] : []);
     }
 }

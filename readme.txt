@@ -114,9 +114,7 @@ Installing "Simple Analytics" can be done in multiple ways.
 
 = Can I pin the analytics scripts? =
 
-Yes. Enable "Pin analytics scripts" under Settings > Simple Analytics > Advanced. It uses a versioned analytics script with Subresource Integrity and a bundled automated-events script. Pinning is off by default. Script updates arrive with plugin releases; changed or unavailable scripts stop the affected tracking without an unpinned fallback. Clear page caches after enabling pinning or updating pinned scripts. Exclude pinned files from JavaScript rewriting or minification.
-
-For a custom domain, save the domain first, review its versioned script, and save its SHA-384 hash separately. See the linked Simple Analytics SRI documentation for the hash. This requires permission to save unfiltered HTML. Domain or version changes require renewed approval; tracking stays paused until approval is complete.
+Yes. Enable "Pin analytics scripts" under Settings > Simple Analytics > Advanced. The plugin then runs the v12 analytics and automated-events scripts bundled with it, with Subresource Integrity, instead of the latest scripts from our CDN. Pinning is off by default. Script updates arrive with plugin releases. Clear page caches after enabling pinning or updating the plugin, and exclude pinned files from JavaScript rewriting or minification. With a custom domain, the plugin saves a copy of the script for that domain in the uploads folder. The readable source of the bundled scripts is at https://github.com/simpleanalytics/scripts/tree/v12/src.
 
 = Is Simple Analytics free? =
 

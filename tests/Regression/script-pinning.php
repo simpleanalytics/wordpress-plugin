@@ -5,82 +5,72 @@ defined('ABSPATH') || exit;
 require __DIR__ . '/../Support/isolated-options.php';
 
 use SimpleAnalytics\SettingName;
-use SimpleAnalytics\Support\CustomDomain;
 use SimpleAnalytics\Support\ScriptPinning;
 
 sa_with_isolated_options(static function () {
-    // Each approval below models a separate settings request.
-    $newRequest = static function () {
-        $property = new ReflectionProperty(ScriptPinning::class, 'domainChanged');
-        $property->setAccessible(true);
-        $property->setValue(null, false);
+    $sri = static function (string $bytes): string {
+        return 'sha384-' . base64_encode(hash('sha384', $bytes, true));
     };
-    wp_set_current_user(get_user_by('login', 'admin')->ID);
-    foreach ([SettingName::PIN_SCRIPTS, SettingName::CUSTOM_DOMAIN, SettingName::CUSTOM_SCRIPT_INTEGRITY, SettingName::CUSTOM_SCRIPT_APPROVAL] as $key) delete_option($key);
+    $bundled = static function (string $file): string {
+        return (string) file_get_contents(SimpleAnalytics\PLUGIN_PATH . ScriptPinning::DIRECTORY . $file);
+    };
+    $uploads = wp_upload_dir(null, false);
+    $written = $uploads['basedir'] . '/' . ScriptPinning::UPLOADS_DIRECTORY . '/' . ScriptPinning::VERSION . '-stats.example.test.js';
+
+    foreach ([SettingName::PIN_SCRIPTS, SettingName::CUSTOM_DOMAIN] as $key) delete_option($key);
     $analytics = new SimpleAnalytics\Scripts\AnalyticsScript();
     $events = new SimpleAnalytics\Scripts\AutomatedEventsScript();
     sa_assert(! ScriptPinning::enabled(), 'Pinning must be opt-in.');
     sa_assert($analytics->path() === 'https://scripts.simpleanalyticscdn.com/latest.js', 'Default loading must remain unchanged.');
     sa_assert(! isset($analytics->attributes()['integrity']), 'Default mode must not pin a changing script.');
-    update_option(SettingName::PIN_SCRIPTS, 1);
-    sa_assert(ScriptPinning::ready(), 'The official CDN requires no user hash.');
-    sa_assert($analytics->path() === 'https://scripts.simpleanalyticscdn.com/sri/v12.js', 'Pinned mode must use the versioned endpoint.');
-    sa_assert($analytics->attributes()['integrity'] === ScriptPinning::INTEGRITY, 'Main script must use the release hash.');
-    sa_assert($analytics->attributes()['crossorigin'] === 'anonymous', 'Cross-origin integrity needs CORS.');
-    sa_assert($events->path() === SimpleAnalytics\PLUGIN_URL . ScriptPinning::EVENTS_PATH, 'Pinned events must be bundled.');
-    sa_assert('sha384-' . base64_encode(hash_file('sha384', SimpleAnalytics\PLUGIN_PATH . ScriptPinning::EVENTS_PATH, true)) === $events->attributes()['integrity'], 'The bundled bytes must match their fixed release hash.');
 
-    $field = new SimpleAnalytics\Settings\Blocks\Fields\Input(SettingName::CUSTOM_SCRIPT_INTEGRITY, 'test');
-    register_setting('test', SettingName::CUSTOM_SCRIPT_INTEGRITY, ['sanitize_callback' => $field->getValueSanitizer()]);
-    register_setting('test', SettingName::CUSTOM_DOMAIN, ['sanitize_callback' => [CustomDomain::class, 'sanitize']]);
-    update_option(SettingName::CUSTOM_DOMAIN, 'stats.example.test');
-    $hash = 'sha384-' . base64_encode(hash('sha384', 'approved script', true));
-    update_option(SettingName::CUSTOM_SCRIPT_INTEGRITY, $hash);
-    sa_assert(! ScriptPinning::ready(), 'Changing a domain and approving a hash requires separate saves.');
-    $newRequest();
-    update_option(SettingName::CUSTOM_SCRIPT_INTEGRITY, $hash);
-    sa_assert(ScriptPinning::ready(), 'An authorized hash must allow tracking.');
-    sa_assert($analytics->attributes()['integrity'] === $hash, 'The custom domain must use its own hash.');
-    sa_assert($analytics->path() === 'https://stats.example.test/sri/v12.js', 'Custom domains use the documented versioned route.');
-    wp_set_current_user(0);
-    sa_assert(ScriptPinning::ready(), 'Saved approval must work for anonymous visitors.');
-    wp_set_current_user(get_user_by('login', 'admin')->ID);
-    foreach ([[], null, 'sha256-' . str_repeat('A', 64), 'sha384-bad', $hash . ' ' . $hash, '<script>'] as $invalid) {
-        sa_assert(ScriptPinning::sanitizeIntegrity($invalid) === $hash, 'Malformed hash input must preserve the current approval.');
+    // The bundled files are the scripts release, and their fixed hashes match their bytes.
+    sa_assert($sri($bundled('app.js')) === ScriptPinning::INTEGRITY, 'app.js must match its fixed hash.');
+    sa_assert($sri($bundled('custom/app.js')) === ScriptPinning::CUSTOM_DOMAIN_INTEGRITY, 'custom/app.js must match its fixed hash.');
+    sa_assert($sri($bundled('auto-events.js')) === ScriptPinning::EVENTS_INTEGRITY, 'auto-events.js must match its fixed hash.');
+    sa_assert(substr_count($bundled('custom/app.js'), ScriptPinning::HOST_PLACEHOLDER) === 1, 'The custom-domain build must have one domain placeholder.');
+    foreach (['app.js' => 'cdn_latest_12', 'custom/app.js' => 'custom_app_12', 'auto-events.js' => '; v12)'] as $file => $marker) {
+        sa_assert(strpos($bundled($file), $marker) !== false, "$file must come from the " . ScriptPinning::VERSION . ' release.');
     }
-    $deny = static function ($caps, $cap) { return $cap === 'unfiltered_html' ? ['do_not_allow'] : $caps; };
-    add_filter('map_meta_cap', $deny, 10, 2);
-    update_option(SettingName::CUSTOM_SCRIPT_INTEGRITY, 'sha384-' . str_repeat('A', 64));
-    sa_assert(ScriptPinning::customIntegrity() === $hash, 'Restricted administrators must not replace approved code.');
-    remove_filter('map_meta_cap', $deny, 10);
-    $blogId = $GLOBALS['blog_id'];
-    $GLOBALS['blog_id'] = 99999;
-    sa_assert(! ScriptPinning::ready(), 'Approval must not transfer to another site.');
-    $GLOBALS['blog_id'] = $blogId;
-    update_option(SettingName::CUSTOM_SCRIPT_APPROVAL, hash_hmac('sha256', 'script-integrity:' . get_current_blog_id() . ':stats.example.test:v11:' . $hash, wp_salt('auth')));
-    sa_assert(! ScriptPinning::ready(), 'Approval must not transfer to another version.');
-    ScriptPinning::sanitizeIntegrity($hash);
-    sa_assert(! ScriptPinning::ready(), 'An unrelated settings save must not reapprove a stale hash.');
 
+    update_option(SettingName::PIN_SCRIPTS, 1);
+    $base = SimpleAnalytics\PLUGIN_URL . ScriptPinning::DIRECTORY;
+    sa_assert($analytics->path() === $base . 'app.js', 'Pinned mode must load the bundled script.');
+    sa_assert($analytics->attributes()['integrity'] === ScriptPinning::INTEGRITY, 'The bundled script must carry its hash.');
+    sa_assert($analytics->attributes()['crossorigin'] === 'anonymous', 'Integrity checks need CORS when assets are served from another origin.');
+    sa_assert($events->path() === $base . 'auto-events.js', 'Pinned events must be bundled.');
+    sa_assert($events->attributes()['integrity'] === ScriptPinning::EVENTS_INTEGRITY, 'Pinned events must carry their hash.');
+    sa_assert(ScriptPinning::problem() === null, 'Pinning without a custom domain needs no warning.');
+
+    // A custom domain gets the custom-domain build with its domain filled in.
+    update_option(SettingName::CUSTOM_DOMAIN, 'stats.example.test');
+    $expected = str_replace(ScriptPinning::HOST_PLACEHOLDER, 'stats.example.test', $bundled('custom/app.js'));
+    sa_assert($analytics->path() === $uploads['baseurl'] . '/' . ScriptPinning::UPLOADS_DIRECTORY . '/' . ScriptPinning::VERSION . '-stats.example.test.js', 'A custom domain must load its script from uploads.');
+    sa_assert(file_get_contents($written) === $expected, 'The written script must be the custom-domain build for this domain.');
+    sa_assert(strpos($expected, '"stats.example.test"') !== false && strpos($expected, '<!--#') === false, 'The script must send data to the custom domain.');
+    sa_assert($analytics->attributes()['integrity'] === $sri($expected), 'The written script must carry its own hash.');
+    sa_assert($events->path() === $base . 'auto-events.js', 'Events stay bundled with a custom domain.');
     wp_set_current_user(0);
-    update_option(SettingName::AUTOMATED_EVENTS, 1);
-    update_option(SettingName::NOSCRIPT, 1);
-    do_action('wp_enqueue_scripts');
-    sa_assert(! wp_script_is('simpleanalytics', 'enqueued') && ! wp_script_is('simpleanalytics_auto_events', 'enqueued'), 'Invalid approval must suppress both scripts without a fallback.');
+    sa_assert($analytics->path() === $uploads['baseurl'] . '/' . ScriptPinning::UPLOADS_DIRECTORY . '/' . ScriptPinning::VERSION . '-stats.example.test.js', 'Visitors must get the same script.');
 
-    wp_set_current_user(get_user_by('login', 'admin')->ID);
-    update_option(SettingName::CUSTOM_SCRIPT_INTEGRITY, '');
-    update_option(SettingName::CUSTOM_SCRIPT_INTEGRITY, $hash);
-    sa_assert(ScriptPinning::ready(), 'Clearing then explicitly approving must restore tracking.');
+    file_put_contents($written, 'window.changed = true;');
+    $analytics->path();
+    sa_assert(file_get_contents($written) === $expected, 'A changed or stale file must be written again.');
+
     update_option(SettingName::CUSTOM_DOMAIN, 'other.example.test');
-    sa_assert(! ScriptPinning::ready(), 'Changing domains must invalidate approval.');
-    sa_assert(get_option(SettingName::CUSTOM_SCRIPT_INTEGRITY, '') === '', 'Changing domains must clear the old hash.');
-    $newRequest();
-    update_option(SettingName::CUSTOM_SCRIPT_INTEGRITY, $hash);
-    sa_assert(ScriptPinning::ready(), 'A new domain can be explicitly approved.');
-    remove_filter('sanitize_option_' . SettingName::CUSTOM_SCRIPT_INTEGRITY, $field->getValueSanitizer());
-    update_option(SettingName::CUSTOM_SCRIPT_INTEGRITY, 'sha384-' . str_repeat('B', 64));
-    sa_assert(! ScriptPinning::ready(), 'Direct option tampering must not authorize another hash.');
-    update_option(SettingName::CUSTOM_DOMAIN, '');
-    sa_assert(ScriptPinning::ready(), 'Clearing a custom domain must restore the pinned CDN.');
+    sa_assert(strpos($analytics->path(), ScriptPinning::VERSION . '-other.example.test.js') !== false, 'A new domain must get its own file.');
+    sa_assert(! file_exists($written), 'The file for the previous domain must be removed.');
+
+    // Without a writable uploads folder, keep tracking with the bundled default script.
+    $broken = static function ($dirs) { $dirs['error'] = 'Unable to create directory.'; return $dirs; };
+    add_filter('upload_dir', $broken);
+    sa_assert($analytics->path() === $base . 'app.js', 'Without uploads, fall back to the bundled default script.');
+    sa_assert($analytics->attributes()['integrity'] === ScriptPinning::INTEGRITY, 'The fallback must keep its hash.');
+    sa_assert(is_string(ScriptPinning::problem()), 'Administrators must learn why the custom domain is not used.');
+    remove_filter('upload_dir', $broken);
+
+    update_option(SettingName::PIN_SCRIPTS, 0);
+    sa_assert($analytics->path() === 'https://other.example.test/latest.js', 'Without pinning, custom domains load their latest script.');
+
+    foreach (glob($uploads['basedir'] . '/' . ScriptPinning::UPLOADS_DIRECTORY . '/*.js') ?: [] as $file) wp_delete_file($file);
 });

@@ -35,8 +35,6 @@ class CustomDomain
             return $current;
         }
 
-        ScriptPinning::domainChanged();
-
         return $value;
     }
 

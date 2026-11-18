@@ -6,106 +6,114 @@ defined('ABSPATH') || exit;
 
 use SimpleAnalytics\Setting;
 use SimpleAnalytics\SettingName;
+use const SimpleAnalytics\PLUGIN_PATH;
+use const SimpleAnalytics\PLUGIN_URL;
 
+/**
+ * Pinned mode runs the scripts of one simpleanalytics/scripts release, bundled
+ * with this plugin, instead of the latest scripts from the CDN.
+ */
 final class ScriptPinning
 {
+    // The scripts release tag. DIRECTORY holds dist/v12/app.js, dist/v12/custom/app.js
+    // and dist/v12/auto-events.js from that release's scripts-v12.tar.gz, unmodified.
     const VERSION = 'v12';
-    // The bundled automated-events script comes from the same scripts release as VERSION.
-    const EVENTS_PATH = 'resources/js/pinned/' . self::VERSION . '/auto-events.js';
-    const INTEGRITY = 'sha384-VVOeJV8okLf6owAyITVK14p3AX78fPOStksa5tYEruAngS4yv5EYM26KP9bvcZ/L';
-    // Updated with the reviewed bundled file, never calculated from a remote response.
-    const EVENTS_INTEGRITY = 'sha384-20qK/TgV9cFZ42dQDiHEOO3XQbjygfKLks99D0CT9hZM/6cXxKQZbEyZNPlTpmrP';
-
-    private static $domainChanged = false;
+    const DIRECTORY = 'resources/js/pinned/' . self::VERSION . '/';
+    // Fixed hashes of the bundled files, updated with them and never calculated at runtime.
+    const INTEGRITY = 'sha384-hW/9WnZdBVODKX3qmD+1Tbu8NAw+eqwfTa6hcnBO8jNjTQgh/lkr8adCkM5Pysqc';
+    const CUSTOM_DOMAIN_INTEGRITY = 'sha384-QCld7tlMzHkNDAxbcql6iYzbOEaLUjgLGnRyR1rk3Ov82ZMA2jHSjGQlpMnMQK5x';
+    const EVENTS_INTEGRITY = 'sha384-SQFrB7qW0OT1xKu17wLDikKn7a4X2l6654U0ieJhW/jn6ge9W+NECt0eHBG2uTjO';
+    // custom/app.js sends data to the domain it is served from: custom-domain
+    // servers write their hostname over this placeholder, and so does the plugin.
+    const HOST_PLACEHOLDER = '<!--# echo var="http_host" default="" -->';
+    // Scripts written for a custom domain, inside the uploads folder.
+    const UPLOADS_DIRECTORY = 'simpleanalytics';
 
     public static function enabled(): bool
     {
         return Setting::boolean(SettingName::PIN_SCRIPTS, false) === true;
     }
 
-    public static function domainChanged(): void
+    /**
+     * @return array{src: string, integrity: string}
+     */
+    public static function analyticsScript(): array
     {
-        self::$domainChanged = true;
-        delete_option(SettingName::CUSTOM_SCRIPT_APPROVAL);
-        delete_option(SettingName::CUSTOM_SCRIPT_INTEGRITY);
+        return self::customDomainScript() ?? [
+            'src' => PLUGIN_URL . self::DIRECTORY . 'app.js',
+            'integrity' => self::INTEGRITY,
+        ];
     }
 
-    public static function sanitizeIntegrity($value): string
+    /**
+     * @return array{src: string, integrity: string}
+     */
+    public static function eventsScript(): array
     {
-        $current = get_option(SettingName::CUSTOM_SCRIPT_INTEGRITY, '');
-        $current = is_string($current) ? $current : '';
-        if (! current_user_can('unfiltered_html')) {
-            return $current;
-        }
-        // options.php saves the domain before this field. Do not approve a hash
-        // copied from the previous domain in the same form submission.
-        if (self::$domainChanged) {
-            if ($value !== '' && $value !== null) {
-                add_settings_error(SettingName::CUSTOM_SCRIPT_INTEGRITY, 'domain_changed', 'Custom domain changed. Save its SHA-384 hash in a separate save after reviewing the versioned script.');
-            }
-            return '';
-        }
-        $value = is_string($value) ? trim($value) : null;
-        if ($value === '') {
-            delete_option(SettingName::CUSTOM_SCRIPT_APPROVAL);
-            return '';
-        }
-        $domain = CustomDomain::get('');
-        if ($value === null || preg_match('/\Asha384-[A-Za-z0-9+\/]{64}\z/', $value) !== 1 || $domain === '') {
-            add_settings_error(SettingName::CUSTOM_SCRIPT_INTEGRITY, 'invalid_integrity', 'Save a valid custom domain first, then enter its reviewed script hash: sha384- followed by 64 base64 characters.');
-            return $current;
-        }
-        // Saving unrelated settings after a version change must not reapprove
-        // a stale hash. Clear it first if deliberately approving identical bytes.
-        if ($value === $current && self::customIntegrity() === null) {
-            add_settings_error(SettingName::CUSTOM_SCRIPT_INTEGRITY, 'stale_integrity', 'This hash approval has expired. Enter the new version’s hash, or clear and save this field before approving the same hash again.');
-            return $current;
-        }
-        update_option(SettingName::CUSTOM_SCRIPT_APPROVAL, self::approvalHash($domain, $value));
-        return $value;
+        return [
+            'src' => PLUGIN_URL . self::DIRECTORY . 'auto-events.js',
+            'integrity' => self::EVENTS_INTEGRITY,
+        ];
     }
 
-    public static function customIntegrity(): ?string
+    /**
+     * Explains why pinned scripts cannot use the custom domain, for administrators.
+     */
+    public static function problem(): ?string
     {
-        $domain = CustomDomain::get('');
-        $value = get_option(SettingName::CUSTOM_SCRIPT_INTEGRITY, '');
-        $approval = get_option(SettingName::CUSTOM_SCRIPT_APPROVAL, '');
-        if ($domain === '' || ! is_string($value) || preg_match('/\Asha384-[A-Za-z0-9+\/]{64}\z/', $value) !== 1 || ! is_string($approval)) {
+        if (! self::enabled() || CustomDomain::get('') === '' || self::customDomainScript() !== null) {
             return null;
         }
-        return hash_equals(self::approvalHash($domain, $value), $approval) ? $value : null;
-    }
 
-    public static function ready(): bool
-    {
-        if (! self::enabled()) return true;
-        $domain = get_option(SettingName::CUSTOM_DOMAIN, '');
-        // A malformed or unapproved configured domain must not silently change
-        // the tracking destination when pinning is enabled.
-        return $domain === '' || $domain === false || $domain === null || self::customIntegrity() !== null;
-    }
-
-    public static function attributes(): array
-    {
-        if (! self::enabled()) return [];
-        return [
-            'integrity' => CustomDomain::get('') !== '' ? self::customIntegrity() : self::INTEGRITY,
-            'crossorigin' => 'anonymous',
-        ];
+        return 'Simple Analytics could not save the pinned script for your custom domain in the uploads folder, so visitors load the pinned script for the default domain. Make sure WordPress can write to its uploads folder.';
     }
 
     public static function notice(bool $inSettings = false): void
     {
         // The settings page uses a shadow root, which hides ordinary WP notices.
         $settingsPage = isset($_GET['page']) && $_GET['page'] === 'simpleanalytics';
-        if ($settingsPage !== $inSettings) return;
-        if (self::enabled() && ! self::ready() && current_user_can('manage_options')) {
-            echo '<div class="notice notice-error" role="alert" style="border-left:4px solid #b32d2e;background:#fff;padding:12px;margin:12px 0"><p>' . esc_html('Simple Analytics tracking is paused: approve the SHA-384 hash for your custom domain’s ' . self::VERSION . ' script under Settings → Simple Analytics → Advanced. No unpinned script will be loaded.') . '</p></div>';
+        if ($settingsPage !== $inSettings || ! current_user_can('manage_options')) return;
+        $problem = self::problem();
+        if ($problem !== null) {
+            echo '<div class="notice notice-warning" role="alert" style="border-left:4px solid #dba617;background:#fff;padding:12px;margin:12px 0"><p>' . esc_html($problem) . '</p></div>';
         }
     }
 
-    private static function approvalHash(string $domain, string $integrity): string
+    /**
+     * Writes the custom-domain build with the saved domain filled in, as the
+     * custom-domain server would serve it, to the uploads folder.
+     *
+     * @return array{src: string, integrity: string}|null
+     */
+    private static function customDomainScript(): ?array
     {
-        return hash_hmac('sha256', 'script-integrity:' . get_current_blog_id() . ':' . $domain . ':' . self::VERSION . ':' . $integrity, wp_salt('auth'));
+        $domain = CustomDomain::get('');
+        if ($domain === '') return null;
+
+        $template = file_get_contents(PLUGIN_PATH . self::DIRECTORY . 'custom/app.js');
+        if (! is_string($template) || 'sha384-' . base64_encode(hash('sha384', $template, true)) !== self::CUSTOM_DOMAIN_INTEGRITY) {
+            return null;
+        }
+        $code = str_replace(self::HOST_PLACEHOLDER, $domain, $template);
+
+        $uploads = wp_upload_dir(null, false);
+        if (! empty($uploads['error'])) return null;
+        $directory = $uploads['basedir'] . '/' . self::UPLOADS_DIRECTORY;
+        // The domain and version are in the name, so browsers can cache it for good.
+        $file = self::VERSION . '-' . $domain . '.js';
+
+        if (! is_file("$directory/$file") || file_get_contents("$directory/$file") !== $code) {
+            if (! wp_mkdir_p($directory) || file_put_contents("$directory/$file", $code, LOCK_EX) !== strlen($code)) {
+                return null;
+            }
+            foreach (glob("$directory/*.js") ?: [] as $old) {
+                if (basename($old) !== $file) wp_delete_file($old);
+            }
+        }
+
+        return [
+            'src' => $uploads['baseurl'] . '/' . self::UPLOADS_DIRECTORY . '/' . $file,
+            'integrity' => 'sha384-' . base64_encode(hash('sha384', $code, true)),
+        ];
     }
 }

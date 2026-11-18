@@ -53,10 +53,6 @@ final class Plugin
             return;
         }
 
-        if (! ScriptPinning::ready()) {
-            return;
-        }
-
         $hasExcludedIp = $this->trackingRules->hasExcludedIp();
         $hasExcludedUserRole = $this->trackingRules->hasExcludedUserRole();
         $tracking = ! $hasExcludedIp && ! $hasExcludedUserRole;

@@ -116,12 +116,7 @@ $adminPage = SimpleAnalytics\Settings\AdminPage::title('Simple Analytics')
             ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
 
         $tab->checkbox(SettingName::PIN_SCRIPTS, 'Pin analytics scripts')
-            ->description('Only run approved scripts. Updates arrive with plugin releases. Changed or unavailable scripts stop tracking. Automated events use a bundled copy. Clear your page cache after changing this setting.')
-            ->docs('https://docs.simpleanalytics.com/sri');
-
-        $tab->input(SettingName::CUSTOM_SCRIPT_INTEGRITY, 'Custom domain script hash')
-            ->placeholder('sha384-…')
-            ->description('Only needed with pinning and a custom domain. Save the domain first, then review https://YOUR.DOMAIN/sri/' . SimpleAnalytics\Support\ScriptPinning::VERSION . '.js and paste its SHA-384 integrity hash from the Simple Analytics SRI documentation. Saving approves that hash and requires permission to save unfiltered HTML. Tracking stays paused until approval is complete.')
+            ->description('Run the ' . SimpleAnalytics\Support\ScriptPinning::VERSION . ' scripts bundled with this plugin, checked with Subresource Integrity, instead of the latest scripts from our CDN. Script updates arrive with plugin releases. With a custom domain, its script is saved in the uploads folder. Clear your page cache after changing this setting.')
             ->docs('https://docs.simpleanalytics.com/sri');
 
         $tab->checkbox(SettingName::COLLECT_DNT, 'Collect Do Not Track')
