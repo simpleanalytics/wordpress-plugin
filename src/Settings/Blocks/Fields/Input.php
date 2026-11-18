@@ -85,12 +85,27 @@ class Input extends Field
             <?php echo esc_html($this->description); ?>
         </p>
     <?php endif;
-        // The settings page's shadow root hides WordPress's global errors.
-        if ($this->getKey() === SettingName::CUSTOM_SCRIPT_INTEGRITY) {
-            foreach (get_settings_errors($this->getKey()) as $error) {
-                echo '<p role="alert" style="color:#b32d2e">' . esc_html($error['message']) . '</p>';
-            }
+        foreach ($this->messages() as $message): ?>
+        <p role="alert" class="mt-2 text-sm font-medium text-red-700">
+            <?php echo esc_html($message); ?>
+        </p>
+    <?php endforeach;
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function messages(): array
+    {
+        // WordPress prints settings errors outside the settings page's shadow
+        // root, where nobody sees them, so show them beside the field.
+        $messages = array_column(get_settings_errors($this->getKey()), 'message');
+
+        if ($this->getKey() === SettingName::CUSTOM_DOMAIN && $messages === []) {
+            $messages[] = CustomDomain::problem();
         }
+
+        return array_values(array_unique(array_filter($messages)));
     }
 
     public function type(string $type): self

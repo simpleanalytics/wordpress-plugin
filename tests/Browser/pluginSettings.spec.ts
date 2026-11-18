@@ -394,6 +394,29 @@ test('malformed tabs fall back to General without requesting external fonts', as
   expect(requests.some(url => url.includes('fonts.bunny.net'))).toBe(false);
 });
 
+test('explains rejected custom domains beside the field', async ({ page, browser }) => {
+  const field = '[name="simpleanalytics_custom_domain"]';
+  await asAdmin(page);
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=advanced');
+  await page.fill(field, 'https://Stats.Example.com/');
+  await saveSettings(page);
+  await expect(page.locator(field)).toHaveValue('stats.example.com');
+  await expect(page.getByRole('alert')).toHaveCount(0);
+
+  await page.fill(field, 'stats.example.com/latest.js?x');
+  await saveSettings(page);
+  await expect(page.locator(field)).toHaveValue('stats.example.com');
+  await expect(page.getByRole('alert')).toContainText('The custom domain was not changed.');
+
+  const guest = await visitAsGuest(browser);
+  await expect(guest.locator('script[src="https://stats.example.com/latest.js"]')).toBeAttached();
+  await guest.context().close();
+
+  await page.fill(field, '');
+  await saveSettings(page);
+  await expect(page.getByRole('alert')).toHaveCount(0);
+});
+
 test('pins both scripts, requires custom-domain approval, and blocks altered bytes', async ({ page, browser }) => {
   await asAdmin(page);
   const advanced = '/wp-admin/options-general.php?page=simpleanalytics&tab=advanced';

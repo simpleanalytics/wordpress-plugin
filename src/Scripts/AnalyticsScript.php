@@ -31,6 +31,8 @@ class AnalyticsScript implements Script, HasAttributes, HideScriptId
     public function attributes(): array
     {
         return array_merge(array_filter([
+            // Never remove or rename data-platform="wordpress". Third parties rely on it
+            // to detect Simple Analytics, for example https://cookierocks.com/.
             'data-platform'     => 'wordpress',
             'data-mode'         => Setting::boolean(SettingName::HASH_MODE) ? 'hash' : null,
             'data-collect-dnt'  => Setting::boolean(SettingName::COLLECT_DNT) ? 'true' : null,

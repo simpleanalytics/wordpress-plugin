@@ -16,7 +16,7 @@ sa_with_isolated_options(static function () {
         $property->setValue(null, false);
     };
     wp_set_current_user(get_user_by('login', 'admin')->ID);
-    foreach ([SettingName::PIN_SCRIPTS, SettingName::CUSTOM_DOMAIN, SettingName::CUSTOM_DOMAIN_HASH, SettingName::CUSTOM_SCRIPT_INTEGRITY, SettingName::CUSTOM_SCRIPT_APPROVAL] as $key) delete_option($key);
+    foreach ([SettingName::PIN_SCRIPTS, SettingName::CUSTOM_DOMAIN, SettingName::CUSTOM_SCRIPT_INTEGRITY, SettingName::CUSTOM_SCRIPT_APPROVAL] as $key) delete_option($key);
     $analytics = new SimpleAnalytics\Scripts\AnalyticsScript();
     $events = new SimpleAnalytics\Scripts\AutomatedEventsScript();
     sa_assert(! ScriptPinning::enabled(), 'Pinning must be opt-in.');

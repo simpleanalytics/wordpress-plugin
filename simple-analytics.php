@@ -94,7 +94,13 @@ $adminPage = SimpleAnalytics\Settings\AdminPage::title('Simple Analytics')
         $tab->multiCheckbox(SettingName::EXCLUDED_ROLES, 'Specific User Roles to Exclude')
             ->description('When none selected, all authenticated users will be excluded from tracking.')
             ->options(function () {
-                return wp_roles()->get_names();
+                $roles = wp_roles()->get_names();
+
+                if (is_multisite()) {
+                    $roles[SimpleAnalytics\TrackingRules::SUPER_ADMIN] = 'Network administrator (Super Admin)';
+                }
+
+                return $roles;
             });
 
         $tab->ipList(SettingName::EXCLUDED_IP_ADDRESSES, 'Exclude IP Addresses')
@@ -106,7 +112,7 @@ $adminPage = SimpleAnalytics\Settings\AdminPage::title('Simple Analytics')
 
         $tab->input(SettingName::CUSTOM_DOMAIN, 'Custom Domain')
             ->placeholder('Enter your custom domain or leave it empty.')
-            ->description('E.g. api.example.com, without a URL scheme or path. Requires permission to save unfiltered HTML. After upgrading, save an existing custom domain again to enable it. Leave empty to use the default domain.')
+            ->description('E.g. api.example.com. Requires permission to save unfiltered HTML. Leave empty to use the default domain.')
             ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
 
         $tab->checkbox(SettingName::PIN_SCRIPTS, 'Pin analytics scripts')
