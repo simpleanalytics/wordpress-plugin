@@ -1,7 +1,9 @@
 name: Release
 
 on:
-    workflow_dispatch: # Releases require an explicit manual trigger on main.
+    schedule:
+        - cron: "0 8 * * 1" # At 08:00 on Monday: test new WordPress versions and release when anything changed.
+    workflow_dispatch: # Allows manual triggering
 
 concurrency:
     group: wordpress-release
