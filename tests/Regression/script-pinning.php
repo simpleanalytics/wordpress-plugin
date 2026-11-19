@@ -29,6 +29,13 @@ sa_with_isolated_options(static function () {
     sa_assert($sri($bundled('custom/app.js')) === ScriptPinning::CUSTOM_DOMAIN_INTEGRITY, 'custom/app.js must match its fixed hash.');
     sa_assert($sri($bundled('auto-events.js')) === ScriptPinning::EVENTS_INTEGRITY, 'auto-events.js must match its fixed hash.');
     sa_assert(substr_count($bundled('custom/app.js'), ScriptPinning::HOST_PLACEHOLDER) === 1, 'The custom-domain build must have one domain placeholder.');
+    sa_assert(substr($bundled('custom/app.js'), -strlen(ScriptPinning::CUSTOM_DOMAIN_SOURCE_MAP)) === ScriptPinning::CUSTOM_DOMAIN_SOURCE_MAP, 'The custom-domain build must end with the source map reference the plugin removes.');
+    // Browsers request the source map a script names, so each bundled reference must resolve.
+    foreach (['app.js', 'auto-events.js'] as $file) {
+        sa_assert(preg_match('~\n//# sourceMappingURL=([^/\s]+)$~', $bundled($file), $match) === 1, "$file must end with a source map reference.");
+        $map = json_decode($bundled(dirname($file) . '/' . $match[1]), true);
+        sa_assert(is_array($map) && ($map['version'] ?? null) === 3, "$file must have its source map bundled.");
+    }
     foreach (['app.js' => 'cdn_latest_12', 'custom/app.js' => 'custom_app_12', 'auto-events.js' => '; v12)'] as $file => $marker) {
         sa_assert(strpos($bundled($file), $marker) !== false, "$file must come from the " . ScriptPinning::VERSION . ' release.');
     }
@@ -44,10 +51,11 @@ sa_with_isolated_options(static function () {
 
     // A custom domain gets the custom-domain build with its domain filled in.
     update_option(SettingName::CUSTOM_DOMAIN, 'stats.example.test');
-    $expected = str_replace(ScriptPinning::HOST_PLACEHOLDER, 'stats.example.test', $bundled('custom/app.js'));
+    $expected = str_replace([ScriptPinning::HOST_PLACEHOLDER, ScriptPinning::CUSTOM_DOMAIN_SOURCE_MAP], ['stats.example.test', ''], $bundled('custom/app.js'));
     sa_assert($analytics->path() === $uploads['baseurl'] . '/' . ScriptPinning::UPLOADS_DIRECTORY . '/' . ScriptPinning::VERSION . '-stats.example.test.js', 'A custom domain must load its script from uploads.');
     sa_assert(file_get_contents($written) === $expected, 'The written script must be the custom-domain build for this domain.');
     sa_assert(strpos($expected, '"stats.example.test"') !== false && strpos($expected, '<!--#') === false, 'The script must send data to the custom domain.');
+    sa_assert(strpos($expected, 'sourceMappingURL') === false, 'The written script must not name a source map that does not exist.');
     sa_assert($analytics->attributes()['integrity'] === $sri($expected), 'The written script must carry its own hash.');
     sa_assert($events->path() === $base . 'auto-events.js', 'Events stay bundled with a custom domain.');
     wp_set_current_user(0);

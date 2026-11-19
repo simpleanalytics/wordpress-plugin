@@ -15,8 +15,9 @@ use const SimpleAnalytics\PLUGIN_URL;
  */
 final class ScriptPinning
 {
-    // The scripts release tag. DIRECTORY holds dist/v12/app.js, dist/v12/custom/app.js
-    // and dist/v12/auto-events.js from that release's scripts-v12.tar.gz, unmodified.
+    // The scripts release tag. DIRECTORY holds dist/v12/app.js, dist/v12/custom/app.js,
+    // dist/v12/auto-events.js and the source maps of app.js and auto-events.js from that
+    // release's scripts-v12.tar.gz, unmodified.
     const VERSION = 'v12';
     const DIRECTORY = 'resources/js/pinned/' . self::VERSION . '/';
     // Fixed hashes of the bundled files, updated with them and never calculated at runtime.
@@ -26,6 +27,9 @@ final class ScriptPinning
     // custom/app.js sends data to the domain it is served from: custom-domain
     // servers write their hostname over this placeholder, and so does the plugin.
     const HOST_PLACEHOLDER = '<!--# echo var="http_host" default="" -->';
+    // The custom-domain source map is valid JSON only after its server fills in the
+    // hostname, so it is not bundled, and the written script drops this reference.
+    const CUSTOM_DOMAIN_SOURCE_MAP = "\n//# sourceMappingURL=app.js.map";
     // Scripts written for a custom domain, inside the uploads folder.
     const UPLOADS_DIRECTORY = 'simpleanalytics';
 
@@ -94,7 +98,7 @@ final class ScriptPinning
         if (! is_string($template) || 'sha384-' . base64_encode(hash('sha384', $template, true)) !== self::CUSTOM_DOMAIN_INTEGRITY) {
             return null;
         }
-        $code = str_replace(self::HOST_PLACEHOLDER, $domain, $template);
+        $code = str_replace([self::HOST_PLACEHOLDER, self::CUSTOM_DOMAIN_SOURCE_MAP], [$domain, ''], $template);
 
         $uploads = wp_upload_dir(null, false);
         if (! empty($uploads['error'])) return null;
