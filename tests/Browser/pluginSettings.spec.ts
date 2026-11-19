@@ -416,7 +416,7 @@ test('explains rejected custom domains beside the field', async ({ page, browser
   await expect(page.getByRole('alert')).toHaveCount(0);
 });
 
-test('pins bundled scripts, fills in the custom domain, and blocks altered bytes', async ({ page, browser }) => {
+test('pins bundled scripts and fills in the custom domain', async ({ page, browser }) => {
   await asAdmin(page);
   const advanced = '/wp-admin/options-general.php?page=simpleanalytics&tab=advanced';
   const events = '/wp-admin/options-general.php?page=simpleanalytics&tab=events';
@@ -426,14 +426,8 @@ test('pins bundled scripts, fills in the custom domain, and blocks altered bytes
   // Record where the scripts send data without sending it anywhere.
   await context.route(/^https:\/\/(queue\.simpleanalyticscdn\.com|stats\.example\.test)\//, route => route.fulfill({ status: 200, body: '' }));
   await context.route('https://scripts.simpleanalyticscdn.com/**', route => route.fulfill({
-    contentType: 'application/javascript', body: 'window.sa_unapproved = true;',
+    contentType: 'application/javascript', body: 'window.sa_cdn_script = true;',
   }));
-  let corrupt = false;
-  await context.route(/\/(resources\/js\/pinned|uploads\/simpleanalytics)\/.*\.js$/, async route => {
-    if (!corrupt) return route.continue();
-    const response = await route.fetch();
-    await route.fulfill({ response, body: (await response.text()) + '\nwindow.sa_unapproved = true;' });
-  });
   // The v12 automated-events script binds the links present when the page has loaded.
   const guest = await context.newPage();
   await guest.addInitScript(() => document.addEventListener('DOMContentLoaded', () => {
@@ -459,10 +453,8 @@ test('pins bundled scripts, fills in the custom domain, and blocks altered bytes
     await saveSettings(page);
     await expect(page.locator('#simpleanalytics_pin_scripts')).toBeChecked();
     await guest.goto('/', { waitUntil: 'load' });
-    const main = guest.locator('script[src*="/resources/js/pinned/v12/app.js"]');
-    await expect(main).toHaveAttribute('integrity', /^sha384-/);
-    await expect(main).toHaveAttribute('crossorigin', 'anonymous');
-    await expect(guest.locator('script[src*="/resources/js/pinned/v12/auto-events.js"]')).toHaveAttribute('integrity', /^sha384-/);
+    await expect(guest.locator('script[src$="/resources/js/pinned/v12/app.js"]:not([integrity])')).toBeAttached();
+    await expect(guest.locator('script[src$="/resources/js/pinned/v12/auto-events.js"]:not([integrity])')).toBeAttached();
     await expect.poll(() => guest.evaluate(() => (window as any).sa_event_loaded)).toBe(true);
     await expect.poll(() => dataSentTo('queue.simpleanalyticscdn.com')).toBe(true);
     expect(requests.some(url => url.startsWith('https://scripts.simpleanalyticscdn.com/'))).toBe(false);
@@ -485,25 +477,16 @@ test('pins bundled scripts, fills in the custom domain, and blocks altered bytes
     await expect(page.getByRole('alert')).toHaveCount(0);
     requests.length = 0;
     await guest.reload({ waitUntil: 'load' });
-    const custom = guest.locator('script[src*="/uploads/simpleanalytics/v12-stats.example.test.js"]');
-    await expect(custom).toHaveAttribute('integrity', /^sha384-/);
+    await expect(guest.locator('script[src$="/uploads/simpleanalytics/v12-stats.example.test.js"]')).toBeAttached();
     await expect.poll(() => dataSentTo('stats.example.test')).toBe(true);
     expect(dataSentTo('queue.simpleanalyticscdn.com')).toBe(false);
-
-    // Changed bytes are refused by the browser, for both written and bundled scripts.
-    corrupt = true;
-    await guest.reload({ waitUntil: 'load' });
-    await guest.waitForTimeout(300);
-    expect(await guest.evaluate(() => (window as any).sa_unapproved)).toBeUndefined();
-    expect(await guest.evaluate(() => (window as any).sa_event)).toBeUndefined();
-    corrupt = false;
 
     await page.locator('#simpleanalytics_custom_domain').fill('');
     await page.locator('#simpleanalytics_pin_scripts').uncheck();
     await saveSettings(page);
     await guest.reload();
-    await expect(guest.locator(DEFAULT_SCRIPT_SELECTOR)).not.toHaveAttribute('integrity');
-    expect(await guest.evaluate(() => (window as any).sa_unapproved)).toBe(true);
+    await expect(guest.locator(DEFAULT_SCRIPT_SELECTOR)).toBeAttached();
+    expect(await guest.evaluate(() => (window as any).sa_cdn_script)).toBe(true);
   } finally {
     await context.close();
     await page.goto(advanced);

@@ -117,8 +117,7 @@ $adminPage = SimpleAnalytics\Settings\AdminPage::title('Simple Analytics')
             ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
 
         $tab->checkbox(SettingName::PIN_SCRIPTS, 'Pin analytics scripts')
-            ->description('Run the ' . SimpleAnalytics\Support\ScriptPinning::VERSION . ' scripts bundled with this plugin, checked with Subresource Integrity, instead of the latest scripts from our CDN. Script updates arrive with plugin releases. With a custom domain, its script is saved in the uploads folder. Clear your page cache after changing this setting.')
-            ->docs('https://docs.simpleanalytics.com/sri');
+            ->description('Run the ' . SimpleAnalytics\Support\ScriptPinning::VERSION . ' scripts bundled with this plugin instead of the latest scripts from our CDN. Script updates arrive with plugin releases. With a custom domain, its script is saved in the uploads folder. Clear your page cache after changing this setting.');
 
         $tab->checkbox(SettingName::COLLECT_DNT, 'Collect Do Not Track')
             ->description('If you want to collect visitors with Do Not Track enabled, turn this on.')

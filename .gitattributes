@@ -8,5 +8,5 @@
 /.gitignore export-ignore
 /README.md export-ignore
 
-# SRI hashes depend on exact bytes, including line endings.
+# The regression test checks the exact bytes, including line endings.
 /resources/js/pinned/** text eol=lf

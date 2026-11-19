@@ -17,13 +17,10 @@ final class ScriptPinning
 {
     // The scripts release tag. DIRECTORY holds dist/v12/app.js, dist/v12/custom/app.js,
     // dist/v12/auto-events.js and the source maps of app.js and auto-events.js from that
-    // release's scripts-v12.tar.gz, unmodified.
+    // release's scripts-v12.tar.gz, unmodified. Directories of earlier releases stay in
+    // the plugin, so pages cached before a plugin update keep loading their scripts.
     const VERSION = 'v12';
     const DIRECTORY = 'resources/js/pinned/' . self::VERSION . '/';
-    // Fixed hashes of the bundled files, updated with them and never calculated at runtime.
-    const INTEGRITY = 'sha384-hW/9WnZdBVODKX3qmD+1Tbu8NAw+eqwfTa6hcnBO8jNjTQgh/lkr8adCkM5Pysqc';
-    const CUSTOM_DOMAIN_INTEGRITY = 'sha384-QCld7tlMzHkNDAxbcql6iYzbOEaLUjgLGnRyR1rk3Ov82ZMA2jHSjGQlpMnMQK5x';
-    const EVENTS_INTEGRITY = 'sha384-SQFrB7qW0OT1xKu17wLDikKn7a4X2l6654U0ieJhW/jn6ge9W+NECt0eHBG2uTjO';
     // custom/app.js sends data to the domain it is served from: custom-domain
     // servers write their hostname over this placeholder, and so does the plugin.
     const HOST_PLACEHOLDER = '<!--# echo var="http_host" default="" -->';
@@ -38,26 +35,14 @@ final class ScriptPinning
         return Setting::boolean(SettingName::PIN_SCRIPTS, false) === true;
     }
 
-    /**
-     * @return array{src: string, integrity: string}
-     */
-    public static function analyticsScript(): array
+    public static function analyticsScript(): string
     {
-        return self::customDomainScript() ?? [
-            'src' => PLUGIN_URL . self::DIRECTORY . 'app.js',
-            'integrity' => self::INTEGRITY,
-        ];
+        return self::customDomainScript() ?? PLUGIN_URL . self::DIRECTORY . 'app.js';
     }
 
-    /**
-     * @return array{src: string, integrity: string}
-     */
-    public static function eventsScript(): array
+    public static function eventsScript(): string
     {
-        return [
-            'src' => PLUGIN_URL . self::DIRECTORY . 'auto-events.js',
-            'integrity' => self::EVENTS_INTEGRITY,
-        ];
+        return PLUGIN_URL . self::DIRECTORY . 'auto-events.js';
     }
 
     /**
@@ -86,38 +71,33 @@ final class ScriptPinning
     /**
      * Writes the custom-domain build with the saved domain filled in, as the
      * custom-domain server would serve it, to the uploads folder.
-     *
-     * @return array{src: string, integrity: string}|null
      */
-    private static function customDomainScript(): ?array
+    private static function customDomainScript(): ?string
     {
         $domain = CustomDomain::get('');
         if ($domain === '') return null;
 
         $template = file_get_contents(PLUGIN_PATH . self::DIRECTORY . 'custom/app.js');
-        if (! is_string($template) || 'sha384-' . base64_encode(hash('sha384', $template, true)) !== self::CUSTOM_DOMAIN_INTEGRITY) {
-            return null;
-        }
+        if (! is_string($template)) return null;
         $code = str_replace([self::HOST_PLACEHOLDER, self::CUSTOM_DOMAIN_SOURCE_MAP], [$domain, ''], $template);
 
         $uploads = wp_upload_dir(null, false);
         if (! empty($uploads['error'])) return null;
         $directory = $uploads['basedir'] . '/' . self::UPLOADS_DIRECTORY;
-        // The domain and version are in the name, so browsers can cache it for good.
+        // The version and domain are in the name, so browsers can cache it for good.
         $file = self::VERSION . '-' . $domain . '.js';
 
         if (! is_file("$directory/$file") || file_get_contents("$directory/$file") !== $code) {
             if (! wp_mkdir_p($directory) || file_put_contents("$directory/$file", $code, LOCK_EX) !== strlen($code)) {
                 return null;
             }
+            // Remove the scripts of earlier domains. Earlier versions for this domain stay,
+            // so pages cached before a plugin update keep loading their script.
             foreach (glob("$directory/*.js") ?: [] as $old) {
-                if (basename($old) !== $file) wp_delete_file($old);
+                if (preg_match('/^v\d+-' . preg_quote($domain, '/') . '\.js$/', basename($old)) !== 1) wp_delete_file($old);
             }
         }
 
-        return [
-            'src' => $uploads['baseurl'] . '/' . self::UPLOADS_DIRECTORY . '/' . $file,
-            'integrity' => 'sha384-' . base64_encode(hash('sha384', $code, true)),
-        ];
+        return $uploads['baseurl'] . '/' . self::UPLOADS_DIRECTORY . '/' . $file;
     }
 }

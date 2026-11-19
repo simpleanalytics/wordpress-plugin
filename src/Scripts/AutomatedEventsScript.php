@@ -17,7 +17,7 @@ class AutomatedEventsScript implements Script, HasAttributes, HideScriptId
     public function path(): string
     {
         if (ScriptPinning::enabled()) {
-            return ScriptPinning::eventsScript()['src'];
+            return ScriptPinning::eventsScript();
         }
         return sprintf("https://%s/auto-events.js", CustomDomain::get('scripts.simpleanalyticscdn.com'));
     }
@@ -29,15 +29,12 @@ class AutomatedEventsScript implements Script, HasAttributes, HideScriptId
 
     public function attributes(): array
     {
-        return array_merge(array_filter([
+        return array_filter([
             'data-collect'    => Setting::get(SettingName::EVENT_COLLECT_DOWNLOADS),
             'data-extensions' => Setting::get(SettingName::EVENT_EXTENSIONS),
             'data-use-title'  => Setting::boolean(SettingName::EVENT_USE_TITLE) ? 'true' : 'false',
             'data-full-urls'  => Setting::boolean(SettingName::EVENT_FULL_URLS) ? 'true' : 'false',
             'data-sa-global'  => Setting::get(SettingName::EVENT_SA_GLOBAL),
-        ]), ScriptPinning::enabled() ? [
-            'integrity' => ScriptPinning::eventsScript()['integrity'],
-            'crossorigin' => 'anonymous',
-        ] : []);
+        ]);
     }
 }

@@ -18,7 +18,7 @@ class AnalyticsScript implements Script, HasAttributes, HideScriptId
     public function path(): string
     {
         if (ScriptPinning::enabled()) {
-            return ScriptPinning::analyticsScript()['src'];
+            return ScriptPinning::analyticsScript();
         }
         return sprintf("https://%s/latest.js", CustomDomain::get('scripts.simpleanalyticscdn.com'));
     }
@@ -30,7 +30,7 @@ class AnalyticsScript implements Script, HasAttributes, HideScriptId
 
     public function attributes(): array
     {
-        return array_merge(array_filter([
+        return array_filter([
             // Never remove or rename data-platform="wordpress". Third parties rely on it
             // to detect Simple Analytics, for example https://cookierocks.com/.
             'data-platform'     => 'wordpress',
@@ -41,9 +41,6 @@ class AnalyticsScript implements Script, HasAttributes, HideScriptId
             'onload'            => OnloadCallback::get(),
             'data-sa-global'    => Setting::get(SettingName::SA_GLOBAL),
             'data-hostname'     => Setting::get(SettingName::HOSTNAME),
-        ]), ScriptPinning::enabled() ? [
-            'integrity' => ScriptPinning::analyticsScript()['integrity'],
-            'crossorigin' => 'anonymous',
-        ] : []);
+        ]);
     }
 }
