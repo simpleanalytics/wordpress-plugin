@@ -415,3 +415,83 @@ test('explains rejected custom domains beside the field', async ({ page, browser
   await saveSettings(page);
   await expect(page.getByRole('alert')).toHaveCount(0);
 });
+
+test('pins bundled scripts and fills in the custom domain', async ({ page, browser }) => {
+  await asAdmin(page);
+  const advanced = '/wp-admin/options-general.php?page=simpleanalytics&tab=advanced';
+  const events = '/wp-admin/options-general.php?page=simpleanalytics&tab=events';
+  const context = await browser.newContext();
+  const requests: string[] = [];
+  context.on('request', request => requests.push(request.url()));
+  // Record where the scripts send data without sending it anywhere.
+  await context.route(/^https:\/\/(queue\.simpleanalyticscdn\.com|stats\.example\.test)\//, route => route.fulfill({ status: 200, body: '' }));
+  await context.route('https://scripts.simpleanalyticscdn.com/**', route => route.fulfill({
+    contentType: 'application/javascript', body: 'window.sa_cdn_script = true;',
+  }));
+  // The v12 automated-events script binds the links present when the page has loaded.
+  const guest = await context.newPage();
+  await guest.addInitScript(() => document.addEventListener('DOMContentLoaded', () => {
+    for (const [id, href] of [['outbound-test', 'https://example.org/'], ['download-test', '/test.pdf'], ['email-test', 'mailto:hello@example.org']]) {
+      const link = document.createElement('a'); link.id = id; link.href = href; link.textContent = id;
+      link.addEventListener('click', event => event.preventDefault()); document.body.appendChild(link);
+    }
+  }));
+  const dataSentTo = (host: string) => requests.some(url => url.startsWith(`https://${host}/`));
+  try {
+    await page.goto(events);
+    await page.locator('#simpleanalytics_automated_events').check();
+    await page.locator('#simpleanalytics_event_collect_downloads').fill('outbound,emails,downloads');
+    await page.locator('#simpleanalytics_event_extensions').fill('pdf');
+    await page.locator('#simpleanalytics_event_use_title').uncheck();
+    await page.locator('#simpleanalytics_event_full_urls').uncheck();
+    await page.locator('#simpleanalytics_event_sa_global').fill('');
+    await saveSettings(page);
+
+    await page.goto(advanced);
+    await page.locator('#simpleanalytics_custom_domain').fill('');
+    await page.locator('#simpleanalytics_pin_scripts').check();
+    await saveSettings(page);
+    await expect(page.locator('#simpleanalytics_pin_scripts')).toBeChecked();
+    await guest.goto('/', { waitUntil: 'load' });
+    await expect(guest.locator('script[src$="/resources/js/pinned/v12/app.js"]:not([integrity])')).toBeAttached();
+    await expect(guest.locator('script[src$="/resources/js/pinned/v12/auto-events.js"]:not([integrity])')).toBeAttached();
+    await expect.poll(() => guest.evaluate(() => (window as any).sa_event_loaded)).toBe(true);
+    await expect.poll(() => dataSentTo('queue.simpleanalyticscdn.com')).toBe(true);
+    expect(requests.some(url => url.startsWith('https://scripts.simpleanalyticscdn.com/'))).toBe(false);
+
+    // The bundled events script reports clicks through the bundled main script.
+    await guest.evaluate(() => {
+      (window as any).sa_test_events = [];
+      const original = (window as any).sa_event;
+      (window as any).sa_event = function (name: string, ...rest: unknown[]) {
+        (window as any).sa_test_events.push(name);
+        return original.call(this, name, ...rest);
+      };
+    });
+    for (const id of ['outbound-test', 'download-test', 'email-test']) await guest.locator('#' + id).click();
+    expect(await guest.evaluate(() => (window as any).sa_test_events)).toEqual(['outbound_example_org', 'download_test_pdf', 'email_hello_example_org']);
+
+    // A custom domain gets its own copy of the bundled custom-domain script, sending data to that domain.
+    await page.locator('#simpleanalytics_custom_domain').fill('stats.example.test');
+    await saveSettings(page);
+    await expect(page.getByRole('alert')).toHaveCount(0);
+    requests.length = 0;
+    await guest.reload({ waitUntil: 'load' });
+    await expect(guest.locator('script[src$="/uploads/simpleanalytics/v12-stats.example.test.js"]')).toBeAttached();
+    await expect.poll(() => dataSentTo('stats.example.test')).toBe(true);
+    expect(dataSentTo('queue.simpleanalyticscdn.com')).toBe(false);
+
+    await page.locator('#simpleanalytics_custom_domain').fill('');
+    await page.locator('#simpleanalytics_pin_scripts').uncheck();
+    await saveSettings(page);
+    await guest.reload();
+    await expect(guest.locator(DEFAULT_SCRIPT_SELECTOR)).toBeAttached();
+    expect(await guest.evaluate(() => (window as any).sa_cdn_script)).toBe(true);
+  } finally {
+    await context.close();
+    await page.goto(advanced);
+    await page.locator('#simpleanalytics_custom_domain').fill('');
+    await page.locator('#simpleanalytics_pin_scripts').uncheck();
+    await saveSettings(page);
+  }
+});

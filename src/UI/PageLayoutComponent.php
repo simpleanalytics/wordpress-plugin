@@ -78,6 +78,7 @@ class PageLayoutComponent
 
                 <!-- Fields / Layout -->
                 <div class="mx-auto max-w-3xl bg-white px-4 py-6 sm:px-4 lg:px-0">
+                    <?php \SimpleAnalytics\Support\ScriptPinning::notice(true); ?>
                     <div class="border-b border-gray-900/10 pb-7">
                         <?php if ($currentTab->getSlug() === 'general'): ?>
                             <?php $this->renderGeneralTabIntro(); ?>

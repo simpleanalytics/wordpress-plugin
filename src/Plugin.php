@@ -11,6 +11,7 @@ use SimpleAnalytics\Scripts\AnalyticsScript;
 use SimpleAnalytics\Scripts\AutomatedEventsScript;
 use SimpleAnalytics\Scripts\InactiveScript;
 use SimpleAnalytics\Settings\AdminPage;
+use SimpleAnalytics\Support\ScriptPinning;
 
 final class Plugin
 {
@@ -40,6 +41,7 @@ final class Plugin
         $this->hooks->onActivation(\Closure::fromCallable([$this, 'onActivation']));
 
         if ($this->hooks->isAdmin()) {
+            $this->hooks->addAction('admin_notices', [ScriptPinning::class, 'notice']);
             $this->adminPage->register();
             AddPluginSettingsLink::register();
         }

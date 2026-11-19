@@ -11,11 +11,15 @@ use SimpleAnalytics\Setting;
 use SimpleAnalytics\SettingName;
 use SimpleAnalytics\Support\CustomDomain;
 use SimpleAnalytics\Support\OnloadCallback;
+use SimpleAnalytics\Support\ScriptPinning;
 
 class AnalyticsScript implements Script, HasAttributes, HideScriptId
 {
     public function path(): string
     {
+        if (ScriptPinning::enabled()) {
+            return ScriptPinning::analyticsScript();
+        }
         return sprintf("https://%s/latest.js", CustomDomain::get('scripts.simpleanalyticscdn.com'));
     }
 

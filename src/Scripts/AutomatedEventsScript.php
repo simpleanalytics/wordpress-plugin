@@ -10,11 +10,15 @@ use SimpleAnalytics\Scripts\Contracts\Script;
 use SimpleAnalytics\Setting;
 use SimpleAnalytics\SettingName;
 use SimpleAnalytics\Support\CustomDomain;
+use SimpleAnalytics\Support\ScriptPinning;
 
 class AutomatedEventsScript implements Script, HasAttributes, HideScriptId
 {
     public function path(): string
     {
+        if (ScriptPinning::enabled()) {
+            return ScriptPinning::eventsScript();
+        }
         return sprintf("https://%s/auto-events.js", CustomDomain::get('scripts.simpleanalyticscdn.com'));
     }
 

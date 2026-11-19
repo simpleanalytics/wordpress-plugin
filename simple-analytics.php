@@ -51,6 +51,7 @@ require __DIR__ . '/src/Actions/AddPluginSettingsLink.php';
 require __DIR__ . '/src/Support/Str.php';
 require __DIR__ . '/src/Support/OnloadCallback.php';
 require __DIR__ . '/src/Support/CustomDomain.php';
+require __DIR__ . '/src/Support/ScriptPinning.php';
 require __DIR__ . '/src/Settings/Block.php';
 require __DIR__ . '/src/Settings/Blocks/CalloutBlock.php';
 require __DIR__ . '/src/Settings/Concerns/HasDocs.php';
@@ -114,6 +115,9 @@ $adminPage = SimpleAnalytics\Settings\AdminPage::title('Simple Analytics')
             ->placeholder('Enter your custom domain or leave it empty.')
             ->description('E.g. api.example.com. Requires permission to save unfiltered HTML. Leave empty to use the default domain.')
             ->docs('https://docs.simpleanalytics.com/bypass-ad-blockers');
+
+        $tab->checkbox(SettingName::PIN_SCRIPTS, 'Pin analytics scripts')
+            ->description('Run the ' . SimpleAnalytics\Support\ScriptPinning::VERSION . ' scripts bundled with this plugin instead of the latest scripts from our CDN. Script updates arrive with plugin releases. With a custom domain, its script is saved in the uploads folder. Clear your page cache after changing this setting.');
 
         $tab->checkbox(SettingName::COLLECT_DNT, 'Collect Do Not Track')
             ->description('If you want to collect visitors with Do Not Track enabled, turn this on.')
