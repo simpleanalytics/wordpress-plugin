@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Settings;
 
+defined('ABSPATH') || exit;
+
 use SimpleAnalytics\Support\SvgIcon;
 
 class Tab

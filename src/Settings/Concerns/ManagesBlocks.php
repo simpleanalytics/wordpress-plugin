@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Settings\Concerns;
 
+defined('ABSPATH') || exit;
+
 use SimpleAnalytics\Settings\Block;
 use SimpleAnalytics\Settings\Blocks\CalloutBlock;
 use SimpleAnalytics\Settings\Blocks\Fields\Checkbox;

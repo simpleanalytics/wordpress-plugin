@@ -12,7 +12,7 @@ module.exports = {
                 littleMuted: "#68797b",
             },
             fontFamily: {
-                sans: ["Space Grotesk", ...defaultTheme.fontFamily.sans],
+                sans: defaultTheme.fontFamily.sans,
             },
             borderWidth: {
                 3: "3px",

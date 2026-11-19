@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics;
 
+defined('ABSPATH') || exit;
+
 use SimpleAnalytics\Actions\AddInactiveComment;
 use SimpleAnalytics\Actions\AddNoScriptTag;
 use SimpleAnalytics\Actions\AddPluginSettingsLink;
@@ -34,7 +36,7 @@ final class Plugin
 
     public function boot(): void
     {
-        $this->hooks->addAction('init', \Closure::fromCallable([$this, 'onInit']));
+        $this->hooks->addAction('wp_enqueue_scripts', \Closure::fromCallable([$this, 'enqueueScripts']));
         $this->hooks->onActivation(\Closure::fromCallable([$this, 'onActivation']));
 
         if ($this->hooks->isAdmin()) {
@@ -43,8 +45,12 @@ final class Plugin
         }
     }
 
-    public function onInit(): void
+    public function enqueueScripts(): void
     {
+        if ($this->hooks->isAdmin() || ($GLOBALS['pagenow'] ?? '') === 'wp-login.php') {
+            return;
+        }
+
         $hasExcludedIp = $this->trackingRules->hasExcludedIp();
         $hasExcludedUserRole = $this->trackingRules->hasExcludedUserRole();
         $tracking = ! $hasExcludedIp && ! $hasExcludedUserRole;
@@ -61,7 +67,7 @@ final class Plugin
             AddNoScriptTag::register();
         }
 
-        if ($this->settings->boolean(SettingName::AUTOMATED_EVENTS)) {
+        if ($tracking && $this->settings->boolean(SettingName::AUTOMATED_EVENTS)) {
             $this->scripts->push(new AutomatedEventsScript);
         }
 

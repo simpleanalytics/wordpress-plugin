@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 require __DIR__ . '/../Support/isolated-options.php';
 
 sa_with_isolated_options(static function () {

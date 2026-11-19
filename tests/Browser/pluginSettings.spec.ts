@@ -344,3 +344,74 @@ test('adds a script with a custom domain name', async ({ page, browser }) => {
   await page.fill('[name="simpleanalytics_custom_domain"]', '');
   await saveSettings(page);
 });
+
+
+test('does not load analytics on login or admin pages with automated events enabled', async ({ page, browser }) => {
+  await asAdmin(page);
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=events');
+  await page.locator('[name="simpleanalytics_automated_events"]').check();
+  await saveSettings(page);
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules');
+  // The logged-in administrator is deliberately not excluded by role.
+  for (const checkbox of await page.locator('input[name="simpleanalytics_exclude_user_roles[]"]').all()) {
+    await checkbox.uncheck();
+  }
+  await page.locator('#simpleanalytics_exclude_user_roles-editor').check();
+  await saveSettings(page);
+
+  const scripts = 'script[src*="/latest.js"], script[src*="/auto-events.js"], script[src*="resources/js/inactive.js"]';
+  await page.goto('/wp-admin/');
+  await expect(page.locator(scripts)).toHaveCount(0);
+  const login = await visitAsGuest(browser, '/wp-login.php');
+  await expect(login.locator(scripts)).toHaveCount(0);
+  await login.context().close();
+
+  await page.goto('/');
+  await expect(page.locator(DEFAULT_SCRIPT_SELECTOR)).toBeAttached();
+  await expect(page.locator('script[src$="/auto-events.js"]')).toBeAttached();
+});
+
+test('excluded visitors do not load automated events', async ({ page }) => {
+  await asAdmin(page);
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=events');
+  await page.locator('[name="simpleanalytics_automated_events"]').check();
+  await saveSettings(page);
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=ignore-rules');
+  await page.locator('#simpleanalytics_exclude_user_roles-administrator').check();
+  await saveSettings(page);
+  await page.goto('/');
+  await expect(page.locator(INACTIVE_ADMIN_SCRIPT_SELECTOR)).toBeAttached();
+  await expect(page.locator('script[src$="/auto-events.js"]')).toHaveCount(0);
+});
+
+test('malformed tabs fall back to General without requesting external fonts', async ({ page }) => {
+  await asAdmin(page);
+  const requests: string[] = [];
+  page.on('request', request => requests.push(request.url()));
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab[]=x');
+  await expect(page.getByText('Simple Analytics is now added to your WordPress site.')).toBeVisible();
+  expect(requests.some(url => url.includes('fonts.bunny.net'))).toBe(false);
+});
+
+test('explains rejected custom domains beside the field', async ({ page, browser }) => {
+  const field = '[name="simpleanalytics_custom_domain"]';
+  await asAdmin(page);
+  await page.goto('/wp-admin/options-general.php?page=simpleanalytics&tab=advanced');
+  await page.fill(field, 'https://Stats.Example.com/');
+  await saveSettings(page);
+  await expect(page.locator(field)).toHaveValue('stats.example.com');
+  await expect(page.getByRole('alert')).toHaveCount(0);
+
+  await page.fill(field, 'stats.example.com/latest.js?x');
+  await saveSettings(page);
+  await expect(page.locator(field)).toHaveValue('stats.example.com');
+  await expect(page.getByRole('alert')).toContainText('The custom domain was not changed.');
+
+  const guest = await visitAsGuest(browser);
+  await expect(guest.locator('script[src="https://stats.example.com/latest.js"]')).toBeAttached();
+  await guest.context().close();
+
+  await page.fill(field, '');
+  await saveSettings(page);
+  await expect(page.getByRole('alert')).toHaveCount(0);
+});

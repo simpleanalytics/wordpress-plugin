@@ -2,6 +2,8 @@
 
 namespace SimpleAnalytics\Actions;
 
+defined('ABSPATH') || exit;
+
 trait Action
 {
     protected function hook(): string

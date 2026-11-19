@@ -2,8 +2,15 @@ name: Release
 
 on:
     schedule:
-        - cron: "0 8 * * 1" # At 08:00 on Monday.
+        - cron: "0 8 * * 1" # At 08:00 on Monday: test new WordPress versions and release when anything changed.
     workflow_dispatch: # Allows manual triggering
+
+concurrency:
+    group: wordpress-release
+    cancel-in-progress: false
+
+permissions:
+    contents: read
 
 jobs:
     e2e:
@@ -11,6 +18,7 @@ jobs:
 
     update:
         name: Update version
+        if: github.ref == 'refs/heads/main'
         needs: e2e
         runs-on: ubuntu-latest
         timeout-minutes: 10
@@ -20,7 +28,7 @@ jobs:
         steps:
             - name: Create release app token
               id: release-app
-              uses: actions/create-github-app-token@v3
+              uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3
               with:
                   client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
                   private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
@@ -30,10 +38,11 @@ jobs:
               id: release-app-user
               env:
                   GH_TOKEN: ${{ steps.release-app.outputs.token }}
-              run: echo "user-id=$(gh api "/users/${{ steps.release-app.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+                  APP_SLUG: ${{ steps.release-app.outputs.app-slug }}
+              run: echo "user-id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
 
             - name: Check out repository
-              uses: actions/checkout@v6
+              uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
               with:
                   token: ${{ steps.release-app.outputs.token }}
                   persist-credentials: true # Required to push the release commit as the app
@@ -41,29 +50,30 @@ jobs:
                   fetch-tags: true # Ensure tags are fetched
 
             - name: Install pnpm
-              uses: pnpm/action-setup@v5
+              uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5
               with:
                   version: 10
 
             - name: Install Node.js LTS
-              uses: actions/setup-node@v6
+              uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
               with:
                   node-version: lts/*
                   cache: "pnpm"
 
             - name: Install dependencies
-              run: pnpm install
+              run: pnpm install --frozen-lockfile
 
             - name: Build assets
               run: pnpm build
 
             - name: Install PHP
-              uses: shivammathur/setup-php@v2
+              uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
               with:
                   php-version: "latest"
+                  tools: composer:v2
 
-            - name: Install Composer
-              uses: ramsey/composer-install@v4
+            - name: Install Composer dependencies
+              run: composer install --no-interaction --prefer-dist --no-progress
 
             - name: Downgrade PHP code to the minimum version WordPress requires
               run: vendor/bin/rector --ansi
@@ -83,18 +93,23 @@ jobs:
 
             - name: Commit and push changes
               if: steps.script.outputs.has-changed == 'true'
+              env:
+                  RELEASE_NAME: ${{ steps.script.outputs.release-name }}
+                  RELEASE_REF: ${{ github.ref_name }}
+                  APP_SLUG: ${{ steps.release-app.outputs.app-slug }}
+                  APP_USER_ID: ${{ steps.release-app-user.outputs.user-id }}
               run: |
-                  git config user.name "${{ steps.release-app.outputs.app-slug }}[bot]"
-                  git config user.email "${{ steps.release-app-user.outputs.user-id }}+${{ steps.release-app.outputs.app-slug }}[bot]@users.noreply.github.com"
+                  git config user.name "${APP_SLUG}[bot]"
+                  git config user.email "${APP_USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
                   git add .
-                  git commit -m "${{ steps.script.outputs.release-name }}"
-                  # Push changes, handling potential conflicts
-                  git push || git pull --rebase origin ${{ github.ref_name }} && git push
+                  git commit -m "$RELEASE_NAME"
+                  # Stop if main changed instead of deploying an untested rebase.
+                  git push origin "HEAD:$RELEASE_REF"
 
             - name: WordPress Plugin Deploy
               if: steps.script.outputs.has-changed == 'true'
               id: deploy
-              uses: 10up/action-wordpress-plugin-deploy@2.3.0
+              uses: 10up/action-wordpress-plugin-deploy@54bd289b8525fd23a5c365ec369185f2966529c2 # 2.3.0
               with:
                   generate-zip: true
               env:
@@ -107,13 +122,16 @@ jobs:
             - name: Name release zip like repository
               if: steps.script.outputs.has-changed == 'true'
               id: release_zip
+              env:
+                  ZIP_PATH: ${{ steps.deploy.outputs.zip-path }}
+                  REPOSITORY_NAME: ${{ github.event.repository.name }}
               run: |
-                  cp "${{ steps.deploy.outputs.zip-path }}" "${{ github.workspace }}/${{ github.event.repository.name }}.zip"
-                  echo "path=${{ github.workspace }}/${{ github.event.repository.name }}.zip" >> "$GITHUB_OUTPUT"
+                  cp -- "$ZIP_PATH" "$GITHUB_WORKSPACE/$REPOSITORY_NAME.zip"
+                  echo "path=$GITHUB_WORKSPACE/$REPOSITORY_NAME.zip" >> "$GITHUB_OUTPUT"
 
             - name: Create GitHub release
               if: steps.script.outputs.has-changed == 'true'
-              uses: softprops/action-gh-release@v3
+              uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3
               with:
                   tag_name: ${{ steps.script.outputs.stable-tag }}
                   name: ${{ steps.script.outputs.release-name }}
