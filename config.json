@@ -1,6 +1,6 @@
 {
-  "TESTED_UP_TO": "7.1.4",
-  "REQUIRES_AT_LEAST": "7.0.7",
+  "TESTED_UP_TO": "7.1.5",
+  "REQUIRES_AT_LEAST": "7.0.8",
   "REQUIRES_PHP": "7.4.0",
-  "STABLE_TAG": "1.115"
+  "STABLE_TAG": "1.116"
 }
