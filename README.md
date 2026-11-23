@@ -12,3 +12,15 @@ You need a Simple Analytics account. Start with the [free plan](https://www.simp
 
 -   [WordPress plugin page](https://wordpress.org/plugins/simpleanalytics/)
 -   [Create a Simple Analytics account](https://www.simpleanalytics.com/signup)
+
+## Script pinning
+
+Enable **Pin analytics scripts** under **Settings → Simple Analytics → Advanced** to run the v12 analytics and automated-events scripts bundled with the plugin, instead of the latest scripts from the CDN. Pinning is off by default. Script updates arrive with plugin releases, and the release number is part of each script's URL. Clear page caches after changing this setting, so visitors receive the new script tags.
+
+With a custom domain, the plugin fills the domain into the bundled custom-domain build, as the custom-domain server does for `https://YOUR.DOMAIN/sri/v12.js`, and saves it as `wp-content/uploads/simpleanalytics/v12-YOUR.DOMAIN.js`. That script sends data to the custom domain. Scripts written for earlier releases stay until the custom domain changes. If the uploads folder is not writable, visitors get the bundled script for the default domain and administrators see a warning.
+
+### Updating pinned scripts
+
+- Pinned scripts follow the releases of [simpleanalytics/scripts](https://github.com/simpleanalytics/scripts). `VERSION` in `src/Support/ScriptPinning.php` is the release tag (`v12`), and `resources/js/pinned/v12/` holds `dist/v12/app.js`, `dist/v12/custom/app.js`, `dist/v12/auto-events.js`, `dist/v12/app.js.map` and `dist/v12/auto-events.js.map` from that release's `scripts-v12.tar.gz`, unmodified. Directories of earlier releases stay, so pages cached before a plugin update keep loading their scripts. Browsers request a script's source map when developer tools are open, so a missing map logs an error. The custom-domain map is valid only after its server fills in the hostname, so it is not bundled, and the script written for a custom domain drops its source map comment. `app.js` equals `https://scripts.simpleanalyticscdn.com/sri/v12.js` except for its source map comment. The MIT license is retained in `resources/js/pinned/LICENSE`.
+- For a new release such as `v13`: review the upstream changes, put the same five files from `scripts-v13.tar.gz` in `resources/js/pinned/v13/`, keep `v12/`, change `VERSION`, and add the hashes of `app.js`, `custom/app.js` and `auto-events.js` to `$releases` in `tests/Regression/script-pinning.php`. Calculate each hash with `echo "sha384-$(openssl dgst -sha384 -binary FILE | openssl base64 -A)"`. The test fails when a bundled release has no hashes or a file does not match them.
+- Run the PHP regressions and browser checks, including a custom domain and event collection.

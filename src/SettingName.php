@@ -9,6 +9,8 @@ defined('\\ABSPATH') || exit;
  */
 class SettingName
 {
+    const PIN_SCRIPTS = 'simpleanalytics_pin_scripts';
+
     /**
      * @var string
      */

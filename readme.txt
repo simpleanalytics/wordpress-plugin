@@ -112,6 +112,10 @@ Installing "Simple Analytics" can be done in multiple ways.
 
 == Frequently Asked Questions ==
 
+= Can I pin the analytics scripts? =
+
+Yes. Enable "Pin analytics scripts" under Settings > Simple Analytics > Advanced. The plugin then runs the v12 analytics and automated-events scripts bundled with it, instead of the latest scripts from our CDN. Pinning is off by default. Script updates arrive with plugin releases. Clear page caches after enabling or disabling pinning. With a custom domain, the plugin saves a copy of the script for that domain in the uploads folder. The readable source of the bundled scripts is at https://github.com/simpleanalytics/scripts/tree/v12/src.
+
 = Is Simple Analytics free? =
 
 Yes. You can use Simple Analytics for free forever. You only need to create an account at [Simple Analytics](https://simpleanalytics.com/?ref=wordpress).

@@ -7,3 +7,6 @@
 /.gitattributes export-ignore
 /.gitignore export-ignore
 /README.md export-ignore
+
+# The regression test checks the exact bytes, including line endings.
+/resources/js/pinned/** text eol=lf
